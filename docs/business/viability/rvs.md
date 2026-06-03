@@ -173,61 +173,48 @@ Dessa forma, o projeto demonstra:
 
 Relatório de Viabilidade Legal: Vitrine Virtual “PedeAqui” SaaS
 
-### 1. LGPD (Lei 13.709/2018)
+### 3.1 LGPD (Lei 13.709/2018)
 
 **a) Análise de Conformidade:** O modelo de "coleta mínima" facilita a conformidade. Para
-compradores não cadastrados, a base legal é **Execução de Contrato ou Procedimentos
-Preliminares** (Art. 7º, V). Para compradores cadastrados, aplica-se o **Consentimento** (Art. 7º, I) ou **Legítimo Interesse** (Art. 7º, IX) para facilitar futuras compras.
-
-**b) Riscos: Médio**. O risco reside na possível confusão de papéis entre a plataforma e o lojista.
-
-**c) Recomendações:** * Implementar um _Check-box_ de aceite dos termos no primeiro pedido.
-Estabelecer que a plataforma é **Operadora** e o Lojista é **Controlador** dos dados dos clientes finais.
-
+compradores não cadastrados, a base legal é **Execução de Contrato ou Procedimentos Preliminares** (Art. 7º, V). Para compradores cadastrados, aplica-se o **Consentimento** (Art. 7º, I) ou **Legítimo Interesse** (Art. 7º, IX) para facilitar futuras compras.<br>
+**b) Riscos: Médio**. O risco reside na possível confusão de papéis entre a plataforma e o lojista.<br>
+**c) Recomendações:** Implementar um _Check-box_ de aceite dos termos no primeiro pedido. Estabelecer que a plataforma é **Operadora** e o Lojista é **Controlador** dos dados dos clientes finais.<br>
 **d) Normas:** Art. 5º, 7º e 15º da LGPD.
 
 
-### 2. Marco Civil da Internet (Lei 12.965/2014)
+### 3.2. Marco Civil da Internet (Lei 12.965/2014)
 
 **a) Análise de Conformidade:** A plataforma é um "Provedor de Aplicação". O projeto deve,
 obrigatoriamente, registrar logs de acesso (IP, data e hora) de todos os usuários (administradores e
-compradores).
-
+compradores).<br>
 **b) Riscos: Médio**. A ausência de logs impede a identificação de fraudadores ou usuários
-mal-intencionados, gerando responsabilidade para a plataforma.
-
-**c) Recomendações:** Manter logs de conexão por 6 meses em ambiente seguro e sigiloso.
-
+mal-intencionados, gerando responsabilidade para a plataforma.<br>
+**c) Recomendações:** Manter logs de conexão por 6 meses em ambiente seguro e sigiloso.<br>
 **d) Normas:** Art. 15º do Marco Civil da Internet.
-### 3. CDC (Lei 8.078/90) e Decreto do E-commerce (7.962/13)
 
-**a) Análise de Conformidade:** Mesmo sendo apenas uma vitrine, o Decreto exige que as informações do fornecedor (Lojista) sejam claras. Como a plataforma é o "meio", ela deve forçar o lojista a exibir CNPJ/CPF e endereço.
+### 3.3 CDC (Lei 8.078/90) e Decreto do E-commerce (7.962/13)
 
-**b) Riscos: Alto**. Se o lojista for anônimo, a plataforma pode ser responsabilizada solidariamente por danos ao consumidor (Teoria da Aparência).
-
-**c) Recomendações:** Tornar obrigatório o preenchimento dos dados do lojista (Rodapé da vitrine) antes da publicação do catálogo.
-
+**a) Análise de Conformidade:** Mesmo sendo apenas uma vitrine, o Decreto exige que as informações do fornecedor (Lojista) sejam claras. Como a plataforma é o "meio", ela deve forçar o lojista a exibir CNPJ/CPF e endereço.<br>
+**b) Riscos: Alto**. Se o lojista for anônimo, a plataforma pode ser responsabilizada solidariamente por danos ao consumidor (Teoria da Aparência).<br>
+**c) Recomendações:** Tornar obrigatório o preenchimento dos dados do lojista (Rodapé da vitrine) antes da publicação do catálogo.<br>
 **d) Normas:** Art. 2º do Decreto 7.962/2013; Art. 14 e 18 do CDC.
-### 4. Uso da API do WhatsApp Business
 
-**a) Análise de Conformidade:** O redirecionamento via link wa.me é uma prática padrão. Contudo, o conteúdo da mensagem pré-preenchida não deve violar as Políticas Comerciais da Meta (ex: venda de armas, medicamentos controlados).
+### 3.4 Uso da API do WhatsApp Business
 
-**b) Riscos: Baixo**. O risco de banimento recai sobre o lojista, mas a plataforma deve alertar sobre as boas práticas.
-
-**c) Recomendações:** Incluir nos Termos de Uso a proibição de uso da plataforma para produtos proibidos pelo WhatsApp.
-
+**a) Análise de Conformidade:** O redirecionamento via link wa.me é uma prática padrão. Contudo, o conteúdo da mensagem pré-preenchida não deve violar as Políticas Comerciais da Meta (ex: venda de armas, medicamentos controlados).<br>
+**b) Riscos: Baixo**. O risco de banimento recai sobre o lojista, mas a plataforma deve alertar sobre as boas práticas.<br>
+**c) Recomendações:** Incluir nos Termos de Uso a proibição de uso da plataforma para produtos proibidos pelo WhatsApp.<br>
 **d) Normas:** Políticas de Mensagens Comerciais do WhatsApp.
-### 6. Modelo SaaS e Responsabilidades Contratuais
+
+### 3.5 Modelo SaaS e Responsabilidades Contratuais
 
 **a) Análise de Conformidade:** É fundamental separar a responsabilidade do software
-(disponibilidade, segurança) da responsabilidade do negócio (entrega do produto, qualidade).
-
-**b) Riscos: Médio.** Risco de ser processado por falha na entrega do lojista.
-
-**c) Recomendações:** Cláusula de **Exclusão de Responsabilidade por Transações Intermediadas**. Como o pagamento é externo, a plataforma deve declarar-se apenas como ferramenta tecnológica de anúncio.
- 
+(disponibilidade, segurança) da responsabilidade do negócio (entrega do produto, qualidade).<br>
+**b) Riscos: Médio.** Risco de ser processado por falha na entrega do lojista.<br>
+**c) Recomendações:** Cláusula de **Exclusão de Responsabilidade por Transações Intermediadas**. Como o pagamento é externo, a plataforma deve declarar-se apenas como ferramenta tecnológica de anúncio.<br>
 **d) Normas:** Art. 18 e 19 do Marco Civil (Responsabilidade de Terceiros).
-### Quadro-Resumo de Riscos
+
+### 3.6 Quadro-Resumo de Riscos
 | Área        | Nível de Risco | Principal Causa           | Medida de Mitigação                         |
 | ----------- | -------------- | ------------------------- | ------------------------------------------- |
 | Consumidor  | Alto           | Anonimato do lojista      | Obrigatoriedade de dados de identificação   |
@@ -252,82 +239,96 @@ mal-intencionados, gerando responsabilidade para a plataforma.
 
 ## 4. Viabilidade Operacional (Operational)
 
-A viabilidade operacional avalia se um sistema pode ser efetivamente utilizado em seu contexto real, considerando facilidade de adoção, adequação aos processos existentes e impacto prático no dia a dia dos usuários. No projeto de um site para conectar clientes e empreendedores, o sucesso depende principalmente da usabilidade, aceitação e eficiência operacional.
+A viabilidade operacional avalia se o sistema pode ser utilizado de forma eficiente dentro do contexto real de uso, considerando fatores como facilidade de adoção, usabilidade, simplicidade operacional e adequação às necessidades dos usuários. No contexto do sistema **PedeAqui**, a proposta apresenta alta viabilidade operacional por ter sido concebida para atender uma necessidade comum de pequenos empreendedores: possuir presença digital organizada sem a complexidade de um e-commerce tradicional.
 
-O sistema proposto apresenta boa viabilidade operacional por ter sido concebido para atender a uma necessidade real de pequenos e médios empreendedores: divulgar produtos de forma organizada e atrativa, sem exigir um e-commerce completo. Como vitrine virtual, permite cadastro simples de produtos (nome, imagem, descrição, preço), reduzindo a sobrecarga operacional.
+A plataforma funcionará como uma vitrine virtual simplificada, permitindo que lojistas realizem o cadastro de produtos com informações básicas, como nome, descrição, imagem e preço. Essa abordagem reduz significativamente a complexidade operacional do sistema e facilita sua utilização mesmo por usuários com baixo nível de conhecimento técnico.
 
-Para o cliente, o fluxo é direto: acessa o site, visualiza produtos, seleciona itens e é redirecionado ao WhatsApp do empreendedor. Esse modelo aproveita ferramentas já difundidas, diminuindo barreiras de uso. O sistema não substitui o atendimento humano, mas o organiza e potencializa.
+Para os clientes, o fluxo de utilização é simples e intuitivo: acessar o catálogo, visualizar os produtos disponíveis e iniciar contato diretamente com o lojista via WhatsApp. Esse modelo aproveita uma ferramenta já amplamente utilizada pela população, reduzindo barreiras de adoção e aprendizado. A integração com o WhatsApp também contribui para minimizar mudanças no processo de venda já utilizado pelos empreendedores. O sistema não substitui o atendimento humano nem o processo de negociação do lojista, funcionando apenas como uma ferramenta de organização e exposição digital dos produtos.
 
-A integração com o WhatsApp evita mudanças radicais de comportamento, favorecendo a
-adoção. O empreendedor continua responsável pela negociação e fechamento da venda; o site atua como catálogo.
+Outro fator relevante para a viabilidade operacional é a simplicidade da interface. O sistema foi planejado para possuir navegação objetiva, baixo número de etapas e foco na experiência do usuário, reduzindo dificuldades de utilização tanto para clientes quanto para lojistas. Além disso, o painel administrativo do lojista também deverá seguir a mesma proposta de simplicidade, permitindo gerenciamento rápido do catálogo sem necessidade de conhecimento técnico avançado.
 
-A simplicidade da interface é essencial: navegação objetiva, elementos claros, poucas etapas. Quanto mais direto, maior a eficiência operacional.
+### Principais limitações operacionais
 
-Para o empreendedor, o painel de administração deve ser simples, permitindo atualização de produtos sem conhecimento técnico. Caso contrário, o sistema perde utilidade prática.
+* Dependência de atualização manual dos produtos pelo lojista;
+* Necessidade de acesso estável à internet;
+* Dependência parcial do WhatsApp como principal canal de atendimento.
 
-Principais limitações:
-
-* Dependência de o empreendedor manter os produtos atualizados.
-* Necessidade de conexão estável com a internet.
-
-Apesar disso, os benefícios superam os desafios: melhora a organização da oferta, facilita o
-contato, amplia a visibilidade do negócio e complementa o atendimento humano, sem substituí-lo.
+Apesar dessas limitações, os benefícios operacionais superam significativamente os desafios identificados. O sistema melhora a organização da divulgação dos produtos, amplia a presença digital dos empreendedores e facilita o contato inicial entre clientes e lojistas de forma simples e acessível.
 
 ## 5. Viabilidade de Cronograma (Schedule)
 
-A viabilidade de cronograma avalia se o sistema pode ser desenvolvido dentro do prazo previsto, considerando o escopo atual do projeto, sua complexidade técnica e a disponibilidade da equipe.
+A viabilidade de cronograma analisa se o sistema pode ser desenvolvido dentro do prazo previsto, considerando o escopo atual do projeto, sua complexidade técnica, a disponibilidade da equipe e os recursos tecnológicos adotados.
 
-No contexto do sistema PedeAqui, estima-se um prazo de desenvolvimento de **2 meses** para a entrega do MVP funcional, compatível com o calendário acadêmico.
+No contexto do sistema **PedeAqui**, estima-se um prazo de aproximadamente **2 meses** para desenvolvimento e entrega do MVP funcional, mantendo compatibilidade com o calendário acadêmico e com os objetivos iniciais do projeto.
 
-Essa estimativa mostra-se altamente viável devido à **redução significativa do escopo do sistema**. A aplicação consiste exclusivamente em:
+Essa estimativa apresenta alta viabilidade devido à proposta simplificada do sistema e à adoção de uma arquitetura moderna voltada para desenvolvimento ágil. O projeto possui foco principal em:
 
 * Cadastro e gerenciamento de produtos pelo lojista;
-* Exibição do catálogo ao cliente;
-* Exibição obrigatória dos dados do lojista (exigência legal);
-* Redirecionamento do cliente para o WhatsApp via link wa.me.
+* Página pública de catálogo;
+* Sistema de autenticação do lojista;
+* Exibição das informações comerciais do lojista;
+* Redirecionamento do cliente para atendimento via WhatsApp.
 
-O sistema **não possui mais** :
+A arquitetura do sistema também contribui para redução do tempo de desenvolvimento. A utilização de um monorepositório com **TurboRepo** facilita a organização do projeto e melhora a produtividade da equipe durante o desenvolvimento simultâneo do frontend e backend.
+
+Além disso, a adoção do **Supabase** reduz significativamente a necessidade de configuração manual de infraestrutura backend, autenticação e gerenciamento de banco de dados, diminuindo a complexidade operacional do sistema.
+
+O projeto também deixa de possuir funcionalidades tradicionalmente complexas em plataformas de e-commerce, como:
 
 * Cálculo de frete;
-* Geolocalização;
-* Integrações com APIs externas;
-* Processamento de pagamentos;
-* Funcionalidades de alta complexidade.
+* Sistema logístico;
+* Marketplace interno;
+* Processamento completo de pedidos;
+* Geolocalização em tempo real;
+* Integrações externas de alta complexidade.
 
-Essa simplificação reduz drasticamente o esforço de desenvolvimento e os riscos técnicos.
+Essa redução de escopo diminui significativamente os riscos técnicos e melhora a previsibilidade do cronograma.
 
-Outro fator determinante é a familiaridade da equipe com as tecnologias adotadas (React, Node.js, PostgreSQL, Prisma e Tailwind CSS), o que reduz a curva de aprendizado e aumenta a produtividade.
+Outro fator importante é a familiaridade da equipe com as tecnologias adotadas, como React, Node.js, TypeScript, Tailwind CSS e PostgreSQL, reduzindo a curva de aprendizado e aumentando a produtividade durante o desenvolvimento.
 
 ### Funcionalidades críticas do MVP
 
-Para garantir a entrega dentro do prazo, o foco inicial será:
+Para garantir a entrega dentro do prazo estimado, o foco inicial do MVP será concentrado nas seguintes funcionalidades:
 
-1. Sistema de cadastro e login do lojista (SaaS);
-2. Painel administrativo simples para cadastro de produtos;
-3. Página pública do catálogo;
-4. Exibição obrigatória das informações do lojista no rodapé;
-5. Botão de redirecionamento para o WhatsApp.
+1. Sistema de visualização de lojas e carrinho de pedidos do cliente;
+2. Sistema de gerenciamento e visualização de produtos para o lojista;
+3. Exibição das informações obrigatórias do lojista;
+4. Painel administrativo para gerenciamento da plataforma;
+5. Sistema de cadastro e autenticação do lojista (Gateway de pagamento);
+6. Adições, mudanças e outros (extra)
 
-Funcionalidades estéticas e melhorias secundárias poderão ser implementadas após o MVP.
+Funcionalidades secundárias, melhorias visuais e recursos adicionais poderão ser implementados em versões futuras após a validação inicial da plataforma.
 
-### Análise de Risco no Cronograma
+### Análise de risco do cronograma
 
-Com a remoção das partes mais complexas do sistema, os principais riscos deixam de ser técnicos e passam a ser apenas organizacionais (divisão de tarefas, testes e ajustes finais).
+Os principais riscos do cronograma concentram-se em fatores organizacionais, como divisão de tarefas, integração entre frontend e backend, realização de testes e ajustes finais.
 
-Não há dependência de serviços externos, APIs pagas ou configurações complexas de infraestrutura, o que torna o cronograma ainda mais seguro.
+No entanto, a utilização de ferramentas modernas, a baixa complexidade arquitetural e a ausência de integrações externas críticas reduzem significativamente os riscos técnicos do projeto.
 
 ### Conclusão da Viabilidade de Cronograma
 
-Considerando o escopo atual, a baixa complexidade do sistema, a experiência prévia da equipe com as tecnologias adotadas e a priorização clara das funcionalidades essenciais do MVP, conclui-se que o projeto apresenta **altíssima viabilidade de cronograma**.
+Considerando o escopo atual do sistema, a simplicidade operacional da plataforma, a experiência prévia da equipe com as tecnologias utilizadas e a priorização clara das funcionalidades essenciais do MVP, conclui-se que o projeto apresenta alta viabilidade de cronograma.
 
-O prazo de 2 meses não apenas é suficiente, como apresenta margem de segurança para testes, ajustes e refinamentos antes da entrega final.
-
+O prazo estimado de 2 meses mostra-se adequado para desenvolvimento, testes, validação e refinamentos iniciais da plataforma.
 
 ## 6. Matriz de Riscos
 
-| RISCO                                                           | PROBABILIDADE | IMPACTO | DESCRIÇÃO                                                                                                                                                                         |
-| --------------------------------------------------------------- | ------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Desatualização do catálogo de produtos pelo empreendedor        | Alta          | Alto    | O sistema depende totalmente de o empreendedor manter os produtos, preços e imagens atualizados. Caso isso não ocorra, o catálogo perde credibilidade e utilidade para o cliente. |
-| Dependência do WhatsApp (wa.me) para o fluxo de atendimento     | Médio         | Médio   | O fluxo principal do sistema depende do redirecionamento para o WhatsApp. Mudanças na política do serviço, bloqueios ou instabilidades podem afetar a comunicação com o cliente.  |
-| Dificuldade do empreendedor em utilizar o painel administrativo | Média         | Médio   | Caso o painel não seja extremamente simples e intuitivo, o empreendedor pode ter dificuldade em cadastrar ou atualizar produtos, comprometendo a operação do sistema.             |
-| Sobrecarga de atendimentos no whatsapp do empreendedor          | Média         | Alto    | O aumento da visibilidade pode gerar um volume de mensagens maior do que o empreendedor consegue atender, causando demora nas respostas e experiência negativa para o cliente.    |
+| RISCO                                                       | PROBABILIDADE | IMPACTO | DESCRIÇÃO                                                                                                                                                                                                   |
+| ----------------------------------------------------------- | ------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Desatualização do catálogo de produtos pelo lojista         | Alta          | Alto    | O sistema depende diretamente de o lojista manter produtos, preços e imagens atualizados. Informações desatualizadas podem comprometer a credibilidade da plataforma e prejudicar a experiência do cliente. |
+| Dependência do WhatsApp como canal principal de atendimento | Média         | Alto    | O fluxo operacional do sistema depende do redirecionamento para o WhatsApp. Instabilidades, alterações de política ou limitações da plataforma podem impactar a comunicação entre clientes e lojistas.      |
+| Dificuldade de utilização do painel administrativo          | Média         | Médio   | Caso o painel administrativo não seja suficientemente intuitivo, alguns lojistas podem apresentar dificuldades no gerenciamento do catálogo e das informações da loja.                                      |
+| Sobrecarga de mensagens para o lojista                      | Média         | Médio   | O aumento da visibilidade dos produtos pode gerar um volume elevado de mensagens, dificultando o atendimento rápido aos clientes.                                                                           |
+| Falhas de configuração na infraestrutura inicial            | Baixa         | Médio   | Problemas de configuração da VPS, domínio ou ambiente backend podem causar indisponibilidade temporária durante as fases iniciais do projeto.                                                               |
+| Dependência de serviços terceiros gratuitos                 | Média         | Médio   | Parte da infraestrutura do projeto depende de serviços externos, como hospedagem frontend e Supabase. Mudanças em políticas, limites gratuitos ou indisponibilidade podem impactar a operação do sistema.   |
+| Escalabilidade limitada na infraestrutura inicial           | Baixa         | Médio   | A infraestrutura enxuta adotada no MVP pode exigir ajustes futuros caso haja crescimento acelerado da quantidade de lojistas e acessos simultâneos.                                                         |
+| Integração incompleta entre frontend e backend              | Média         | Médio   | Como o projeto utiliza arquitetura separada em frontend e backend dentro de um monorepositório, falhas de integração podem ocorrer durante o desenvolvimento inicial.                                       |
+
+### Estratégias gerais de mitigação
+
+* Desenvolvimento de interface simples e intuitiva;
+* Uso de tecnologias amplamente documentadas e dominadas pela equipe;
+* Monitoramento contínuo da infraestrutura inicial;
+* Atualização periódica do catálogo pelos lojistas;
+* Planejamento gradual de escalabilidade da plataforma;
+* Separação organizada da arquitetura utilizando monorepositório com TurboRepo.
