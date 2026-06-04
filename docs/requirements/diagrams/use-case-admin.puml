@@ -1,0 +1,55 @@
+﻿@startuml
+title PedeAqui - Casos de Uso do Administrador
+left to right direction
+
+actor "Administrador" as Admin
+
+rectangle "Administração e Monitoramento da Plataforma" {
+  usecase "Acessar dashboard administrativa" as UC01
+  usecase "Gerenciar lojistas" as UC02
+  usecase "Listar lojistas" as UC03
+  usecase "Buscar ou filtrar lojista" as UC04
+  usecase "Visualizar detalhes do lojista" as UC05
+  usecase "Aprovar conta" as UC06
+  usecase "Bloquear conta" as UC07
+  usecase "Editar conta" as UC08
+  usecase "Voltar sem executar ação" as UC09
+  usecase "Moderar conteúdos" as UC10
+  usecase "Listar produtos cadastrados" as UC11
+  usecase "Buscar ou filtrar produto" as UC12
+  usecase "Aprovar produto" as UC13
+  usecase "Bloquear produto" as UC14
+  usecase "Remover produto" as UC15
+  usecase "Visualizar logs e eventos" as UC16
+  usecase "Buscar ou filtrar logs" as UC17
+  usecase "Visualizar detalhes do log" as UC18
+  usecase "Registrar ação administrativa" as UC19
+}
+
+Admin --> UC01
+Admin --> UC02
+Admin --> UC10
+Admin --> UC16
+
+UC02 ..> UC03 : <<include>>
+UC02 ..> UC04 : <<include>>
+UC02 ..> UC05 : <<include>>
+UC02 ..> UC19 : <<include>>
+UC06 ..> UC02 : <<extend>>
+UC07 ..> UC02 : <<extend>>
+UC08 ..> UC02 : <<extend>>
+UC09 ..> UC02 : <<extend>>
+
+UC10 ..> UC11 : <<include>>
+UC10 ..> UC12 : <<include>>
+UC10 ..> UC19 : <<include>>
+UC13 ..> UC10 : <<extend>>
+UC14 ..> UC10 : <<extend>>
+UC15 ..> UC10 : <<extend>>
+
+UC16 ..> UC17 : <<include>>
+UC16 ..> UC18 : <<include>>
+UC16 ..> UC19 : <<include>>
+@enduml
+
+

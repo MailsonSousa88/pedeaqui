@@ -1,0 +1,51 @@
+﻿@startuml
+title PedeAqui - Casos de Uso do Lojista
+left to right direction
+
+actor "Lojista" as Lojista
+
+rectangle "Gestão de Loja pelo Lojista" {
+  usecase "Realizar login" as UC01
+  usecase "Validar credenciais" as UC02
+  usecase "Contratar plano lojista" as UC03
+  usecase "Informar CPF/CNPJ" as UC04
+  usecase "Validar CPF/CNPJ" as UC05
+  usecase "Escolher plano" as UC06
+  usecase "Cadastrar loja" as UC07
+  usecase "Configurar informações da loja" as UC08
+  usecase "Acessar dashboard da loja" as UC09
+  usecase "Visualizar dados da loja" as UC10
+  usecase "Editar informações da loja" as UC11
+  usecase "Gerenciar produtos" as UC12
+  usecase "Cadastrar produto" as UC13
+  usecase "Editar produto" as UC14
+  usecase "Remover produto" as UC15
+  usecase "Acompanhar pedidos" as UC16
+  usecase "Registrar ações do lojista" as UC17
+  usecase "Bloquear cadastro inválido" as UC18
+}
+
+Lojista --> UC01
+Lojista --> UC03
+Lojista --> UC07
+Lojista --> UC09
+Lojista --> UC11
+Lojista --> UC12
+Lojista --> UC16
+
+UC01 ..> UC02 : <<include>>
+UC03 ..> UC04 : <<include>>
+UC03 ..> UC05 : <<include>>
+UC03 ..> UC06 : <<include>>
+UC07 ..> UC08 : <<include>>
+UC09 ..> UC10 : <<include>>
+UC11 ..> UC08 : <<include>>
+UC12 ..> UC13 : <<include>>
+UC12 ..> UC14 : <<include>>
+UC12 ..> UC15 : <<include>>
+UC12 ..> UC17 : <<include>>
+UC16 ..> UC17 : <<include>>
+UC18 ..> UC05 : <<extend>>
+@enduml
+
+

@@ -1,0 +1,45 @@
+﻿@startuml
+title PedeAqui - Casos de Uso do Consumidor
+left to right direction
+
+actor "Consumidor" as Consumidor
+actor "WhatsApp" as WhatsApp
+
+rectangle "Jornada de Compra do Consumidor" {
+  usecase "Acessar página inicial" as UC01
+  usecase "Buscar lojas" as UC02
+  usecase "Visualizar loja" as UC03
+  usecase "Visualizar produtos" as UC04
+  usecase "Adicionar produto ao carrinho" as UC05
+  usecase "Visualizar pedidos por loja" as UC06
+  usecase "Remover produto do carrinho" as UC07
+  usecase "Selecionar pedido da loja" as UC08
+  usecase "Preencher informações do pedido" as UC09
+  usecase "Finalizar pedido" as UC10
+  usecase "Validar carrinho com produtos" as UC11
+  usecase "Gerar mensagem personalizada" as UC12
+  usecase "Redirecionar para WhatsApp do lojista" as UC13
+  usecase "Bloquear finalização com carrinho vazio" as UC14
+}
+
+Consumidor --> UC01
+Consumidor --> UC02
+Consumidor --> UC03
+Consumidor --> UC04
+Consumidor --> UC05
+Consumidor --> UC06
+Consumidor --> UC07
+Consumidor --> UC08
+Consumidor --> UC09
+Consumidor --> UC10
+
+UC10 ..> UC11 : <<include>>
+UC10 ..> UC12 : <<include>>
+UC12 ..> UC13 : <<include>>
+UC13 --> WhatsApp
+
+UC07 ..> UC06 : <<extend>>
+UC14 ..> UC10 : <<extend>>
+@enduml
+
+

@@ -1,0 +1,58 @@
+﻿@startuml
+title PedeAqui - Diagrama Geral de Casos de Uso
+left to right direction
+
+actor "Consumidor" as Consumidor
+actor "Lojista" as Lojista
+actor "Administrador" as Admin
+actor "WhatsApp" as WhatsApp
+
+rectangle "Sistema PedeAqui" {
+  usecase "Buscar lojas" as UC01
+  usecase "Visualizar loja" as UC02
+  usecase "Visualizar produtos" as UC03
+  usecase "Gerenciar carrinho" as UC04
+  usecase "Finalizar pedido" as UC05
+  usecase "Gerar mensagem personalizada" as UC06
+  usecase "Redirecionar para WhatsApp" as UC07
+
+  usecase "Realizar login" as UC08
+  usecase "Validar CPF/CNPJ" as UC09
+  usecase "Contratar plano lojista" as UC10
+  usecase "Cadastrar e configurar loja" as UC11
+  usecase "Gerenciar produtos" as UC12
+  usecase "Acompanhar pedidos" as UC13
+
+  usecase "Gerenciar lojistas" as UC14
+  usecase "Moderar conteúdos" as UC15
+  usecase "Visualizar logs e eventos" as UC16
+  usecase "Registrar ações administrativas" as UC17
+}
+
+Consumidor --> UC01
+Consumidor --> UC02
+Consumidor --> UC03
+Consumidor --> UC04
+Consumidor --> UC05
+
+UC05 ..> UC06 : <<include>>
+UC06 ..> UC07 : <<include>>
+UC07 --> WhatsApp
+
+Lojista --> UC08
+Lojista --> UC10
+Lojista --> UC11
+Lojista --> UC12
+Lojista --> UC13
+UC10 ..> UC09 : <<include>>
+UC11 ..> UC09 : <<include>>
+
+Admin --> UC14
+Admin --> UC15
+Admin --> UC16
+UC14 ..> UC17 : <<include>>
+UC15 ..> UC17 : <<include>>
+UC16 ..> UC17 : <<include>>
+@enduml
+
+
