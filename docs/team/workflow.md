@@ -7,15 +7,18 @@ Definir o fluxo básico de trabalho do time Cloud Hive no desenvolvimento do Ped
 ## Fluxo de trabalho que deve ser seguido pela equipe
 
 1. Criar uma branch de trabalho a partir da branch `development` atualizada.
-2. Implementar a alteração com escopo claro.
-3. Fazer commits seguindo o guia de commits.
-4. Atualizar documentação quando a alteração impactar regras, fluxos, arquitetura ou requisitos.
-5. Abrir Pull Request apontando para a branch `development`.
-6. Solicitar revisão de pelo menos 2 pessoas.
-7. Corrigir pontos levantados na revisão.
-8. O autor do PR deve fazer o merge na `development` somente após aprovação mínima.
-9. Após validação na `development`, abrir Pull Request da `development` para a `main`.
-10. Fazer merge na `main` somente quando a versão estiver validada e estável.
+2. Vincular o trabalho a uma issue, quando a alteração fizer parte de uma tarefa planejada.
+3. Garantir que a issue esteja associada à milestone correta, quando fizer parte de uma entrega.
+4. Implementar a alteração com escopo claro.
+5. Fazer commits seguindo o guia de commits.
+6. Atualizar documentação quando a alteração impactar regras, fluxos, arquitetura ou requisitos.
+7. Abrir Pull Request apontando para a branch `development`.
+8. Relacionar o PR com a issue correspondente, quando existir.
+9. Solicitar revisão de pelo menos 2 pessoas.
+10. Corrigir pontos levantados na revisão.
+11. O autor do PR deve fazer o merge na `development` somente após aprovação mínima.
+12. Após validação na `development`, abrir Pull Request da `development` para a `main`.
+13. Fazer merge na `main` somente quando a versão estiver validada e estável.
 
 ## Branch principal (Main)
 
@@ -51,7 +54,7 @@ São consideradas mudanças sensíveis:
 - Alterações em regras de negócio críticas.
 - Alterações em documentos oficiais do projeto.
 
-O merge da `development` para a `main` deve ser feito pelo responsavel ou por uma pessoa autorizada pelo responsavel, após validação da versão.
+O merge da `development` para a `main` deve ser feito pelo responsável ou por uma pessoa autorizada pelo responsável, após validação da versão.
 
 ## Antes de abrir um Pull Request
 
@@ -59,6 +62,8 @@ O autor deve verificar:
 
 - A branch possui nome adequado.
 - Os commits possuem mensagens claras.
+- A issue relacionada está vinculada ao PR, quando existir.
+- A milestone está definida, quando a alteração fizer parte de uma entrega planejada.
 - O escopo da alteração está coeso.
 - Arquivos desnecessários não foram adicionados.
 - Documentação foi atualizada quando necessário.
