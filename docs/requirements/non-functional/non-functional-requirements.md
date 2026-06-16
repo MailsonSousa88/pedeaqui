@@ -1,243 +1,165 @@
 # Requisitos Não Funcionais
 
-Este documento concentra os requisitos não funcionais do PedeAqui.
+## Segurança
 
-Requisitos não funcionais descrevem como o sistema deve se comportar em relação a segurança, desempenho, disponibilidade, usabilidade, privacidade, manutenção e operação.
+**[RNF0001] – Controle de acesso por perfil**
 
-## Padrão de escrita
+O sistema deve controlar o acesso às rotas protegidas conforme o perfil do usuário autenticado.
 
-Cada requisito não funcional deve seguir o formato:
+> **Critério:** Rotas `/admin/*` devem exigir JWT válido com claim `role=LOJISTA`. Ausência de token ou token inválido deve retornar HTTP 401. Token válido com perfil incorreto deve retornar HTTP 403.
+---
 
-```text
-RNF-0001 - Nome do requisito
-```
+**[RNF0002] – Controle de dados por loja**
 
-Campos recomendados:
+O sistema deve garantir isolamento de dados entre lojas, impedindo que um lojista acesse dados de outro tenant.
 
-- identificador;
-- nome;
-- descrição;
-- categoria;
-- prioridade;
-- status;
-- critério de verificação.
+> **Critério:** Toda operação de leitura ou escrita deve usar o `tenant_id` extraído do JWT para filtrar dados. Tentativa de acesso a dados de outro tenant deve retornar HTTP 403.
+---
 
-## Status possíveis
+**[RNF0003] – Segurança no sistema de pagamento**
 
-- `Proposto`;
-- `Em discussão`;
-- `Aprovado`;
-- `Alterado`;
-- `Removido`.
+O sistema deve validar eventos de pagamento antes de alterar o status do lojista ou da assinatura.
 
-## Prioridades possíveis
+> **Critério:** Webhook de pagamento deve ser validado por assinatura `HMAC-SHA256`. Falha de validação deve retornar HTTP 400. A transição de status só deve ocorrer após confirmação bem-sucedida. A idempotência deve ser garantida por chave única por evento.
+---
 
-- `Obrigatório`;
-- `Importante`;
-- `Desejável`.
+**[RNF0004] – Tratamento padronizado de dados inválidos**
 
-## Requisitos
+O sistema deve retornar erros de validação de forma padronizada quando receber dados inválidos.
 
-### RNF-0001 - Segurança na autenticação
+> **Critério:** Campos com tipo, formato ou tamanho inválido devem retornar HTTP 422 com body no formato `{ errors: [{ field, message }] }`.
+---
 
-**Categoria:** Segurança.
+**[RNF0005] – Registro de logs de acesso**
 
-**Prioridade:** Obrigatório.
+O sistema deve registrar informações de acesso em requisições da API que envolvam leitura ou manipulação de dados.
 
-**Status:** Em discussão.
+> **Critério:** Cada registro deve conter endereço IP, data, hora e rota acessada.
+---
 
-**Descrição:** O sistema deve proteger o processo de login, cadastro e recuperação de senha.
+**[RNF0006] – Armazenamento seguro de logs**
 
-**Critério de verificação:**
+O sistema deve armazenar registros de log em ambiente separado da aplicação principal.
 
-- senhas não devem ser armazenadas em texto puro;
-- rotas protegidas devem exigir autenticação;
-- usuários não autenticados não devem acessar áreas restritas;
-- erros de login não devem expor informações sensíveis.
+> **Critério:** Logs devem ser armazenados em serviço separado da aplicação principal e acessíveis apenas por administradores autenticados por credencial própria.
+---
 
-### RNF-0002 - Controle de acesso por perfil
+**[RNF0007] – Retenção de logs para auditoria**
 
-**Categoria:** Segurança.
+O sistema deve manter logs por período mínimo para auditoria e investigação de incidentes.
 
-**Prioridade:** Obrigatório.
+> **Critério:** Registros de log devem ser mantidos por no mínimo 6 meses.
+---
 
-**Status:** Em discussão.
+**[RNF0008] – Proteção contra abuso em rotas públicas**
 
-**Descrição:** O sistema deve garantir que cada perfil acesse apenas os recursos permitidos.
+O sistema deve limitar requisições em rotas públicas para reduzir abuso e uso indevido da API.
 
-**Critério de verificação:**
+> **Critério:** Rotas públicas devem permitir no máximo 200 requisições por IP em janela deslizante de 60 segundos. Excesso deve retornar HTTP 429 com header `Retry-After: 60`.
+---
 
-- clientes não devem acessar recursos de lojista;
-- lojistas não devem acessar dados administrativos;
-- um lojista não deve acessar dados de outra loja;
-- administradores devem possuir permissões separadas dos demais perfis.
+**[RNF0009] – Autenticação em rotas privadas do lojista**
 
-### RNF-0003 - Privacidade e LGPD
+O sistema deve exigir autenticação do lojista para acesso às rotas privadas.
 
-**Categoria:** Privacidade.
+> **Critério:** O JWT deve ser enviado no header `Authorization: Bearer {token}` e validado pelo backend a cada requisição protegida.
+---
 
-**Prioridade:** Obrigatório.
+**[RNF0010] – Proteção de dados em trânsito**
 
-**Status:** Em discussão.
+O sistema deve proteger toda comunicação entre cliente e servidor usando conexão segura.
 
-**Descrição:** O sistema deve tratar dados pessoais de acordo com princípios de privacidade e proteção de dados.
+> **Critério:** Toda comunicação cliente-servidor deve ocorrer via HTTPS/TLS 1.2 ou superior. Requisições HTTP puras devem ser redirecionadas automaticamente para HTTPS com HTTP 301.
+---
 
-**Critério de verificação:**
+## Desempenho
 
-- coletar apenas dados necessários para o funcionamento do sistema;
-- proteger dados como CPF, CNPJ, e-mail e telefone;
-- informar termos de uso e política de privacidade;
-- evitar exposição indevida de dados pessoais em respostas da API.
+**[RNF0011] – Tempo de resposta da API**
 
-### RNF-0004 - Desempenho das telas públicas
+O sistema deve manter tempo de resposta aceitável nas principais rotas públicas da API.
 
-**Categoria:** Desempenho.
+> **Critério:** Requisições da API para listagem de lojas e produtos devem responder em até 2 segundos no percentil 95 sob carga de 100 requisições simultâneas.
+---
 
-**Prioridade:** Importante.
+**[RNF0012] – Paginação de resultados**
 
-**Status:** Proposto.
+O sistema deve paginar listagens para evitar respostas excessivamente grandes.
 
-**Descrição:** As páginas públicas de loja e produtos devem carregar de forma rápida para consumidores.
+> **Critério:** Listagens de produtos e lojas devem retornar no máximo 20 registros por requisição, com metadados `{ page, limit, total }`.
+---
 
-**Critério de verificação:**
+**[RNF0013] – Disponibilidade mínima do sistema**
 
-- páginas de loja devem carregar sem bloqueios desnecessários;
-- imagens devem ser otimizadas para web;
-- listagens de produtos devem evitar carregamento excessivo de dados;
-- o frontend deve buscar apenas os dados necessários para a tela.
+O sistema deve manter disponibilidade mínima mensal para acesso às páginas públicas.
 
-### RNF-0005 - Disponibilidade do sistema
+> **Critério:** Páginas públicas de lojas e produtos devem manter disponibilidade mínima de 99% ao mês. Downtime tolerado: até 7,2 horas por mês.
+---
 
-**Categoria:** Operação.
+## Usabilidade
 
-**Prioridade:** Importante.
+**[RNF0014] – Facilidade no contato com lojista**
 
-**Status:** Proposto.
+O sistema deve permitir que o consumidor inicie contato com o lojista de forma simples a partir da experiência de compra.
 
-**Descrição:** O sistema deve estar disponível para lojistas gerenciarem lojas e consumidores realizarem pedidos.
+> **Critério:** O consumidor deve conseguir iniciar o contato via WhatsApp em até 4 interações a partir da página de produtos.
+---
 
-**Critério de verificação:**
+**[RNF0015] – Responsividade da interface**
 
-- backend deve ser executado em ambiente estável;
-- falhas devem ser registradas para análise;
-- indisponibilidades devem ser tratadas com mensagens compreensíveis;
-- serviços externos críticos devem ser monitorados quando possível.
+O sistema deve ser utilizável em dispositivos móveis e desktop.
 
-### RNF-0006 - Responsividade
+> **Critério:** Telas públicas de loja, produto, carrinho, checkout via WhatsApp e telas do lojista devem se adaptar a diferentes tamanhos de tela sem sobreposição de textos, botões ou cards. Ações principais devem permanecer acessíveis em dispositivos móveis.
+---
 
-**Categoria:** Usabilidade.
+**[RNF0016] – Acessibilidade básica da interface**
 
-**Prioridade:** Obrigatório.
+O sistema deve seguir práticas básicas de acessibilidade nas telas principais.
 
-**Status:** Em discussão.
+> **Critério:** Campos de formulário devem possuir labels visíveis. Botões devem ter texto ou descrição acessível. Ações importantes não devem depender apenas de cor. Textos e elementos interativos devem manter contraste suficiente para leitura.
+---
 
-**Descrição:** O sistema deve ser utilizável em dispositivos móveis e desktop.
+## Integridade de dados
 
-**Critério de verificação:**
+**[RNF0017] – Representação monetária em centavos**
 
-- telas devem se adaptar a larguras menores;
-- botões e campos devem permanecer clicáveis em dispositivos móveis;
-- textos não devem sobrepor outros elementos;
-- cards e listas devem reorganizar o layout em telas pequenas.
+O sistema deve armazenar valores monetários de forma segura contra erros de arredondamento.
 
-### RNF-0007 - Acessibilidade inicial
+> **Critério:** Preços de produtos e totais de pedidos devem ser armazenados e processados internamente em centavos. A interface pode exibir valores em reais, mas cálculos financeiros devem usar os valores inteiros armazenados pelo backend.
+---
 
-**Categoria:** Usabilidade.
+**[RNF0018] – Validação server-side de regras críticas**
 
-**Prioridade:** Importante.
+O sistema deve validar no backend todas as regras críticas que impactam segurança, pagamento, estoque, plano e criação de pedidos.
 
-**Status:** Proposto.
+> **Critério:** Regras como limite de produtos por plano, disponibilidade de produto, estoque, status da loja, status do lojista, preço atual e tenant do lojista não devem depender apenas de validação no frontend.
+---
 
-**Descrição:** A interface deve seguir boas práticas iniciais de acessibilidade.
+**[RNF0019] – Criação consistente de pedidos**
 
-**Critério de verificação:**
+O sistema deve evitar criação parcial ou inconsistente de pedidos durante o checkout.
 
-- campos devem possuir labels visíveis;
-- botões devem ter texto claro;
-- contraste entre texto e fundo deve ser adequado;
-- ações importantes não devem depender apenas de cor.
+> **Critério:** A criação de pedido deve ocorrer somente após validação completa dos itens, preços e disponibilidade. Se qualquer item for inválido, indisponível ou sem estoque, nenhum pedido deve ser criado.
+---
 
-### RNF-0008 - Armazenamento de imagens
+## Arquivos e imagens
 
-**Categoria:** Infraestrutura.
+**[RNF0020] – Armazenamento externo de imagens**
 
-**Prioridade:** Obrigatório.
+O sistema deve armazenar imagens de produtos e lojas fora do build do frontend.
 
-**Status:** Em discussão.
+> **Critério:** Imagens enviadas por lojistas devem ser armazenadas em serviço externo apropriado, como Cloudflare R2. O banco de dados deve armazenar apenas as referências necessárias para acesso às imagens, como URL, chave do objeto ou metadados.
+---
 
-**Descrição:** Imagens de lojas e produtos devem ser armazenadas fora do frontend, usando serviço apropriado para arquivos.
+**[RNF0021] – Validação segura de uploads**
 
-**Critério de verificação:**
+O sistema deve validar arquivos enviados por lojistas antes do armazenamento.
 
-- imagens não devem ser armazenadas diretamente no build do frontend;
-- uploads devem ser enviados para armazenamento externo, como Cloudflare R2;
-- o banco de dados deve armazenar referências das imagens;
-- imagens removidas ou substituídas devem seguir regra definida pelo backend.
+> **Critério:** Uploads devem aceitar apenas formatos de imagem permitidos pelo projeto. Arquivos inválidos, vazios, com tipo incompatível ou acima do limite definido devem retornar HTTP 422. O backend não deve confiar apenas na extensão do arquivo informada pelo usuário.
+---
 
-### RNF-0009 - Integração com pagamento
+**[RNF0022] – Padronização de imagens para exibição**
 
-**Categoria:** Integração.
+O sistema deve preparar imagens enviadas para uso adequado na vitrine e no painel do lojista.
 
-**Prioridade:** Obrigatório.
-
-**Status:** Proposto.
-
-**Descrição:** A ativação da conta do lojista deve depender da confirmação do pagamento pelo gateway escolhido.
-
-**Critério de verificação:**
-
-- pagamento pendente não deve liberar conta como lojista ativo;
-- pagamento aprovado deve ativar a conta conforme regra do sistema;
-- falhas de pagamento devem permitir nova tentativa;
-- confirmações do gateway devem ser validadas pelo backend.
-
-### RNF-0010 - Manutenibilidade
-
-**Categoria:** Manutenção.
-
-**Prioridade:** Importante.
-
-**Status:** Proposto.
-
-**Descrição:** O projeto deve ser organizado para facilitar manutenção, evolução e colaboração da equipe.
-
-**Critério de verificação:**
-
-- código deve seguir padrões definidos pelo time;
-- commits e branches devem seguir os guias em `docs/team`;
-- mudanças relevantes devem passar por pull request;
-- documentação deve ser atualizada quando decisões importantes mudarem.
-
-### RNF-0011 - Observabilidade mínima
-
-**Categoria:** Operação.
-
-**Prioridade:** Desejável.
-
-**Status:** Proposto.
-
-**Descrição:** O sistema deve permitir investigação básica de erros e falhas em produção.
-
-**Critério de verificação:**
-
-- erros relevantes devem ser registrados;
-- logs não devem expor senhas ou dados sensíveis;
-- falhas de integração devem ser rastreáveis;
-- eventos críticos, como pagamento e criação de loja, devem ser acompanháveis.
-
-### RNF-0012 - Backup e recuperação
-
-**Categoria:** Operação.
-
-**Prioridade:** Importante.
-
-**Status:** Proposto.
-
-**Descrição:** Dados importantes do sistema devem possuir estratégia de backup e recuperação.
-
-**Critério de verificação:**
-
-- banco de dados deve possuir política de backup;
-- restauração deve ser possível em caso de falha crítica;
-- arquivos enviados devem ter estratégia compatível com o armazenamento escolhido.
-
+> **Critério:** Imagens aceitas devem seguir uma regra de padronização definida pelo projeto antes de serem exibidas, considerando dimensões, formato final e compressão. Essa regra deve ser aplicada de forma consistente para produto, banner da loja e imagem de perfil da loja.
+---
