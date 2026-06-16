@@ -68,7 +68,9 @@ describe('Domain Entities', () => {
     it('should create a Tenant instance correctly', () => {
       const tenantProps = {
         id: 'uuid-tenant',
+        name: 'Tenant Name',
         status: 'active' as const,
+        cpfCnpj: '12345678900',
         photoStorageLimit: 500000,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -81,7 +83,9 @@ describe('Domain Entities', () => {
     it('should throw an error if photo storage limit is less than or equal to 0', () => {
       const tenantProps = {
         id: 'uuid-tenant',
+        name: 'Tenant Name',
         status: 'active' as const,
+        cpfCnpj: '12345678900',
         photoStorageLimit: 0,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -93,7 +97,9 @@ describe('Domain Entities', () => {
     it('should throw an error if status is invalid', () => {
       const tenantProps = {
         id: 'uuid-tenant',
+        name: 'Tenant Name',
         status: 'invalid' as any,
+        cpfCnpj: '12345678900',
         photoStorageLimit: 500000,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -142,8 +148,11 @@ describe('Domain Entities', () => {
         id: 'uuid-store',
         tenantId: 'uuid-tenant',
         slug: 'my-store',
-        name: 'My Store',
-        description: 'Store Description',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        descricao: 'Store Description',
         logoUrl: 'http://image.url',
         whatsappNumber: '11999999999',
         active: true,
@@ -160,10 +169,13 @@ describe('Domain Entities', () => {
         id: 'uuid-store',
         tenantId: 'uuid-tenant',
         slug: '',
-        name: 'My Store',
-        description: null,
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        descricao: null,
         logoUrl: null,
-        whatsappNumber: null,
+        whatsappNumber: '11999999999',
         active: true,
         deletedAt: null,
         createdAt: new Date(),
@@ -177,10 +189,13 @@ describe('Domain Entities', () => {
         id: 'uuid-store',
         tenantId: 'uuid-tenant',
         slug: 'my-store',
-        name: '',
-        description: null,
+        storeName: '',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        descricao: null,
         logoUrl: null,
-        whatsappNumber: null,
+        whatsappNumber: '11999999999',
         active: true,
         deletedAt: null,
         createdAt: new Date(),
@@ -272,7 +287,10 @@ describe('Domain Entities', () => {
       const imgProps = {
         id: 'uuid-img',
         productId: 'uuid-product',
+        r2Key: 'r2-key-value',
         url: 'http://image.url/img.png',
+        sizeBytes: 1024,
+        mimeType: 'image/png',
         sortOrder: 1,
         createdAt: new Date()
       };
@@ -284,7 +302,10 @@ describe('Domain Entities', () => {
       const imgProps = {
         id: 'uuid-img',
         productId: 'uuid-product',
+        r2Key: 'r2-key-value',
         url: '',
+        sizeBytes: 1024,
+        mimeType: 'image/png',
         sortOrder: 1,
         createdAt: new Date()
       };
@@ -323,6 +344,7 @@ describe('Domain Entities', () => {
         id: 'uuid-opt',
         variationId: 'uuid-var',
         value: 'Black',
+        priceModifierCents: 0,
         sortOrder: 1,
         createdAt: new Date()
       };
@@ -335,6 +357,7 @@ describe('Domain Entities', () => {
         id: 'uuid-opt',
         variationId: 'uuid-var',
         value: '',
+        priceModifierCents: 0,
         sortOrder: 1,
         createdAt: new Date()
       };
