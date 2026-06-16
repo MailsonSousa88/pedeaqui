@@ -45,51 +45,38 @@ O sistema deve permitir que o usuário visualize uma página de loja específica
 O sistema deve permitir que o usuário possa visualizar detalhes de um produto específico dentro da loja.
 
 **[RF004] – Adição de produtos ao carrinho de compras**
-O sistema deve permitir que o usuário adicione um ou mais produtos de uma loja a um carrinho de compras temporário.
-
-> **Critério:** Carrinho aceita até 50 itens distintos. Produto já presente tem quantidade incrementada. Snapshot do preço, nome e imagem é gravado no momento da adição.
-
-> [!WARNING]
-> ⚠️ _**MODIFICADO** — critério de aceitação adicionado: limite de itens, comportamento de duplicata e snapshot de preço._
-
+O sistema deve permitir que o consumidor adicione até 50 produtos de uma loja a um carrinho de compras temporário, armazenado no localStorage. Produto já presente tem quantidade incrementada. Snapshot do preço, nome e imagem é gravado no momento da adição.
 
 **[RF005] – Remoção e Atualização de Quantidade de Produtos do Carrinho**
-O sistema deve permitir que o usuário ajuste a quantidade de cada item no carrinho por meio de botões '+' e '−', e remova itens individualmente. Ao atingir quantidade 0 pelo botão '−', o item é removido do carrinho automaticamente.
-
-> **Critério:** Botão '+' incrementa a quantidade em 1 a cada clique. Botão '−' decrementa em 1; ao chegar a 0 o item é removido sem confirmação adicional. Total do carrinho é recalculado em tempo real. Carrinho vazio exibe mensagem informativa.
-
-> [!WARNING]
-> ⚠️ _**MODIFICADO** — critério de aceitação adicionado: limite de itens, comportamento de duplicata e snapshot de preço._
+O sistema deve permitir que o usuário ajuste a quantidade de cada item no carrinho por meio de botões '+' e '−', e remova itens individualmente. Botão '+' incrementa a quantidade em 1 a cada clique. Botão '−' decrementa em 1; ao chegar a 0 o sistema pede confirmação adicional para apagar o produto do carrinho. Total do carrinho é recalculado em tempo real. Carrinho vazio exibe mensagem informativa.
 
 **[RF006] – Finalização da compra**
-O sistema deve permitir que o usuário finalize sua compra a partir do carrinho, gerando automaticamente uma mensagem contendo os produtos selecionados, quantidades e valor total, redirecionando o usuário para o WhatsApp para envio do pedido ao lojista.
-
-> **Critério:** Botão só é habilitado com ao menos 1 item de quantidade válida (≥ 1). URL segue formato wa.me/{numero}?text={mensagem_codificada}. WhatsApp abre em nova aba. Se loja não tiver número cadastrado, botão é desabilitado com aviso.
-
-> [!WARNING]
-> ⚠️ _**MODIFICADO** — critério expandido com formato de URL, condição de habilitação e tratamento de loja sem WhatsApp._
+O sistema deve permitir que o usuário finalize sua compra a partir do carrinho, gerando automaticamente uma mensagem contendo os produtos selecionados, quantidades e valor total, redirecionando o usuário para o WhatsApp para envio do pedido ao lojista. Botão só é habilitado com ao menos 1 item de quantidade válida (≥ 1). URL segue formato wa.me/{numero}?text={mensagem_codificada}.
+O fluxo é: 
+Consumidor entra na pagina de carrinho -> 
+Escolhe a loja na qual tem o pedido que ele quer finalizar -> 
+Escolhe se ele quer finalizar com todos os pedidos que estão naquela loja, ou se quer somente um especifico -> 
+Clica no butão de fazer pedido -> 
+Adiciona as informações adicionais(Endereço, numero de telefone, observações) ->  
+Clica no botão de finalizar pedido ->
+O sistema exibe uma tela de confirmação com informações sobre o pedido para o consumidor ->
+O consumidor clica em finalizar pedido via whatsapp.
 
 **[RF007] – Busca e Filtragem de Produtos dentro da Loja**
-O sistema deve disponibilizar um campo de pesquisa centralizado na parte superior da loja. A partir de uma busca realizada, o usuário poderá aplicar filtros sobre os resultados: por faixa de valor, ordem alfabética (A–Z / Z–A), menor preço e maior preço.
-
-> **Critério:** Campo de busca aceita termos parciais do nome do produto. Filtros são aplicados sobre o resultado da busca sem recarregar a página. Combinação de filtros é permitida. Resultados paginados com máximo de 20 itens por página.
-
-> [!WARNING]
-> ⚠️ _**REESCRITO (instrução nova)** — RF008 original ('filtragem por categoria') foi substituído. Navegação por categoria já é feita pelas abas na parte superior da loja. Este RF passa a cobrir: campo de busca centralizado + filtros de valor e ordenação sobre os resultados. RF009 original (ordenação isolada) foi fundido aqui._
+O sistema deve disponibilizar um campo de pesquisa da loja. A partir de uma busca realizada, o usuário poderá aplicar filtros sobre os resultados: por faixa de valor, ordem alfabética (A–Z / Z–A), menor preço e maior preço. Campo de busca aceita termos parciais do nome do produto. Filtros são aplicados sobre o resultado da busca sem recarregar a página. Combinação de filtros é permitida. Resultados paginados com máximo de 20 itens por página.
 
 **[RF008] – Exibição de Produtos em Destaque via Banner Dinâmico**
-O sistema deve exibir um banner dinâmico na parte superior da página da loja do vendedor, logo abaixo do perfil e banner principal, destacando produtos selecionados pelo lojista. O banner deve ser rotativo e exibir imagem, nome e preço de cada produto em destaque.
-
-> **Critério:** Banner exibe apenas produtos marcados como 'em destaque' pelo lojista e com disponibilidade ativa. Produtos indisponíveis são automaticamente removidos do banner. Clique no produto do banner redireciona para a página de detalhe do produto.
-
-> [!WARNING]
-> ⚠️ _**REESCRITO (instrução nova)** — 'destaque' agora está definido: banner dinâmico abaixo do perfil/banner principal, com produtos selecionados pelo lojista. O modelo de domínio precisa incluir campo featured (booleano) na tabela products para suportar este RF._
+O sistema deve exibir produtos selecionados pelo lojista como destaque. O produto é colocado em uma moldura para destacar esse produto.
+Apenas produtos em destaque podem estar em promoção, o sistema exibe o valor antigo cortado e o valor novo em uma nova cor para destacar o preço de promoção.
 
 **[RF009] – Compartilhamento de loja**
-O sistema deve permitir que o usuário compartilhe o link de uma loja em aplicativos externos.
-
-> [!CAUTION]
-> 🚨 _**PENDENTE** — mecanismo ainda não definido: Web Share API? Botão de copiar link? QR code? Sem decisão técnica não é implementável. Manter fora do sprint até definição._
+O sistema deve permitir que o usuário compartilhe o link de uma loja em aplicativos externos. 
+Fluxo: 
+Cliente entra na pagina de uma loja X --> 
+Clica no icone de compartilha loja --> 
+Icone muda para um "✅" e fica por 2 segundos nesse estado --> 
+Mensagem de "Link copiado com sucesso ✅" aparece na tela --> 
+O icone volta para o estado natural (icone padrao de compartilhamento);
 
 ### REQUISITOS FUNCIONAIS - BACKEND
 
