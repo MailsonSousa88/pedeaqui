@@ -32,7 +32,8 @@ Todo Pull Request deve ter pelo menos **2 pessoas revisoras** antes de ser aprov
 
 Um PR só deve ser aprovado quando:
 
-- Tiver pelo menos 2 revisores.
+- Tiver pelo menos 2 revisores para trabalhos mais simples.
+- Tiver no mininimo 4 revisores para trabalhos mais complexos.
 - Não houver comentários críticos pendentes.
 - A branch estiver atualizada com a base, quando necessário.
 - O código/documentação estiver coerente com o escopo do PR.
