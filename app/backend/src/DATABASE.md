@@ -129,7 +129,9 @@ Planos disponíveis para assinatura.
 ### 3.4 `tenants`
 Clientes comerciais da plataforma que possuem lojas.
 - `id` (UUID, PK): ID único vinculado ao `auth.users.id`.
+- `name` (VARCHAR): Nome do lojista.
 - `status` (VARCHAR): Estado operacional (`active`, `suspended`). Default: `active`.
+- `cpf_cnpj` (VARCHAR, UNIQUE): Documento de identificação.
 - `photo_storage_limit` (BIGINT): Limite de arquivos de imagens em bytes.
 - `stripe_customer_id` (VARCHAR, UNIQUE, NULL): Código do cliente no Stripe.
 - `created_at` / `updated_at` (TIMESTAMPTZ): Datas de criação e atualização.
@@ -141,7 +143,7 @@ Contratos ativos de cobrança dos Tenants.
 - `plan_id` (UUID, FK): Aponta para `plans.id`.
 - `status` (VARCHAR): Situação do pagamento (`active`, `past_due`, `unpaid`, `canceled`). Default: `active`.
 - `stripe_subscription_id` (VARCHAR, UNIQUE, NULL): ID da assinatura no Stripe.
-- `starts_at` / `ends_at` (TIMESTAMPTZ, NULL): Período de vigência da assinatura.
+- `starts_at` / `ends_at` (TIMESTAMPTZ): Período de vigência da assinatura.
 - `created_at` / `updated_at` (TIMESTAMPTZ): Datas de criação e atualização.
 
 ### 3.6 `stores`
@@ -149,10 +151,13 @@ Vitrines digitais configuradas por cada tenant.
 - `id` (UUID, PK): Chave primária.
 - `tenant_id` (UUID, FK, UNIQUE): Vinculado a `tenants.id` (Relação 1-para-1).
 - `slug` (VARCHAR, UNIQUE): Endereço amigável da loja (ex: `minha-loja`).
-- `name` (VARCHAR): Nome de exibição da loja.
-- `description` (TEXT, NULL): Descrição curta ou slogan.
+- `store_name` (VARCHAR, UNIQUE): Nome de exibição da loja.
+- `horario_abertura` (TIME): Horário de abertura da loja.
+- `horario_fechamento` (TIME): Horário de fechamento da loja.
+- `endereco` (TEXT): Endereço da loja.
+- `descricao` (TEXT, NULL): Descrição curta ou slogan.
 - `logo_url` (VARCHAR, NULL): URL da imagem do logotipo.
-- `whatsapp_number` (VARCHAR, NULL): Número do celular com DDI para redirecionamento.
+- `whatsapp_number` (VARCHAR, UNIQUE): Número do celular com DDI para redirecionamento.
 - `active` (BOOLEAN): Status de exibição pública. Default: `true`.
 - `deleted_at` (TIMESTAMPTZ, NULL): Data de exclusão lógica (Soft Delete).
 - `created_at` / `updated_at` (TIMESTAMPTZ): Datas de criação e atualização.
@@ -188,7 +193,10 @@ Catálogo de itens comercializados pelas lojas.
 Fotos de exibição cadastradas para o produto.
 - `id` (UUID, PK): Chave primária.
 - `product_id` (UUID, FK): Aponta para `products.id`.
-- `url` (VARCHAR): URL absoluta da imagem armazenada no bucket.
+- `r2_key` (VARCHAR, UNIQUE): Caminho do arquivo no bucket R2.
+- `url` (VARCHAR, UNIQUE): URL absoluta da imagem armazenada no bucket.
+- `size_bytes` (BIGINT): Tamanho do arquivo em bytes.
+- `mime_type` (VARCHAR): Tipo MIME da imagem.
 - `sort_order` (INTEGER): Ordem de exibição na galeria do produto. Default: `0`.
 - `created_at` (TIMESTAMPTZ): Data de upload.
 
@@ -205,5 +213,6 @@ Opções selecionáveis vinculadas a uma variação (ex: "Preto", "M").
 - `id` (UUID, PK): Chave primária.
 - `variation_id` (UUID, FK): Aponta para `product_variations.id`.
 - `value` (VARCHAR): Valor textual da opção de variação.
+- `price_modifier_cents` (BIGINT): Valor adicionado ao price_cents do produto. Default: `0`.
 - `sort_order` (INTEGER): Ordem de listagem das opções. Default: `0`.
 - `created_at` (TIMESTAMPTZ): Registro de criação.

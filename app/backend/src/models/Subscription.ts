@@ -6,8 +6,8 @@ export interface ISubscriptionProps {
   planId: string;
   status: SubscriptionStatus;
   stripeSubscriptionId: string | null;
-  startsAt: Date | null;
-  endsAt: Date | null;
+  startsAt: Date;
+  endsAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -18,8 +18,8 @@ export class Subscription {
   public planId: string;
   public status: SubscriptionStatus;
   public stripeSubscriptionId: string | null;
-  public startsAt: Date | null;
-  public endsAt: Date | null;
+  public startsAt: Date;
+  public endsAt: Date;
   public readonly createdAt: Date;
   public updatedAt: Date;
 

@@ -2,10 +2,13 @@ export interface IStoreProps {
   id: string;
   tenantId: string;
   slug: string;
-  name: string;
-  description: string | null;
+  storeName: string;
+  horarioAbertura: string;
+  horarioFechamento: string;
+  endereco: string;
+  descricao: string | null;
   logoUrl: string | null;
-  whatsappNumber: string | null;
+  whatsappNumber: string;
   active: boolean;
   deletedAt: Date | null;
   createdAt: Date;
@@ -16,10 +19,13 @@ export class Store {
   public readonly id: string;
   public readonly tenantId: string;
   public slug: string;
-  public name: string;
-  public description: string | null;
+  public storeName: string;
+  public horarioAbertura: string;
+  public horarioFechamento: string;
+  public endereco: string;
+  public descricao: string | null;
   public logoUrl: string | null;
-  public whatsappNumber: string | null;
+  public whatsappNumber: string;
   public active: boolean;
   public deletedAt: Date | null;
   public readonly createdAt: Date;
@@ -29,14 +35,17 @@ export class Store {
     if (!props.slug || props.slug.trim() === '') {
       throw new Error('Store slug is required');
     }
-    if (!props.name || props.name.trim() === '') {
+    if (!props.storeName || props.storeName.trim() === '') {
       throw new Error('Store name is required');
     }
     this.id = props.id;
     this.tenantId = props.tenantId;
     this.slug = props.slug;
-    this.name = props.name;
-    this.description = props.description;
+    this.storeName = props.storeName;
+    this.horarioAbertura = props.horarioAbertura;
+    this.horarioFechamento = props.horarioFechamento;
+    this.endereco = props.endereco;
+    this.descricao = props.descricao;
     this.logoUrl = props.logoUrl;
     this.whatsappNumber = props.whatsappNumber;
     this.active = props.active;
