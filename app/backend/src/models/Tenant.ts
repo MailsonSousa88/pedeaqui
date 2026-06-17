@@ -2,9 +2,8 @@ export type TenantStatus = 'active' | 'suspended';
 
 export interface ITenantProps {
   id: string;
-  name: string;
   status: TenantStatus;
-  cpfCnpj: string;
+  document: string;
   photoStorageLimit: number;
   stripeCustomerId: string | null;
   createdAt: Date;
@@ -13,9 +12,8 @@ export interface ITenantProps {
 
 export class Tenant {
   public readonly id: string;
-  public name: string;
   public status: TenantStatus;
-  public cpfCnpj: string;
+  public document: string;
   public photoStorageLimit: number;
   public stripeCustomerId: string | null;
   public readonly createdAt: Date;
@@ -29,9 +27,8 @@ export class Tenant {
       throw new Error('Invalid tenant status');
     }
     this.id = props.id;
-    this.name = props.name;
     this.status = props.status;
-    this.cpfCnpj = props.cpfCnpj;
+    this.document = props.document;
     this.photoStorageLimit = props.photoStorageLimit;
     this.stripeCustomerId = props.stripeCustomerId;
     this.createdAt = props.createdAt;

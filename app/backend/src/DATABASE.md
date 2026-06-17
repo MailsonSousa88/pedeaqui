@@ -102,7 +102,6 @@ erDiagram
 ### 3.1 `admins`
 Responsável por armazenar os administradores da plataforma.
 - `id` (UUID, PK): Chave primária, referência direta ao `auth.users.id`.
-- `name` (VARCHAR): Nome completo do administrador.
 - `role` (ENUM): Papel do administrador (`super_admin`, `support`, `finance`). Default: `support`.
 - `active` (BOOLEAN): Estado do cadastro. Default: `true`.
 - `created_at` / `updated_at` (TIMESTAMPTZ): Registro de data de criação e atualização.
@@ -110,7 +109,8 @@ Responsável por armazenar os administradores da plataforma.
 ### 3.2 `audit_logs`
 Histórico de ações críticas realizadas por administradores.
 - `id` (UUID, PK): Identificador gerado automaticamente.
-- `admin_id` (UUID, FK): Aponta para `admins.id`.
+- `admin_id` (UUID, FK, NULL): Aponta para `admins.id`.
+- `tenant_id` (UUID, FK, NULL): Aponta para `tenants.id`.
 - `action` (ENUM): Ação auditada (ex: `tenant.suspend`, `plan.create`, etc.).
 - `target_table` (VARCHAR): Tabela afetada.
 - `target_id` (UUID): ID do registro modificado.
@@ -129,9 +129,8 @@ Planos disponíveis para assinatura.
 ### 3.4 `tenants`
 Clientes comerciais da plataforma que possuem lojas.
 - `id` (UUID, PK): ID único vinculado ao `auth.users.id`.
-- `name` (VARCHAR): Nome do lojista.
 - `status` (VARCHAR): Estado operacional (`active`, `suspended`). Default: `active`.
-- `cpf_cnpj` (VARCHAR, UNIQUE): Documento de identificação.
+- `document` (VARCHAR, UNIQUE): Documento de identificação (CPF ou CNPJ).
 - `photo_storage_limit` (BIGINT): Limite de arquivos de imagens em bytes.
 - `stripe_customer_id` (VARCHAR, UNIQUE, NULL): Código do cliente no Stripe.
 - `created_at` / `updated_at` (TIMESTAMPTZ): Datas de criação e atualização.

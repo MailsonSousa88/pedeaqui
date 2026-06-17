@@ -5,7 +5,6 @@ describe('Domain Entities', () => {
     it('should create an Admin instance correctly', () => {
       const adminProps = {
         id: 'uuid-admin',
-        name: 'John Doe',
         role: 'super_admin' as const,
         active: true,
         createdAt: new Date(),
@@ -13,7 +12,6 @@ describe('Domain Entities', () => {
       };
       const admin = new Admin(adminProps);
       expect(admin.id).toBe(adminProps.id);
-      expect(admin.name).toBe(adminProps.name);
       expect(admin.role).toBe(adminProps.role);
     });
   });
@@ -23,15 +21,34 @@ describe('Domain Entities', () => {
       const auditProps = {
         id: 'uuid-log',
         adminId: 'uuid-admin',
+        tenantId: 'uuid-tenant',
         action: 'tenant.create' as const,
         targetTable: 'tenants',
         targetId: 'uuid-tenant',
-        payload: { name: 'Tenant A' },
+        payload: { document: '12345678900' },
         createdAt: new Date()
       };
       const log = new AuditLog(auditProps);
       expect(log.action).toBe(auditProps.action);
+      expect(log.adminId).toBe(auditProps.adminId);
+      expect(log.tenantId).toBe(auditProps.tenantId);
       expect(log.payload).toEqual(auditProps.payload);
+    });
+
+    it('should allow null adminId and tenantId', () => {
+      const auditProps = {
+        id: 'uuid-log',
+        adminId: null,
+        tenantId: null,
+        action: 'tenant.create' as const,
+        targetTable: 'tenants',
+        targetId: 'uuid-tenant',
+        payload: {},
+        createdAt: new Date()
+      };
+      const log = new AuditLog(auditProps);
+      expect(log.adminId).toBeNull();
+      expect(log.tenantId).toBeNull();
     });
   });
 
@@ -68,9 +85,8 @@ describe('Domain Entities', () => {
     it('should create a Tenant instance correctly', () => {
       const tenantProps = {
         id: 'uuid-tenant',
-        name: 'Tenant Name',
         status: 'active' as const,
-        cpfCnpj: '12345678900',
+        document: '12345678900',
         photoStorageLimit: 500000,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -78,14 +94,14 @@ describe('Domain Entities', () => {
       };
       const tenant = new Tenant(tenantProps);
       expect(tenant.photoStorageLimit).toBe(500000);
+      expect(tenant.document).toBe('12345678900');
     });
 
     it('should throw an error if photo storage limit is less than or equal to 0', () => {
       const tenantProps = {
         id: 'uuid-tenant',
-        name: 'Tenant Name',
         status: 'active' as const,
-        cpfCnpj: '12345678900',
+        document: '12345678900',
         photoStorageLimit: 0,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -97,9 +113,8 @@ describe('Domain Entities', () => {
     it('should throw an error if status is invalid', () => {
       const tenantProps = {
         id: 'uuid-tenant',
-        name: 'Tenant Name',
         status: 'invalid' as any,
-        cpfCnpj: '12345678900',
+        document: '12345678900',
         photoStorageLimit: 500000,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
