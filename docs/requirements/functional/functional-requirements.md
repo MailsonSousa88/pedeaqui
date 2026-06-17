@@ -249,5 +249,5 @@ O sistema deve redirecionar o usuário ao WhatsApp com o pedido formatado após 
 
 O sistema deve validar o número de WhatsApp informado pelo lojista durante a configuração inicial da loja.
 
-> **Critério:** O WhatsApp deve ser obrigatório para lojas que receberão pedidos via WhatsApp. O sistema deve validar o formato do número, normalizar para padrão internacional quando aplicável e impedir avanço no onboarding quando o número for inválido. Quando houver mecanismo de confirmação disponível, o sistema deve exigir confirmação do número por código ou link enviado ao contato informado. Número não validado ou não confirmado deve impedir o redirecionamento para pagamento e a publicação da loja.
+> **Critério:** O WhatsApp deve ser obrigatório para lojas que receberão pedidos via WhatsApp. O sistema deve validar o formato do número, normalizar para padrão internacional quando aplicável e enviar um código numérico de validação para o número informado. O lojista deve informar o código recebido para confirmar que possui acesso ao WhatsApp cadastrado. Número inválido, código incorreto, código expirado ou número não confirmado deve impedir o redirecionamento para pagamento, a publicação da loja e o uso do checkout via WhatsApp.
 ---
