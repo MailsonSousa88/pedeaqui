@@ -63,6 +63,13 @@ O sistema deve permitir que o usuário compartilhe o link de uma loja em aplicat
 > **Critério:** Ao clicar no ícone de compartilhamento da loja, o link deve ser copiado. O ícone deve mudar temporariamente para `✅` por 2 segundos, a mensagem `Link copiado com sucesso ✅` deve aparecer na tela e, após esse período, o ícone deve voltar ao estado natural de compartilhamento.
 ---
 
+**[RF0010] – Listagem, atualização e deleção de lojas**
+
+O sistema deve possuir rotas de listagem, atualização e deleção de lojas para servir o catálogo principal da plataforma (rota /stores).
+
+> **Critério:** GET /stores retorna lista paginada (20/página). PATCH /admin/store retorna HTTP 200. DELETE solicita confirmação; retorna HTTP 204.
+---
+
 **[RF011] – Login de lojista**
 
 O sistema deve permitir que o lojista autentique sua conta utilizando e-mail e senha.
