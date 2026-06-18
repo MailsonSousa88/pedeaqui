@@ -1,0 +1,93 @@
+.store-contact-page {
+  min-height: 100vh;
+  overflow-y: auto;
+  background:
+    radial-gradient(circle at 50% 2%, rgba(239, 0, 0, 0.035), transparent 26%),
+    #ffffff;
+  color: #171923;
+}
+
+.store-contact-page__shell {
+  display: grid;
+  width: min(100%, 460px);
+  min-height: 100vh;
+  grid-template-rows: auto auto;
+  margin: 0 auto;
+  padding: 20px 18px 28px;
+}
+
+.store-contact-page__header {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.store-contact-page__logo {
+  display: block;
+  width: min(100%, 172px);
+  height: auto;
+  object-fit: contain;
+}
+
+.store-contact-page__badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  margin-top: 14px;
+  border-radius: 9px;
+  background: #ffe8e8;
+  color: #ef0000;
+  padding: 0 12px;
+  font-size: 0.78rem;
+  font-weight: 800;
+}
+
+.store-contact-page__progress {
+  display: grid;
+  width: min(100%, 176px);
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.store-contact-page__progress-bar {
+  height: 5px;
+  border-radius: 999px;
+  background: #dedfe5;
+}
+
+.store-contact-page__progress-bar--active {
+  background: #ef0000;
+}
+
+.store-contact-page__header h1 {
+  margin: 16px 0 0;
+  color: #151822;
+  font-size: clamp(1.75rem, 7.8vw, 2rem);
+  font-weight: 900;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+
+.store-contact-page__header p {
+  width: min(100%, 320px);
+  margin: 8px 0 0;
+  color: #5e6378;
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+@media (max-width: 390px) {
+  .store-contact-page__shell {
+    padding: 18px 16px 26px;
+  }
+
+  .store-contact-page__logo {
+    width: min(100%, 158px);
+  }
+
+  .store-contact-page__header h1 {
+    font-size: clamp(1.62rem, 7.2vw, 1.85rem);
+  }
+}
