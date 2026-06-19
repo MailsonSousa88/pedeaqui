@@ -5,15 +5,15 @@ import "./StoreContactFormPage.css";
 const STEP_COPY: Record<StoreSetupStep, { title: string; subtitle: string }> = {
   1: {
     title: "Configure sua loja",
-    subtitle: "Comece pelos dados principais que identificam sua vitrine.",
+    subtitle: "Preencha o endereço em campos separados para evitar confusão.",
   },
   2: {
     title: "Configure sua loja",
-    subtitle: "Preencha o endereço em campos separados para evitar confusão.",
+    subtitle: "Informe como seus clientes podem encontrar e falar com sua loja.",
   },
   3: {
-    title: "Configure sua loja",
-    subtitle: "Defina como e quando seus clientes podem falar com sua loja.",
+    title: "Revise sua loja",
+    subtitle: "Confira os dados antes de continuar para a escolha do plano.",
   },
 };
 
