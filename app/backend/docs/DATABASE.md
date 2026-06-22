@@ -42,23 +42,26 @@ O **PedeAqui.store** é uma plataforma SaaS (Software as a Service) multi-tenant
                                         |
                                       (1:1)
                                         v
-+----------+                      +------------+              +-------+
-|  admins  |                      |  tenants   |              | plans |
-+----+-----+                      +--+---+--+--+              +---+---+
-     |                               |   |  |                     |
-   (1:N)         +-------------------+   |  +----------+        (1:N)
-     v           | (1:1)                 |             |          v
-+------------+   v                     (1:N)         (1:N)  +------------+
-| audit_logs | +----------+              |             +--->|subscriptions|
-+------------+ |  stores  |              v                  +------------+
-               +----+-----+        +------------+
-                    |              | categories |
-                  (1:N)            +-----+------+
-                    v                    |
-             +------------+<-------------+ (1:N)
-             |  products  |
-             +--+------+--+
-                |      |
++----------+                      +------------+                      +-------+
+|  admins  |                      |  profiles  |                      | plans |
++----+-----+                      +-----+------+                      +---+---+
+     |                                  |                                 |
+   (1:N)                              (1:1)                             (1:N)
+     v                                  v                                 v
++------------+                    +------------+                   +------------+
+| audit_logs | +----------+       |  tenants   |------------------>|subscriptions|
++------------+ |  stores  |       +--+---+--+--+                   +------------+
+               +----+-----+          |   |
+                    |              (1:1) |
+                    ^----------------+   |
+                  (1:N)                  |
+                    v                    v
+             +------------+        +------------+
+             |  products  |        | categories |
+             +--+------+--+        +-----+------+
+                |      |                 |
+                |      +-----------------+ (1:N)
+                |
               (1:N)  (1:N)
                 v      v
 +----------------+    +--------------------+
@@ -76,7 +79,8 @@ O **PedeAqui.store** é uma plataforma SaaS (Software as a Service) multi-tenant
 
 ```mermaid
 erDiagram
-    auth_users ||--|| tenants : "auth.users.id -> tenants.id"
+    auth_users ||--|| profiles : "auth.users.id -> profiles.id"
+    profiles ||--|| tenants : "profiles.id -> tenants.id"
     admins ||--o{ audit_logs : "executa"
     plans ||--o{ subscriptions : "possui"
     tenants ||--o{ subscriptions : "assina"
@@ -128,9 +132,9 @@ Planos disponíveis para assinatura.
 
 ### 3.4 `tenants`
 Clientes comerciais da plataforma que possuem lojas.
-- `id` (UUID, PK): ID único vinculado ao `auth.users.id`.
+- `id` (UUID, PK): Referência direta a `profiles.id` com `ON DELETE CASCADE`.
 - `status` (VARCHAR): Estado operacional (`active`, `suspended`). Default: `active`.
-- `document` (VARCHAR, UNIQUE): Documento de identificação (CPF ou CNPJ).
+- `business_document` (VARCHAR, UNIQUE, NULL): Documento de identificação comercial (CNPJ). Opcional, mas possui uma constraint `CHECK` garantindo exatamente 14 caracteres caso não seja nulo.
 - `photo_storage_limit` (BIGINT): Limite de arquivos de imagens em bytes.
 - `stripe_customer_id` (VARCHAR, UNIQUE, NULL): Código do cliente no Stripe.
 - `created_at` / `updated_at` (TIMESTAMPTZ): Datas de criação e atualização.
@@ -215,3 +219,18 @@ Opções selecionáveis vinculadas a uma variação (ex: "Preto", "M").
 - `price_modifier_cents` (BIGINT): Valor adicionado ao price_cents do produto. Default: `0`.
 - `sort_order` (INTEGER): Ordem de listagem das opções. Default: `0`.
 - `created_at` (TIMESTAMPTZ): Registro de criação.
+
+### 3.12 `profiles`
+Perfil físico dos lojistas, associados a cada usuário autenticado.
+- `id` (UUID, PK): Chave primária, referência direta ao `auth.users.id` com `ON DELETE CASCADE`.
+- `name` (VARCHAR): Nome completo do usuário.
+- `phone` (VARCHAR): Telefone de contato do usuário.
+- `document` (VARCHAR, UNIQUE, NULL): CPF do usuário (sanitizado com 11 dígitos).
+- `created_at` / `updated_at` (TIMESTAMPTZ): Registro de data de criação e atualização.
+
+---
+
+## 4. Views
+
+### 4.1 `v_tenants_details`
+View utilizada para expandir os dados do lojista, unindo os dados da empresa e do perfil do usuário responsável. Ela realiza um JOIN entre as tabelas `tenants` e `profiles` e expõe uma coluna computada chamada `billing_document`, que utiliza a lógica `COALESCE(t.business_document, p.document)`.

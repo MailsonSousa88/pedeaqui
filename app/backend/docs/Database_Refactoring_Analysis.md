@@ -13,7 +13,7 @@ A introdução da tabela `profiles` como fonte da verdade para dados "humanos" (
 - **Escopo**: Representar o Lojista do ponto de vista do negócio B2B e da nossa plataforma SaaS (Cobranças Stripe, Limites de Armazenamento, Status da Conta).
 - **Relacionamento**: `1:1` com `auth.users` (O lojista dono da conta).
 - **Atributos Removidos**: `name` (pois agora o nome do dono da conta SaaS reside em `profiles`).
-- **Campos Pertencentes**: `id`, `document`, `status`, `photo_storage_limit`, `stripe_customer_id`, `created_at`, `updated_at`.
+- **Campos Pertencentes**: `id`, `business_document`, `status`, `photo_storage_limit`, `stripe_customer_id`, `created_at`, `updated_at`.
 
 ### `admins` (O Funcionário da Plataforma)
 - **Escopo**: Representar o acesso privilegiado de suporte e operações do nosso sistema.
@@ -48,8 +48,8 @@ UPDATE tenants SET name = COALESCE(NEW.raw_user_meta_data->>'full_name', name) .
 Com a remoção do `name` do `tenant`, qualquer local da API ou Front-End que precise exibir "Nome do Lojista (dono)" ou "Nome do Admin" precisará fazer um `JOIN` implícito ou explícito com a tabela `profiles`. 
 - Exemplo: Ao invés de `SELECT name FROM tenants`, será `SELECT p.name FROM tenants t JOIN profiles p ON t.id = p.id`.
 
-### E. O Campo `document` no `tenants`
-O `document` (anteriormente chamado de `cpf_cnpj`) está em `tenants`. Sendo o Tenant a "Entidade Legal de Cobrança", esse é o lugar correto para ele (já que um Cliente Final que apenas faz pedidos de comida não precisa informar documento, a não ser para NF).
+### E. O Campo `business_document` no `tenants`
+O campo `business_document` (anteriormente `cpf_cnpj`) está em `tenants` e agora é restrito estritamente a CNPJ (14 caracteres, opcional). Já o `document` (CPF) reside em `profiles` para representar a pessoa física do lojista. A consolidação dos documentos de faturamento é resolvida pela view `v_tenants_details` usando `COALESCE(t.business_document, p.document)`.
 
 ---
 

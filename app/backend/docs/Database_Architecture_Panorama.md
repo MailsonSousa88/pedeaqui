@@ -17,8 +17,8 @@ Esta documentação detalha as regras de negócio intrínsecas que foram program
 
 ### Cenário 1: Cadastro e Ativação (Happy Path)
 1. O usuário é criado no `auth.users`.
-2. A API cria o `profiles` (com nome e telefone).
-3. A API cria o `tenants` (com Documento (CPF/CNPJ), definindo `status = 'active'`).
+2. A API cria o `profiles` (com nome, telefone e CPF no campo `document`).
+3. A API cria o `tenants` (com `business_document` (CNPJ) opcional, definindo `status = 'active'`).
 4. **Ativando a Assinatura:**
    - O sistema insere um registro em `subscriptions` vinculando ao `tenant_id` e `plan_id`.
    - **Regra do Banco**: O índice `uq_subscriptions_one_active_per_tenant` impede matematicamente que a loja tenha duas assinaturas ativas ao mesmo tempo. Se a API tentar inserir uma segunda assinatura `active`, o banco rejeita a operação com erro.
