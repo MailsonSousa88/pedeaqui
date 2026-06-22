@@ -1,4 +1,4 @@
-import { Admin, AuditLog, Plan, Tenant, Subscription, Store, Category, Product, ProductImage, ProductVariation, VariationOption } from '../index';
+import { Admin, AuditLog, Plan, Tenant, Subscription, Store, Category, Product, ProductImage, ProductVariation, VariationOption, Profile } from '../index';
 
 describe('Domain Entities', () => {
   describe('Admin Entity', () => {
@@ -82,11 +82,11 @@ describe('Domain Entities', () => {
   });
 
   describe('Tenant Entity', () => {
-    it('should create a Tenant instance correctly', () => {
+    it('should create a Tenant instance correctly with a valid business document (CNPJ)', () => {
       const tenantProps = {
         id: 'uuid-tenant',
         status: 'active' as const,
-        document: '12345678900',
+        businessDocument: '33.683.111/0001-07',
         photoStorageLimit: 500000,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -94,14 +94,40 @@ describe('Domain Entities', () => {
       };
       const tenant = new Tenant(tenantProps);
       expect(tenant.photoStorageLimit).toBe(500000);
-      expect(tenant.document).toBe('12345678900');
+      expect(tenant.businessDocument).toBe('33683111000107'); // sanitized
+    });
+
+    it('should create a Tenant instance correctly without a business document (fallback scenario)', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const tenant = new Tenant(tenantProps);
+      expect(tenant.photoStorageLimit).toBe(500000);
+      expect(tenant.businessDocument).toBeNull();
+    });
+
+    it('should throw an error if an invalid business document is provided', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        businessDocument: '11111111111111', // invalid CNPJ
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Tenant(tenantProps)).toThrow('Invalid business document');
     });
 
     it('should throw an error if photo storage limit is less than or equal to 0', () => {
       const tenantProps = {
         id: 'uuid-tenant',
         status: 'active' as const,
-        document: '12345678900',
         photoStorageLimit: 0,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -114,7 +140,6 @@ describe('Domain Entities', () => {
       const tenantProps = {
         id: 'uuid-tenant',
         status: 'invalid' as any,
-        document: '12345678900',
         photoStorageLimit: 500000,
         stripeCustomerId: 'cus_123',
         createdAt: new Date(),
@@ -379,4 +404,79 @@ describe('Domain Entities', () => {
       expect(() => new VariationOption(optProps)).toThrow('Variation option value is required');
     });
   });
+
+  describe('Profile Entity', () => {
+    const validCPF = '52886531863';
+    const validCNPJ = '33683111000107';
+
+    it('should create Profile correctly with valid CPF', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: validCPF
+      });
+      expect(profile.name).toBe('Test Profile');
+      expect(profile.document).toBe(validCPF);
+    });
+
+    it('should create Profile correctly with formatted CPF and sanitize it', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: '528.865.318-63'
+      });
+      expect(profile.document).toBe(validCPF);
+    });
+
+    it('should throw error if valid CNPJ is provided instead of CPF', () => {
+      expect(() => new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: validCNPJ
+      })).toThrow('Invalid CPF');
+    });
+
+    it('should throw error if formatted CNPJ is provided', () => {
+      expect(() => new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: '33.683.111/0001-07'
+      })).toThrow('Invalid CPF');
+    });
+
+    it('should create Profile correctly without document (optional)', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999'
+      });
+      expect(profile.document).toBeUndefined();
+    });
+
+    it('should throw error if id is empty', () => {
+      expect(() => new Profile({ id: '', name: 'Test', phone: '123' })).toThrow('Profile id is required');
+    });
+
+    it('should throw error if name is empty', () => {
+      expect(() => new Profile({ id: 'id', name: '', phone: '123' })).toThrow('Profile name is required');
+    });
+
+    it('should throw error if phone is empty', () => {
+      expect(() => new Profile({ id: 'id', name: 'Test', phone: '' })).toThrow('Profile phone is required');
+    });
+
+    it('should throw error if document is invalid', () => {
+      expect(() => new Profile({
+        id: 'id',
+        name: 'Test',
+        phone: '123',
+        document: '123456'
+      })).toThrow('Invalid CPF');
+    });
+  });
 });
+

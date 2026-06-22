@@ -9,7 +9,8 @@ export class SupabaseProfileRepository implements IProfileRepository {
       .insert({
         id: profile.id,
         name: profile.name,
-        phone: profile.phone
+        phone: profile.phone,
+        document: profile.document
       })
       .select()
       .single();
@@ -22,6 +23,7 @@ export class SupabaseProfileRepository implements IProfileRepository {
       id: data.id,
       name: data.name,
       phone: data.phone,
+      document: data.document,
       createdAt: data.created_at ? new Date(data.created_at) : undefined,
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined
     });
@@ -48,6 +50,33 @@ export class SupabaseProfileRepository implements IProfileRepository {
       id: data.id,
       name: data.name,
       phone: data.phone,
+      document: data.document,
+      createdAt: data.created_at ? new Date(data.created_at) : undefined,
+      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined
+    });
+  }
+
+  async findByDocument(document: string): Promise<Profile | null> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('document', document)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        return null;
+      }
+      throw new Error(`Failed to find profile by document: ${error.message}`);
+    }
+
+    if (!data) return null;
+
+    return new Profile({
+      id: data.id,
+      name: data.name,
+      phone: data.phone,
+      document: data.document,
       createdAt: data.created_at ? new Date(data.created_at) : undefined,
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined
     });

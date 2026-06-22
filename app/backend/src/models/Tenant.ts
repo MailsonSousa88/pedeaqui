@@ -1,9 +1,11 @@
+import { isValidCNPJ, sanitizeCNPJ } from '../utils/cnpjValidator';
+
 export type TenantStatus = 'active' | 'suspended';
 
 export interface ITenantProps {
   id: string;
   status: TenantStatus;
-  document: string;
+  businessDocument?: string | null;
   photoStorageLimit: number;
   stripeCustomerId: string | null;
   createdAt: Date;
@@ -13,7 +15,7 @@ export interface ITenantProps {
 export class Tenant {
   public readonly id: string;
   public status: TenantStatus;
-  public document: string;
+  public businessDocument: string | null;
   public photoStorageLimit: number;
   public stripeCustomerId: string | null;
   public readonly createdAt: Date;
@@ -26,9 +28,19 @@ export class Tenant {
     if (props.status !== 'active' && props.status !== 'suspended') {
       throw new Error('Invalid tenant status');
     }
+
+    if (props.businessDocument !== undefined && props.businessDocument !== null) {
+      const sanitized = sanitizeCNPJ(props.businessDocument);
+      if (!isValidCNPJ(sanitized)) {
+        throw new Error('Invalid business document');
+      }
+      this.businessDocument = sanitized;
+    } else {
+      this.businessDocument = null;
+    }
+
     this.id = props.id;
     this.status = props.status;
-    this.document = props.document;
     this.photoStorageLimit = props.photoStorageLimit;
     this.stripeCustomerId = props.stripeCustomerId;
     this.createdAt = props.createdAt;
