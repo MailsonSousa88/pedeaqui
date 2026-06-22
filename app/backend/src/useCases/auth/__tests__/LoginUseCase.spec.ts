@@ -19,7 +19,8 @@ describe('LoginUseCase', () => {
     };
     mockProfileRepo = {
       create: jest.fn(),
-      findById: jest.fn()
+      findById: jest.fn(),
+      findByDocument: jest.fn()
     };
     loginUseCase = new LoginUseCase(mockAuthRepo, mockProfileRepo);
   });

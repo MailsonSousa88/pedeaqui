@@ -22,12 +22,12 @@ export class AuthController {
 
   signUp = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { email, password, name, phone } = req.body;
-      if (!email || !password || !name || !phone) {
+      const { email, password, name, phone, document } = req.body;
+      if (!email || !password || !name || !phone || !document) {
         res.status(400).json({ error: 'Missing required fields' });
         return;
       }
-      const profile = await this.signUpUseCase.execute({ email, password, name, phone });
+      const profile = await this.signUpUseCase.execute({ email, password, name, phone, document });
       res.status(201).json({ message: 'User created successfully', profile });
     } catch (error: any) {
       res.status(400).json({ error: error.message || 'Error signing up' });

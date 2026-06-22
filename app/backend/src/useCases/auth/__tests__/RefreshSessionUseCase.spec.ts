@@ -19,7 +19,8 @@ describe('RefreshSessionUseCase', () => {
     };
     mockProfileRepo = {
       create: jest.fn(),
-      findById: jest.fn()
+      findById: jest.fn(),
+      findByDocument: jest.fn()
     };
     refreshSessionUseCase = new RefreshSessionUseCase(mockAuthRepo, mockProfileRepo);
   });
