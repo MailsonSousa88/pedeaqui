@@ -1,11 +1,10 @@
-import { Admin, AuditLog, Plan, Tenant, Subscription, Store, Category, Product, ProductImage, ProductVariation, VariationOption } from '../index';
+import { Admin, AuditLog, Plan, Tenant, Subscription, Store, Category, Product, ProductImage, ProductVariation, VariationOption, Profile } from '../index';
 
 describe('Domain Entities', () => {
   describe('Admin Entity', () => {
     it('should create an Admin instance correctly', () => {
       const adminProps = {
         id: 'uuid-admin',
-        name: 'John Doe',
         role: 'super_admin' as const,
         active: true,
         createdAt: new Date(),
@@ -13,7 +12,6 @@ describe('Domain Entities', () => {
       };
       const admin = new Admin(adminProps);
       expect(admin.id).toBe(adminProps.id);
-      expect(admin.name).toBe(adminProps.name);
       expect(admin.role).toBe(adminProps.role);
     });
   });
@@ -23,15 +21,34 @@ describe('Domain Entities', () => {
       const auditProps = {
         id: 'uuid-log',
         adminId: 'uuid-admin',
+        tenantId: 'uuid-tenant',
         action: 'tenant.create' as const,
         targetTable: 'tenants',
         targetId: 'uuid-tenant',
-        payload: { name: 'Tenant A' },
+        payload: { document: '12345678900' },
         createdAt: new Date()
       };
       const log = new AuditLog(auditProps);
       expect(log.action).toBe(auditProps.action);
+      expect(log.adminId).toBe(auditProps.adminId);
+      expect(log.tenantId).toBe(auditProps.tenantId);
       expect(log.payload).toEqual(auditProps.payload);
+    });
+
+    it('should allow null adminId and tenantId', () => {
+      const auditProps = {
+        id: 'uuid-log',
+        adminId: null,
+        tenantId: null,
+        action: 'tenant.create' as const,
+        targetTable: 'tenants',
+        targetId: 'uuid-tenant',
+        payload: {},
+        createdAt: new Date()
+      };
+      const log = new AuditLog(auditProps);
+      expect(log.adminId).toBeNull();
+      expect(log.tenantId).toBeNull();
     });
   });
 
@@ -65,7 +82,22 @@ describe('Domain Entities', () => {
   });
 
   describe('Tenant Entity', () => {
-    it('should create a Tenant instance correctly', () => {
+    it('should create a Tenant instance correctly with a valid business document (CNPJ)', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        businessDocument: '33.683.111/0001-07',
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const tenant = new Tenant(tenantProps);
+      expect(tenant.photoStorageLimit).toBe(500000);
+      expect(tenant.businessDocument).toBe('33683111000107'); // sanitized
+    });
+
+    it('should create a Tenant instance correctly without a business document (fallback scenario)', () => {
       const tenantProps = {
         id: 'uuid-tenant',
         status: 'active' as const,
@@ -76,6 +108,20 @@ describe('Domain Entities', () => {
       };
       const tenant = new Tenant(tenantProps);
       expect(tenant.photoStorageLimit).toBe(500000);
+      expect(tenant.businessDocument).toBeNull();
+    });
+
+    it('should throw an error if an invalid business document is provided', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        businessDocument: '11111111111111', // invalid CNPJ
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Tenant(tenantProps)).toThrow('Invalid business document');
     });
 
     it('should throw an error if photo storage limit is less than or equal to 0', () => {
@@ -142,8 +188,11 @@ describe('Domain Entities', () => {
         id: 'uuid-store',
         tenantId: 'uuid-tenant',
         slug: 'my-store',
-        name: 'My Store',
-        description: 'Store Description',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        descricao: 'Store Description',
         logoUrl: 'http://image.url',
         whatsappNumber: '11999999999',
         active: true,
@@ -160,10 +209,13 @@ describe('Domain Entities', () => {
         id: 'uuid-store',
         tenantId: 'uuid-tenant',
         slug: '',
-        name: 'My Store',
-        description: null,
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        descricao: null,
         logoUrl: null,
-        whatsappNumber: null,
+        whatsappNumber: '11999999999',
         active: true,
         deletedAt: null,
         createdAt: new Date(),
@@ -177,10 +229,13 @@ describe('Domain Entities', () => {
         id: 'uuid-store',
         tenantId: 'uuid-tenant',
         slug: 'my-store',
-        name: '',
-        description: null,
+        storeName: '',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        descricao: null,
         logoUrl: null,
-        whatsappNumber: null,
+        whatsappNumber: '11999999999',
         active: true,
         deletedAt: null,
         createdAt: new Date(),
@@ -272,7 +327,10 @@ describe('Domain Entities', () => {
       const imgProps = {
         id: 'uuid-img',
         productId: 'uuid-product',
+        r2Key: 'r2-key-value',
         url: 'http://image.url/img.png',
+        sizeBytes: 1024,
+        mimeType: 'image/png',
         sortOrder: 1,
         createdAt: new Date()
       };
@@ -284,7 +342,10 @@ describe('Domain Entities', () => {
       const imgProps = {
         id: 'uuid-img',
         productId: 'uuid-product',
+        r2Key: 'r2-key-value',
         url: '',
+        sizeBytes: 1024,
+        mimeType: 'image/png',
         sortOrder: 1,
         createdAt: new Date()
       };
@@ -323,6 +384,7 @@ describe('Domain Entities', () => {
         id: 'uuid-opt',
         variationId: 'uuid-var',
         value: 'Black',
+        priceModifierCents: 0,
         sortOrder: 1,
         createdAt: new Date()
       };
@@ -335,10 +397,86 @@ describe('Domain Entities', () => {
         id: 'uuid-opt',
         variationId: 'uuid-var',
         value: '',
+        priceModifierCents: 0,
         sortOrder: 1,
         createdAt: new Date()
       };
       expect(() => new VariationOption(optProps)).toThrow('Variation option value is required');
     });
   });
+
+  describe('Profile Entity', () => {
+    const validCPF = '52886531863';
+    const validCNPJ = '33683111000107';
+
+    it('should create Profile correctly with valid CPF', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: validCPF
+      });
+      expect(profile.name).toBe('Test Profile');
+      expect(profile.document).toBe(validCPF);
+    });
+
+    it('should create Profile correctly with formatted CPF and sanitize it', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: '528.865.318-63'
+      });
+      expect(profile.document).toBe(validCPF);
+    });
+
+    it('should throw error if valid CNPJ is provided instead of CPF', () => {
+      expect(() => new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: validCNPJ
+      })).toThrow('Invalid CPF');
+    });
+
+    it('should throw error if formatted CNPJ is provided', () => {
+      expect(() => new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: '33.683.111/0001-07'
+      })).toThrow('Invalid CPF');
+    });
+
+    it('should create Profile correctly without document (optional)', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999'
+      });
+      expect(profile.document).toBeUndefined();
+    });
+
+    it('should throw error if id is empty', () => {
+      expect(() => new Profile({ id: '', name: 'Test', phone: '123' })).toThrow('Profile id is required');
+    });
+
+    it('should throw error if name is empty', () => {
+      expect(() => new Profile({ id: 'id', name: '', phone: '123' })).toThrow('Profile name is required');
+    });
+
+    it('should throw error if phone is empty', () => {
+      expect(() => new Profile({ id: 'id', name: 'Test', phone: '' })).toThrow('Profile phone is required');
+    });
+
+    it('should throw error if document is invalid', () => {
+      expect(() => new Profile({
+        id: 'id',
+        name: 'Test',
+        phone: '123',
+        document: '123456'
+      })).toThrow('Invalid CPF');
+    });
+  });
 });
+

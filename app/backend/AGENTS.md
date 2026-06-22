@@ -67,6 +67,11 @@ src/
 
 - **Models/Entities:** Tipagens e lógicas estruturais puras em TypeScript. Nenhuma dependência externa.
 
+- **Bounded Contexts (Limites de Domínio):** Respeitar rigorosamente a separação entre Identidade e Faturamento (veja ADR 002).
+  - O **IdentityContext** (ex: `Profile`) lida estritamente com pessoas físicas (CPF). Não armazene ou valide dados empresariais aqui.
+  - O **TenantManagementContext** (ex: `Tenant`) lida estritamente com a entidade comercial (CNPJ). Não duplique ou armazene CPFs dentro desta entidade de domínio.
+  - **Integração (Fallback):** A relação entre domínios deve ocorrer por meio de Anti-Corruption Layers na infraestrutura (ex: a View de leitura `v_tenants_details`) ou através da orquestração em Use Cases, mantendo as Models de domínio isoladas e puras.
+
 ## 3. Fluxos de Trabalho e Gatilhos Obrigatórios
 
 ### 3.1 Fases de Desenvolvimento
