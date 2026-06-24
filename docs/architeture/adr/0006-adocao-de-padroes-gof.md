@@ -82,6 +82,13 @@ O padrão Observer será utilizado para tratar efeitos secundários independente
 
 Validações, atualização obrigatória de estoque e criação do pedido continuarão fazendo parte do fluxo principal. O Observer será aplicado apenas às ações que possam ser desacopladas sem comprometer a consistência do pedido.
 
+<!--
+O padrão Observer não será utilizado para operações críticas
+que precisam ocorrer de forma transacional para a criação válida
+do pedido, como validações, reserva/baixa de estoque e persistência
+do pedido.
+><!-->
+
 Os padrões serão utilizados somente onde houver necessidade real de variação ou desacoplamento, evitando abstrações desnecessárias.
 
 ## Consequências
