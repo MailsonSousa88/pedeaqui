@@ -10,11 +10,11 @@ Lojista.
 
 ## Atores secundários
 
-Cliente.
+Consumidor.
 
 ## Pré-condições
 
-- O lojista deve estár autenticado.
+- O lojista deve estar autenticado.
 - O lojista deve possuir uma loja cadastrada.
 - O lojista deve ter acesso ao painel administrativo da loja.
 
@@ -50,7 +50,7 @@ O lojista acessa a opção de gerenciamento de produtos na dashboard da loja.
 | Passo | Ação |
 |-------|------|
 | 7a | O lojista seleciona a opção de cadastrar produto. |
-| 7b | O sistema exibe o formulario de cadastro. |
+| 7b | O sistema exibe o formulário de cadastro. |
 | 7c | O lojista informa os dados do produto. |
 | 7d | O sistema salva o novo produto. |
 | 7e | O fluxo retorna ao passo 9 do fluxo principal. |
@@ -91,7 +91,7 @@ O lojista acessa a opção de gerenciamento de produtos na dashboard da loja.
 
 - Produtos cadastrados devem pertencer a uma loja específica.
 - Produtos removidos não devem aparecer na vitrine pública.
-- Alterações de produtos devem ser refletidas para os clientes.
+- Alterações de produtos devem ser refletidas para os consumidores.
 - As ações do lojista devem ser registradas para auditoria operacional.
 
 ## Referências
