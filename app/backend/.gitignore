@@ -1,0 +1,31 @@
+# Dependências locais (cada app gerencia a sua ou herda da raiz)
+node_modules/
+/dist
+/build
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Variáveis de ambiente (Segurança)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Test
+
+coverage
+
+# Cache específico de ferramentas de build do ecossistema TS/JS
+.turbo/
+.tsbuildinfo
+
+# AI tools
+.gemini
+
+
+
