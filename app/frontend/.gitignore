@@ -22,3 +22,11 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local frontend AI spec kit
+# Estes arquivos sao auxiliares locais para agentes de IA e nao devem ser versionados.
+AGENTS.md
+.specify/
+specs/
+docs/adrs/
+docs/adr/

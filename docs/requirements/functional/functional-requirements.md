@@ -242,7 +242,7 @@ O sistema deve exibir a loja para consumidores por meio de um `slug` público, s
 
 O sistema deve receber os produtos selecionados pelo frontend e validar os dados no backend antes de criar o pedido.
 
-> **Critério:** O frontend deve enviar apenas IDs dos produtos e quantidades. O sistema deve ignorar qualquer valor financeiro enviado pelo cliente e sempre consultar os preços atuais no banco de dados. Antes de criar o pedido, o backend deve verificar disponibilidade, estoque controlado e pausa manual de cada item. Se algum produto estiver indisponível, sem estoque ou inválido, a operação deve ser cancelada, nenhum pedido deve ser criado e o sistema deve retornar HTTP 400 com a lista de itens inválidos em `errors.items`. Em caso de sucesso, deve retornar HTTP 201 com o ID do pedido criado e a mensagem formatada para o WhatsApp.
+> **Critério:** O frontend deve enviar apenas IDs dos produtos e quantidades. O sistema deve ignorar qualquer valor financeiro enviado pelo consumidor e sempre consultar os preços atuais no banco de dados. Antes de criar o pedido, o backend deve verificar disponibilidade, estoque controlado e pausa manual de cada item. Se algum produto estiver indisponível, sem estoque ou inválido, a operação deve ser cancelada, nenhum pedido deve ser criado e o sistema deve retornar HTTP 400 com a lista de itens inválidos em `errors.items`. Em caso de sucesso, deve retornar HTTP 201 com o ID do pedido criado e a mensagem formatada para o WhatsApp.
 ---
 
 **[RF034] – Checkout via WhatsApp**
@@ -250,11 +250,4 @@ O sistema deve receber os produtos selecionados pelo frontend e validar os dados
 O sistema deve redirecionar o usuário ao WhatsApp com o pedido formatado após a validação bem-sucedida do checkout.
 
 > **Critério:** A mensagem deve conter nome do produto, quantidade, preço unitário e total. A URL deve seguir o formato `wa.me/{numero}?text={mensagem_codificada}`. Os preços exibidos na mensagem devem ser os valores retornados pelo backend após a validação do checkout.
----
-
-**[RF035] – Validação do WhatsApp da loja**
-
-O sistema deve validar o número de WhatsApp informado pelo lojista durante a configuração inicial da loja.
-
-> **Critério:** O WhatsApp deve ser obrigatório para lojas que receberão pedidos via WhatsApp. O sistema deve validar o formato do número, normalizar para padrão internacional quando aplicável e enviar um código numérico de validação para o número informado. O lojista deve informar o código recebido para confirmar que possui acesso ao WhatsApp cadastrado. Número inválido, código incorreto, código expirado ou número não confirmado deve impedir o redirecionamento para pagamento, a publicação da loja e o uso do checkout via WhatsApp.
 ---
