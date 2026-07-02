@@ -41,7 +41,7 @@ O sistema deve:
 
 ## Critérios de validação
 
-- Checkout deve usar WhatsApp validado da loja no momento da finalização.
+- Checkout deve usar o WhatsApp configurado da loja no momento da finalização.
 - Carrinho com produtos de lojas diferentes deve exigir separação por loja.
 - Clique repetido não deve criar pedidos duplicados.
 - Pedido criado deve possuir status compatível com envio pendente ou enviado via WhatsApp.
