@@ -1,7 +1,7 @@
-import { RegisterPage } from './features/register/pages/RegisterPage'
+import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage'
 
 function App() {
-  return <RegisterPage />
+  return <StorePreconfigurationPage />
 }
 
 export default App
