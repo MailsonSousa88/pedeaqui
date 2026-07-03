@@ -1,0 +1,95 @@
+.page {
+  position: relative;
+  overflow-x: hidden;
+}
+
+.page::before {
+  content: '';
+  position: absolute;
+  top: 104px;
+  right: 0;
+  width: 184px;
+  height: 220px;
+  background-image: radial-gradient(circle, #e5e7eb 1.6px, transparent 1.7px);
+  background-size: 26px 26px;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.main {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.main::before {
+  content: '';
+  position: absolute;
+  left: 84px;
+  bottom: 90px;
+  width: 220px;
+  height: 170px;
+  background-image: radial-gradient(circle, #e5e7eb 1.6px, transparent 1.7px);
+  background-size: 22px 22px;
+  opacity: 0.75;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.main::after {
+  content: '';
+  position: absolute;
+  left: -210px;
+  bottom: -210px;
+  width: 610px;
+  height: 520px;
+  background: #e30507;
+  border-radius: 52% 48% 58% 42% / 52% 38% 62% 48%;
+  pointer-events: none;
+  z-index: -2;
+}
+
+@media (max-width: 1024px) {
+  .page::before {
+    width: 128px;
+    height: 160px;
+    background-size: 22px 22px;
+  }
+
+  .main::before {
+    left: 28px;
+    bottom: 56px;
+    width: 150px;
+    height: 130px;
+    background-size: 20px 20px;
+  }
+
+  .main::after {
+    left: -260px;
+    bottom: -260px;
+    width: 520px;
+    height: 460px;
+  }
+}
+
+@media (max-width: 640px) {
+  .page::before,
+  .main::before {
+    opacity: 0.45;
+  }
+
+  .main::before {
+    left: auto;
+    right: 12px;
+    bottom: 24px;
+    width: 96px;
+    height: 96px;
+  }
+
+  .main::after {
+    left: -300px;
+    bottom: -320px;
+    width: 500px;
+    height: 500px;
+  }
+}
