@@ -1,7 +1,7 @@
-import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage'
+import { CheckoutReviewPage } from './features/billing/checkout-review/pages/CheckoutReviewPage'
 
 function App() {
-  return <StorePreconfigurationPage />
+  return <CheckoutReviewPage />
 }
 
 export default App
