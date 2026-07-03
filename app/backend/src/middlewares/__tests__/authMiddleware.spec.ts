@@ -65,7 +65,7 @@ describe('authMiddleware', () => {
     await authMiddleware(mockRequest as Request, mockResponse as Response, nextFunction);
 
     expect(supabase.auth.getUser).toHaveBeenCalledWith('valid-token');
-    expect((mockRequest as any).user).toEqual({ id: 'user-123', email: 'test@test.com' });
+    expect((mockRequest as any).user).toEqual({ id: 'user-123', email: 'test@test.com', tenantId: 'user-123' });
     expect(nextFunction).toHaveBeenCalled();
   });
 });
