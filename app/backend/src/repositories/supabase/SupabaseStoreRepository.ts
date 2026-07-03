@@ -8,6 +8,7 @@ export class SupabaseStoreRepository implements IStoreRepository {
       .from('stores')
       .select('*')
       .eq('id', id)
+      .is('deleted_at', null)
       .single();
 
     if (error || !data) return null;
@@ -19,6 +20,7 @@ export class SupabaseStoreRepository implements IStoreRepository {
       .from('stores')
       .select('*')
       .eq('tenant_id', tenantId)
+      .is('deleted_at', null)
       .single();
 
     if (error || !data) return null;
@@ -30,6 +32,7 @@ export class SupabaseStoreRepository implements IStoreRepository {
       .from('stores')
       .select('*')
       .eq('slug', slug)
+      .is('deleted_at', null)
       .single();
 
     if (error || !data) return null;

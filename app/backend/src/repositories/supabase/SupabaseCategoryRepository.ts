@@ -14,6 +14,18 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return this.mapToModel(data);
   }
 
+  async findByStoreId(storeId: string): Promise<Category[]> {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('store_id', storeId)
+      .is('deleted_at', null)
+      .order('sort_order', { ascending: true });
+
+    if (error || !data) return [];
+    return data.map(this.mapToModel);
+  }
+
   async findByTenantId(tenantId: string): Promise<Category[]> {
     const { data, error } = await supabase
       .from('categories')
@@ -24,6 +36,20 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
 
     if (error || !data) return [];
     return data.map(this.mapToModel);
+  }
+
+  async countActiveByStoreId(storeId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('categories')
+      .select('*', { count: 'exact', head: true })
+      .eq('store_id', storeId)
+      .is('deleted_at', null);
+
+    if (error) {
+      throw new Error(`Failed to count active categories: ${error.message}`);
+    }
+
+    return count || 0;
   }
 
   async create(category: Category): Promise<Category> {
@@ -71,14 +97,14 @@ export class SupabaseCategoryRepository implements ICategoryRepository {
     return this.mapToModel(data);
   }
 
-  async delete(id: string): Promise<void> {
+  async softDelete(id: string): Promise<void> {
     const { error } = await supabase
       .from('categories')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) {
-      throw new Error(`Failed to delete category: ${error.message}`);
+      throw new Error(`Failed to soft delete category: ${error.message}`);
     }
   }
 

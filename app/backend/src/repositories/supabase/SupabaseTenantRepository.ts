@@ -1,8 +1,36 @@
 import { ITenantRepository } from '../ITenantRepository';
 import { Tenant } from '../../models/Tenant';
+import { TenantDetailsDTO } from '../../dtos/TenantDetailsDTO';
 import supabase from '../../infra/supabase/supabaseClient';
 
 export class SupabaseTenantRepository implements ITenantRepository {
+  async getDetails(id: string): Promise<TenantDetailsDTO | null> {
+    const { data, error } = await supabase
+      .from('v_tenants_details')
+      .select('*')
+      .eq('tenant_id', id)
+      .single();
+
+    if (error || !data) {
+      if (error && error.code !== 'PGRST116') { // PGRST116 is not found
+        console.error('Error finding tenant details:', error);
+      }
+      return null;
+    }
+
+    return {
+      tenantId: data.tenant_id,
+      status: data.status,
+      businessDocument: data.business_document,
+      profileDocument: data.profile_document,
+      billingDocument: data.billing_document,
+      photoStorageLimit: data.photo_storage_limit,
+      stripeCustomerId: data.stripe_customer_id,
+      createdAt: new Date(data.created_at),
+      updatedAt: new Date(data.updated_at)
+    };
+  }
+
   async findById(id: string): Promise<Tenant | null> {
     const { data, error } = await supabase
       .from('tenants')

@@ -36,6 +36,20 @@ export class SupabaseProductRepository implements IProductRepository {
     return data.map(this.mapToModel);
   }
 
+  async countActiveByCategoryId(categoryId: string): Promise<number> {
+    const { count, error } = await supabase
+      .from('products')
+      .select('*', { count: 'exact', head: true })
+      .eq('category_id', categoryId)
+      .is('deleted_at', null);
+
+    if (error) {
+      throw new Error(`Failed to count active products: ${error.message}`);
+    }
+
+    return count || 0;
+  }
+
   async create(product: Product): Promise<Product> {
     const { data, error } = await supabase
       .from('products')
@@ -91,14 +105,32 @@ export class SupabaseProductRepository implements IProductRepository {
     return this.mapToModel(data);
   }
 
-  async delete(id: string): Promise<void> {
+  async toggleAvailability(id: string, available: boolean): Promise<Product> {
+    const { data, error } = await supabase
+      .from('products')
+      .update({
+        available,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to toggle product availability: ${error.message}`);
+    }
+
+    return this.mapToModel(data);
+  }
+
+  async softDelete(id: string): Promise<void> {
     const { error } = await supabase
       .from('products')
       .update({ deleted_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) {
-      throw new Error(`Failed to delete product: ${error.message}`);
+      throw new Error(`Failed to soft delete product: ${error.message}`);
     }
   }
 

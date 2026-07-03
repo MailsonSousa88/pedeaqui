@@ -19,53 +19,32 @@ export class SupabaseSubscriptionRepository implements ISubscriptionRepository {
       .from('subscriptions')
       .select('*')
       .eq('tenant_id', tenantId)
+      .eq('status', 'active')
       .single();
 
     if (error || !data) return null;
     return this.mapToModel(data);
   }
 
-  async create(subscription: Subscription): Promise<Subscription> {
+  async createOrUpdate(subscription: Partial<Subscription>): Promise<Subscription> {
     const { data, error } = await supabase
       .from('subscriptions')
-      .insert({
+      .upsert({
         id: subscription.id,
         tenant_id: subscription.tenantId,
         plan_id: subscription.planId,
         status: subscription.status,
         stripe_subscription_id: subscription.stripeSubscriptionId,
-        starts_at: subscription.startsAt.toISOString(),
-        ends_at: subscription.endsAt.toISOString(),
-        created_at: subscription.createdAt.toISOString(),
-        updated_at: subscription.updatedAt.toISOString()
-      })
+        starts_at: subscription.startsAt?.toISOString(),
+        ends_at: subscription.endsAt?.toISOString(),
+        created_at: subscription.createdAt?.toISOString(),
+        updated_at: subscription.updatedAt?.toISOString()
+      }, { onConflict: 'id' })
       .select()
       .single();
 
     if (error) {
-      throw new Error(`Failed to create subscription: ${error.message}`);
-    }
-
-    return this.mapToModel(data);
-  }
-
-  async update(subscription: Subscription): Promise<Subscription> {
-    const { data, error } = await supabase
-      .from('subscriptions')
-      .update({
-        plan_id: subscription.planId,
-        status: subscription.status,
-        stripe_subscription_id: subscription.stripeSubscriptionId,
-        starts_at: subscription.startsAt.toISOString(),
-        ends_at: subscription.endsAt.toISOString(),
-        updated_at: subscription.updatedAt.toISOString()
-      })
-      .eq('id', subscription.id)
-      .select()
-      .single();
-
-    if (error) {
-      throw new Error(`Failed to update subscription: ${error.message}`);
+      throw new Error(`Failed to save subscription: ${error.message}`);
     }
 
     return this.mapToModel(data);
