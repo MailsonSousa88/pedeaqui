@@ -150,6 +150,9 @@ describe('Domain Entities', () => {
   });
 
   describe('Subscription Entity', () => {
+    const now = new Date();
+    const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
     it('should create a Subscription instance correctly', () => {
       const subProps = {
         id: 'uuid-sub',
@@ -157,13 +160,15 @@ describe('Domain Entities', () => {
         planId: 'uuid-plan',
         status: 'active' as const,
         stripeSubscriptionId: 'sub_123',
-        startsAt: new Date(),
-        endsAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        startsAt: now,
+        endsAt: thirtyDaysLater,
+        createdAt: now,
+        updatedAt: now
       };
       const sub = new Subscription(subProps);
       expect(sub.status).toBe('active');
+      expect(sub.tenantId).toBe('uuid-tenant');
+      expect(sub.planId).toBe('uuid-plan');
     });
 
     it('should throw an error on invalid status', () => {
@@ -172,13 +177,26 @@ describe('Domain Entities', () => {
         tenantId: 'uuid-tenant',
         planId: 'uuid-plan',
         status: 'invalid' as any,
-        stripeSubscriptionId: 'sub_123',
-        startsAt: new Date(),
-        endsAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date()
+        startsAt: now,
+        endsAt: thirtyDaysLater,
+        createdAt: now,
+        updatedAt: now
       };
       expect(() => new Subscription(subProps)).toThrow('Invalid subscription status');
+    });
+
+    it('should throw an error if endsAt is before startsAt', () => {
+      const subProps = {
+        id: 'uuid-sub',
+        tenantId: 'uuid-tenant',
+        planId: 'uuid-plan',
+        status: 'active' as const,
+        startsAt: thirtyDaysLater,
+        endsAt: now,
+        createdAt: now,
+        updatedAt: now
+      };
+      expect(() => new Subscription(subProps)).toThrow('Subscription end date must be after start date');
     });
   });
 

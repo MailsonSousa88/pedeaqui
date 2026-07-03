@@ -2,7 +2,7 @@ export interface IProductProps {
   id: string;
   storeId: string;
   tenantId: string;
-  categoryId: string | null;
+  categoryId: string;
   name: string;
   description: string | null;
   priceCents: number;
@@ -19,7 +19,7 @@ export class Product {
   public readonly id: string;
   public readonly storeId: string;
   public readonly tenantId: string;
-  public categoryId: string | null;
+  public categoryId: string;
   public name: string;
   public description: string | null;
   public priceCents: number;
@@ -34,6 +34,9 @@ export class Product {
   constructor(props: IProductProps) {
     if (!props.name || props.name.trim() === '') {
       throw new Error('Product name is required');
+    }
+    if (!props.categoryId) {
+      throw new Error('Product must belong to a category');
     }
     if (props.priceCents <= 0) {
       throw new Error('Price cents must be greater than 0');
