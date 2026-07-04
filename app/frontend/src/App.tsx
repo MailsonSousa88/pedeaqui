@@ -1,7 +1,7 @@
-import { CheckoutReviewPage } from './features/billing/checkout-review/pages/CheckoutReviewPage'
+import { StorefrontPage } from './features/store/storefront/pages/StorefrontPage'
 
 function App() {
-  return <CheckoutReviewPage />
+  return <StorefrontPage />
 }
 
 export default App
