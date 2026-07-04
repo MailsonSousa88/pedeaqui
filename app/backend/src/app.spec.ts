@@ -1,4 +1,11 @@
 import request from 'supertest';
+jest.mock('./infra/supabase/supabaseClient', () => ({
+  __esModule: true,
+  default: {
+    auth: {},
+    from: jest.fn()
+  }
+}));
 import app from './app';
 
 describe('App', () => {

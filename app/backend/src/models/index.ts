@@ -9,3 +9,5 @@ export * from './Product';
 export * from './ProductImage';
 export * from './ProductVariation';
 export * from './VariationOption';
+export * from './Profile';
+
