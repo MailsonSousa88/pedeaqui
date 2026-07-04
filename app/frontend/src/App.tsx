@@ -1,7 +1,7 @@
-import { RegisterPage } from './features/register/pages/RegisterPage'
+import { LoginPage } from './features/auth/login/pages/LoginPage'
 
 function App() {
-  return <RegisterPage />
+  return <LoginPage />
 }
 
 export default App
