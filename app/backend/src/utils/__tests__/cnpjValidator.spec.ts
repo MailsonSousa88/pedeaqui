@@ -34,5 +34,9 @@ describe('CNPJ Validator Utils', () => {
       expect(isValidCNPJ('123456789012345')).toBe(false); // 15 digits
       expect(isValidCNPJ('')).toBe(false);
     });
+
+    it('should reject alphanumeric CNPJs supported by the external library', () => {
+      expect(isValidCNPJ('12.ABC.345/01DE-35')).toBe(false);
+    });
   });
 });
