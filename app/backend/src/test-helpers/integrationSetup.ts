@@ -13,6 +13,11 @@
 import { createClient } from '@supabase/supabase-js';
 import dotenv from 'dotenv';
 import path from 'path';
+import {
+  makeTestEmail as makeFactoryTestEmail,
+  makeTestCPF as makeFactoryTestCPF,
+  makeTestCNPJ as makeFactoryTestCNPJ,
+} from './testDataFactory';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -37,51 +42,44 @@ export const supabaseAnon = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
 // ---------------------------------------------------------------------------
 
 export function makeTestEmail(): string {
-  return `test-${Date.now()}-${Math.random().toString(36).slice(2)}@pedeaqui-test.local`;
+  return makeFactoryTestEmail();
 }
 
-// Pool de CPFs válidos para testes — cada suite deve usar um índice diferente
-// para evitar conflito de unique constraint ao rodar em paralelo.
-const VALID_CPFS = [
-  '13237289531', // auth suite
-  '84493662832', // tenant suite
-  '28352144707', // store suite
-  '54306138003', // product suite
-  '77020608752', // e2e suite
-  '12681857600', // reserva
-];
-
-const VALID_CNPJS = [
-  '48717882000137', // tenant suite
-  '72871115000162', // store suite
-  '22456475000120', // product suite
-  '11734672000147', // e2e suite
-];
+const cpfByIndex = new Map<number, string>();
+const cnpjByIndex = new Map<number, string>();
 
 /**
- * Retorna um CPF válido fixo por índice (0-5).
- * Cada suite de integração deve usar um índice diferente.
+ * Retorna um CPF válido por índice.
+ * O valor é gerado uma vez por processo para preservar chamadas repetidas na mesma suite.
  */
 export function getTestCPF(index: number): string {
-  return VALID_CPFS[index % VALID_CPFS.length];
+  if (!cpfByIndex.has(index)) {
+    cpfByIndex.set(index, makeFactoryTestCPF());
+  }
+
+  return cpfByIndex.get(index)!;
 }
 
 /**
- * Retorna um CNPJ válido fixo por índice (0-3).
- * Cada suite de integração deve usar um índice diferente.
+ * Retorna um CNPJ numérico válido por índice.
+ * O valor é gerado uma vez por processo para preservar chamadas repetidas na mesma suite.
  */
 export function getTestCNPJ(index: number): string {
-  return VALID_CNPJS[index % VALID_CNPJS.length];
+  if (!cnpjByIndex.has(index)) {
+    cnpjByIndex.set(index, makeFactoryTestCNPJ());
+  }
+
+  return cnpjByIndex.get(index)!;
 }
 
-/** @deprecated Use getTestCPF(index) para evitar conflitos entre suites */
+/** @deprecated Use getTestCPF(index) para preservar dados por suite */
 export function makeTestCPF(): string {
-  return VALID_CPFS[0];
+  return makeFactoryTestCPF();
 }
 
-/** @deprecated Use getTestCNPJ(index) para evitar conflitos entre suites */
+/** @deprecated Use getTestCNPJ(index) para preservar dados por suite */
 export function makeTestCNPJ(): string {
-  return VALID_CNPJS[0];
+  return makeFactoryTestCNPJ();
 }
 
 // ---------------------------------------------------------------------------
