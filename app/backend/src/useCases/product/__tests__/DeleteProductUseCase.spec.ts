@@ -10,6 +10,7 @@ describe('DeleteProductUseCase', () => {
     mockProductRepo = {
       findById: jest.fn(),
       findByStoreId: jest.fn(),
+      findByCategoryId: jest.fn(),
       countActiveByCategoryId: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
@@ -21,7 +22,7 @@ describe('DeleteProductUseCase', () => {
 
   it('should delete a product successfully', async () => {
     const existing = new Product({
-      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', priceCents: 10, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 10, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
     });
     mockProductRepo.findById.mockResolvedValue(existing);
 
@@ -31,7 +32,7 @@ describe('DeleteProductUseCase', () => {
 
   it('should fail if product belongs to another tenant', async () => {
     const existing = new Product({
-      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-999', categoryId: 'cat-1', name: 'A', priceCents: 10, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-999', categoryId: 'cat-1', name: 'A', description: null, priceCents: 10, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
     });
     mockProductRepo.findById.mockResolvedValue(existing);
 

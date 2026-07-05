@@ -16,6 +16,7 @@ describe('CreateProductUseCase', () => {
     mockProductRepo = {
       findById: jest.fn(),
       findByStoreId: jest.fn(),
+      findByCategoryId: jest.fn(),
       countActiveByCategoryId: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
@@ -88,4 +89,3 @@ describe('CreateProductUseCase', () => {
     })).rejects.toThrow('Conflict: Category does not exist');
   });
 });
-

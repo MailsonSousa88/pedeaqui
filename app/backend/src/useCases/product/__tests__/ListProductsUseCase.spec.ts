@@ -12,6 +12,7 @@ describe('ListProductsUseCase', () => {
     mockProductRepo = {
       findById: jest.fn(),
       findByStoreId: jest.fn(),
+      findByCategoryId: jest.fn(),
       countActiveByCategoryId: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),

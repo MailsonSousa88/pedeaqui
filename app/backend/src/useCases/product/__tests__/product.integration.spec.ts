@@ -22,6 +22,14 @@ describe('Product Integration — Criação + Listagem', () => {
   let storeId: string;
   let categoryId: string;
 
+  const restoreMainSession = async () => {
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({ email, password });
+
+    accessToken = loginRes.body.accessToken;
+  };
+
   beforeAll(async () => {
     // Setup completo: signup → login → tenant → store
     const signupRes = await request(app)
@@ -95,7 +103,7 @@ describe('Product Integration — Criação + Listagem', () => {
     const email2 = makeTestEmail();
     const signupRes2 = await request(app)
       .post('/api/auth/signup')
-      .send({ email: email2, password, name: 'Invasor', phone: '11922222222', document: '56073797060' });
+      .send({ email: email2, password, name: 'Invasor', phone: '11922222222', document: getTestCPF(8) });
     const userId2 = signupRes2.body.profile?.id;
 
     if (!userId2) return;
@@ -112,6 +120,7 @@ describe('Product Integration — Criação + Listagem', () => {
     expect(res.body.error).toMatch(/forbidden/i);
 
     await deleteTestUser(userId2);
+    await restoreMainSession();
   });
 
   // ONBOARD-20

@@ -20,6 +20,14 @@ describe('Store Integration — Criação + Consulta', () => {
   let userId: string;
   let accessToken: string;
 
+  const restoreMainSession = async () => {
+    const loginRes = await request(app)
+      .post('/api/auth/login')
+      .send({ email, password });
+
+    accessToken = loginRes.body.accessToken;
+  };
+
   beforeAll(async () => {
     // Setup: signup → login → register tenant
     const signupRes = await request(app)
@@ -92,7 +100,7 @@ describe('Store Integration — Criação + Consulta', () => {
     const emailNoSub = makeTestEmail();
     const signupRes = await request(app)
       .post('/api/auth/signup')
-      .send({ email: emailNoSub, password, name: 'Sem Sub', phone: '11955555555', document: '04898058600' });
+      .send({ email: emailNoSub, password, name: 'Sem Sub', phone: '11955555555', document: getTestCPF(6) });
     const noSubUserId = signupRes.body.profile?.id;
 
     if (!noSubUserId) {
@@ -111,6 +119,7 @@ describe('Store Integration — Criação + Consulta', () => {
     expect(res.status).toBe(403);
 
     await deleteTestUser(noSubUserId);
+    await restoreMainSession();
   });
 
   // ONBOARD-14
@@ -130,14 +139,14 @@ describe('Store Integration — Criação + Consulta', () => {
     const email2 = makeTestEmail();
     const signupRes2 = await request(app)
       .post('/api/auth/signup')
-      .send({ email: email2, password, name: 'Outro Lojista', phone: '11944444444', document: '21569611050' });
+      .send({ email: email2, password, name: 'Outro Lojista', phone: '11944444444', document: getTestCPF(7) });
     const userId2 = signupRes2.body.profile?.id;
 
     if (!userId2) return; // CPF em uso — skip
 
     const loginRes2 = await request(app).post('/api/auth/login').send({ email: email2, password });
     const token2 = loginRes2.body.accessToken;
-    await request(app).post('/api/tenants').set('Authorization', `Bearer ${token2}`).send({ document: '98765432100195' });
+    await request(app).post('/api/tenants').set('Authorization', `Bearer ${token2}`).send({ document: getTestCNPJ(4) });
 
     const res = await request(app)
       .post('/api/stores')
@@ -148,6 +157,7 @@ describe('Store Integration — Criação + Consulta', () => {
     expect(res.body.error).toMatch(/slug already exists/i);
 
     await deleteTestUser(userId2);
+    await restoreMainSession();
   });
 
   // ONBOARD-16

@@ -13,6 +13,7 @@ describe('UpdateProductUseCase', () => {
     mockProductRepo = {
       findById: jest.fn(),
       findByStoreId: jest.fn(),
+      findByCategoryId: jest.fn(),
       countActiveByCategoryId: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
@@ -33,7 +34,7 @@ describe('UpdateProductUseCase', () => {
 
   it('should update successfully', async () => {
     const existing = new Product({
-      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
     });
     mockProductRepo.findById.mockResolvedValue(existing);
     mockProductRepo.update.mockImplementation(async (p) => p);
@@ -46,7 +47,7 @@ describe('UpdateProductUseCase', () => {
 
   it('should validate promo price rules', async () => {
     const existing = new Product({
-      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
     });
     mockProductRepo.findById.mockResolvedValue(existing);
 
@@ -57,7 +58,7 @@ describe('UpdateProductUseCase', () => {
 
   it('should throw if changing to invalid category', async () => {
     const existing = new Product({
-      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
     });
     mockProductRepo.findById.mockResolvedValue(existing);
     mockCategoryRepo.findById.mockResolvedValue(null);
@@ -68,7 +69,7 @@ describe('UpdateProductUseCase', () => {
 
   it('should throw if promo ends at is set without promo price', async () => {
     const existing = new Product({
-      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
     });
     mockProductRepo.findById.mockResolvedValue(existing);
 
@@ -76,4 +77,3 @@ describe('UpdateProductUseCase', () => {
       .rejects.toThrow('Promo ends at requires promo price cents to be defined');
   });
 });
-
