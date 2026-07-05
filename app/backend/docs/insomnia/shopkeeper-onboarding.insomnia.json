@@ -1,0 +1,295 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-07-05T01:50:41Z",
+  "__export_source": "pedeaqui-backend",
+  "resources": [
+    {
+      "_id": "wrk_pedeaqui_shopkeeper_onboarding",
+      "parentId": null,
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "name": "PedeAqui - Shopkeeper Onboarding",
+      "description": "Fluxo principal para testar criacao de loja: signup, login, tenant, store e consulta publica.",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_pedeaqui_shopkeeper_onboarding",
+      "parentId": "wrk_pedeaqui_shopkeeper_onboarding",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "access_token": "",
+        "email": "lojista-teste-insomnia-001@example.com",
+        "password": "TestPass@123",
+        "profile_document": "52998224725",
+        "tenant_document": "33683111000107",
+        "store_slug": "loja-teste-insomnia-001"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "access_token",
+          "email",
+          "password",
+          "profile_document",
+          "tenant_document",
+          "store_slug"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1783216241000,
+      "_type": "environment"
+    },
+    {
+      "_id": "fld_onboarding_flow",
+      "parentId": "wrk_pedeaqui_shopkeeper_onboarding",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "name": "Criacao de Loja",
+      "description": "Execute as requests na ordem numerica. Depois do login, copie accessToken para a variavel access_token.",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": 1783216241000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "req_health_check",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/",
+      "name": "01 - Health check",
+      "description": "Confirma que a API local esta respondendo.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 100,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_signup_shopkeeper",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/auth/signup",
+      "name": "02 - Signup lojista",
+      "description": "Cria usuario e profile com CPF valido.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ _.email }}\",\n  \"password\": \"{{ _.password }}\",\n  \"name\": \"Lojista Teste Insomnia\",\n  \"phone\": \"11999990000\",\n  \"document\": \"{{ _.profile_document }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 200,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_login_shopkeeper",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/auth/login",
+      "name": "03 - Login lojista",
+      "description": "Retorna accessToken e refreshToken. Copie accessToken para a variavel access_token.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ _.email }}\",\n  \"password\": \"{{ _.password }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 300,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_auth_me",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/auth/me",
+      "name": "04 - Validar token",
+      "description": "Opcional. Deve retornar o usuario autenticado se access_token foi preenchido corretamente.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 400,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_register_tenant",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/tenants",
+      "name": "05 - Registrar tenant",
+      "description": "Registra o lojista como tenant e cria subscription trial ativa.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"document\": \"{{ _.tenant_document }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 500,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_tenant_me",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/tenants/me",
+      "name": "06 - Consultar tenant",
+      "description": "Opcional. Confirma que o tenant atual existe.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 600,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_create_store",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/stores",
+      "name": "07 - Criar loja",
+      "description": "Cria a loja do tenant autenticado. Nao envie tenantId; ele vem do JWT.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"slug\": \"{{ _.store_slug }}\",\n  \"storeName\": \"Loja Teste Insomnia\",\n  \"horarioAbertura\": \"08:00\",\n  \"horarioFechamento\": \"18:00\",\n  \"endereco\": \"Rua Teste, 100\",\n  \"whatsappNumber\": \"11999990001\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 700,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_store_public",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/stores/{{ _.store_slug }}",
+      "name": "08 - Consultar loja publica",
+      "description": "Consulta publica por slug da loja criada.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 800,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    }
+  ]
+}
