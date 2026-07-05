@@ -61,6 +61,10 @@ export class SupabaseStoreRepository implements IStoreRepository {
       .select()
       .single();
 
+    if (error?.code === '23505' && error.message.includes('stores_slug_key')) {
+      throw new Error('Conflict: Store with this slug already exists');
+    }
+
     if (error) {
       throw new Error(`Failed to create store: ${error.message}`);
     }
