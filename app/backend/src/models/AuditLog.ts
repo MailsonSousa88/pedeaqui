@@ -15,7 +15,8 @@ export type AuditAction =
 
 export interface IAuditLogProps {
   id: string;
-  adminId: string;
+  adminId: string | null;
+  tenantId: string | null;
   action: AuditAction;
   targetTable: string;
   targetId: string;
@@ -25,7 +26,8 @@ export interface IAuditLogProps {
 
 export class AuditLog {
   public readonly id: string;
-  public readonly adminId: string;
+  public readonly adminId: string | null;
+  public readonly tenantId: string | null;
   public readonly action: AuditAction;
   public readonly targetTable: string;
   public readonly targetId: string;
@@ -35,6 +37,7 @@ export class AuditLog {
   constructor(props: IAuditLogProps) {
     this.id = props.id;
     this.adminId = props.adminId;
+    this.tenantId = props.tenantId;
     this.action = props.action;
     this.targetTable = props.targetTable;
     this.targetId = props.targetId;
