@@ -1,6 +1,6 @@
 # ADR 003: Preparação da Infraestrutura para Integração com Stripe
 
-**Status**: Aceito  
+**Status**: Proposto  
 **Data**: 2026-07-06
 
 ## Contexto
