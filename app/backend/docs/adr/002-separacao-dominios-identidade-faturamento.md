@@ -1,6 +1,6 @@
 # ADR 002: Separação de Domínios - Identidade e Faturamento (Bounded Contexts)
 
-**Status**: Aceito
+**Status**: Proposto
 **Data**: 2026-06-22
 
 ## Contexto
