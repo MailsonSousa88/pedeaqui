@@ -30,7 +30,7 @@ export class StripeProvider implements IStripeProvider {
         },
       ],
       client_reference_id: tenantId,
-      success_url: process.env.STRIPE_SUCCESS_URL || 'http://localhost:3000/success',
+      success_url: process.env.STRIPE_SUCCESS_URL || '/success',
       cancel_url: process.env.STRIPE_CANCEL_URL || 'http://localhost:3000/cancel',
     });
 
