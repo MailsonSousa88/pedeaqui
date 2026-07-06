@@ -14,7 +14,12 @@ const iconByTab: Record<StorefrontTabKey, typeof Package> = {
   products: Package,
 }
 
-export function StoreTabs() {
+type StoreTabsProps = {
+  activeTab: StorefrontTabKey
+  onTabChange: (tab: StorefrontTabKey) => void
+}
+
+export function StoreTabs({ activeTab, onTabChange }: StoreTabsProps) {
   return (
     <nav
       aria-label="Navegação visual da vitrine"
@@ -22,7 +27,7 @@ export function StoreTabs() {
     >
       {storefrontTabs.map((tab) => {
         const Icon = iconByTab[tab.key]
-        const isActive = tab.key === 'products'
+        const isActive = tab.key === activeTab
 
         return (
           <button
@@ -32,6 +37,7 @@ export function StoreTabs() {
               isActive ? 'text-[#e30507]' : '',
             ].join(' ')}
             key={tab.key}
+            onClick={() => onTabChange(tab.key)}
             type="button"
           >
             <Icon aria-hidden="true" size={20} strokeWidth={2.2} />
