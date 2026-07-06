@@ -1,5 +1,6 @@
 import { useState } from 'react'
 
+import { CategoryManagementPage } from '../../category-management/pages/CategoryManagementPage'
 import { ProductManagementPage } from '../../product-management/pages/ProductManagementPage'
 import { CategoryChips } from '../components/CategoryChips'
 import { EmptyProductsArea } from '../components/EmptyProductsArea'
@@ -12,6 +13,7 @@ import type { StorefrontTabKey } from '../types/storefront'
 export function StorefrontPage() {
   const [activeTab, setActiveTab] = useState<StorefrontTabKey>('products')
   const isProductManagementTab = activeTab === 'add'
+  const isCategoryManagementTab = activeTab === 'categories'
 
   return (
     <main className="min-h-screen bg-[#f5f5f5]">
@@ -23,6 +25,8 @@ export function StorefrontPage() {
 
         {isProductManagementTab ? (
           <ProductManagementPage />
+        ) : isCategoryManagementTab ? (
+          <CategoryManagementPage />
         ) : (
           <>
             <CategoryChips />
