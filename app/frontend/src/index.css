@@ -103,3 +103,9 @@ textarea {
 button {
   cursor: pointer;
 }
+
+/* Remove o botão nativo de mostrar senha do Microsoft Edge */
+input[type='password']::-ms-reveal,
+input[type='password']::-ms-clear {
+  display: none;
+}
