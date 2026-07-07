@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles, X } from 'lucide-react';
 
@@ -13,6 +13,15 @@ import Footer from './shared/components/Footer';
 import HomePage from './features/store/home-page/components/HomePage';
 import type { AppRoute } from './app/routes/types';
 
+// Billing feature imports
+import { useToast } from './features/billing/stripe-status/hooks/useToast';
+import { useBillingRetry } from './features/billing/stripe-status/hooks/useBillingRetry';
+import { useBillingStatus } from './features/billing/stripe-status/hooks/useBillingStatus';
+import RetryOverlay from './features/billing/stripe-status/components/RetryOverlay';
+import ToastContainer from './features/billing/stripe-status/components/ToastContainer';
+import SuccessPage from './features/billing/stripe-status/pages/SuccessPage';
+import FailedPage from './features/billing/stripe-status/pages/FailedPage';
+
 export default function App() {
   const [currentPath, setCurrentPath] = useState<AppRoute>('/');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -21,12 +30,27 @@ export default function App() {
     return saved ? parseInt(saved, 10) : null;
   });
 
-  // Sync virtual routing with browser navigation address to make it feel extremely native
+  // Billing hooks
+  const { status: billingStatus, setStatus: setBillingStatus } = useBillingStatus();
+  const { toasts: billingToasts, addToast: addBillingToast, removeToast: removeBillingToast } = useToast();
+  const { isProcessingRetry, handleRetry } = useBillingRetry({
+    setStatus: setBillingStatus,
+    onProcessing: () =>
+      addBillingToast("info", "Processando pagamento", "Verificando saldo e tentando novamente via Stripe..."),
+    onSuccess: () =>
+      addBillingToast("success", "Pagamento concluído!", "Sua assinatura básica do PedeAqui foi ativada."),
+  });
+
+  // Sync virtual routing with browser navigation
   useEffect(() => {
-    // Keep user on the functional Home screen (Início)
-    setCurrentPath('/');
-    if (window.location.pathname !== '/') {
-      window.history.replaceState(null, '', '/');
+    const path = window.location.pathname;
+    if (path === '/billing/success' || path === '/billing/failed') {
+      setCurrentPath(path as AppRoute);
+    } else {
+      setCurrentPath('/');
+      if (path !== '/') {
+        window.history.replaceState(null, '', '/');
+      }
     }
   }, []);
 
@@ -55,6 +79,13 @@ export default function App() {
       return;
     }
 
+    if (route === '/billing/success' || route === '/billing/failed') {
+      setCurrentPath(route);
+      window.history.pushState(null, '', route);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
     setCurrentPath('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -63,36 +94,79 @@ export default function App() {
     triggerToast('🛒 Carrinho: Esta é uma simulação de vitrine. Os pedidos são finalizados diretamente no WhatsApp da loja parceira!');
   };
 
-  return (
-    <div className="min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark pt-[72px]">
+  const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
 
-      {/* Header */}
-      <Header currentPath={currentPath} onNavigate={handleNavigate} />
+  return (
+    <div className="min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark pt-[56px]">
+
+      {/* Header — minimal on billing pages (logo only, no nav buttons) */}
+      <Header currentPath={currentPath} onNavigate={handleNavigate} onCartClick={handleCartClick} minimal={isBillingPage} />
 
       {/* Main content container with smooth page Transitions */}
       <main className="flex-grow">
         <AnimatePresence mode="wait">
-          <motion.div
-            key="home"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <HomePage onNavigate={handleNavigate} />
-          </motion.div>
+          {isBillingPage ? (
+            <motion.div
+              key={currentPath}
+              initial={{ opacity: 0, x: currentPath === '/billing/success' ? -10 : 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: currentPath === '/billing/success' ? 10 : -10 }}
+              transition={{ duration: 0.3 }}
+              className="relative"
+            >
+              <RetryOverlay isVisible={isProcessingRetry} />
+              {currentPath === '/billing/success' ? (
+                <SuccessPage
+                  onConfigureStore={() =>
+                    addBillingToast(
+                      "success",
+                      "Configuração de Loja",
+                      "Redirecionando para a área de integração e configuração..."
+                    )
+                  }
+                  onGoToDashboard={() =>
+                    addBillingToast("info", "Carregando Painel", "Redirecionando para o dashboard central do PedeAqui...")
+                  }
+                />
+              ) : (
+                <FailedPage
+                  onTryAgain={handleRetry}
+                  onBackToPlans={() =>
+                    addBillingToast(
+                      "info",
+                      "Voltando aos planos",
+                      "Redirecionando para a seleção de planos de assinatura..."
+                    )
+                  }
+                />
+              )}
+              <ToastContainer toasts={billingToasts} onRemove={removeBillingToast} />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="home"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <HomePage onNavigate={handleNavigate} />
+            </motion.div>
+          )}
         </AnimatePresence>
       </main>
 
-      {/* Footer */}
-      <Footer />
+      {/* Footer — hidden on billing pages which have their own layout */}
+      {!isBillingPage && <Footer />}
 
-      {/* Persistent Mobile Bottom Navigation */}
-      <BottomNav
-        currentPath={currentPath}
-        onNavigate={handleNavigate}
-        onCartClick={handleCartClick}
-      />
+      {/* Persistent Mobile Bottom Navigation — hidden on billing pages */}
+      {!isBillingPage && (
+        <BottomNav
+          currentPath={currentPath}
+          onNavigate={handleNavigate}
+          onCartClick={handleCartClick}
+        />
+      )}
 
       {/* Elegant Toast Notifications using motion */}
       <AnimatePresence>
@@ -122,3 +196,4 @@ export default function App() {
     </div>
   );
 }
+

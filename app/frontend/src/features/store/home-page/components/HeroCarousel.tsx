@@ -4,10 +4,10 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, TrendingUp, DollarSign, Smartphone, Plus, BarChart3, Clock, CheckCircle2, ShoppingBag, Truck } from 'lucide-react';
 import { SLIDES } from '../services/storeService';
-import { AppRoute } from '../../../../app/routes/types';
+import type { AppRoute } from '../../../../app/routes/types';
 
 interface HeroCarouselProps {
   onNavigate: (route: AppRoute, planId?: number) => void;
@@ -260,7 +260,7 @@ export default function HeroCarousel({ onNavigate }: HeroCarouselProps) {
                 <span className="text-primary font-sans font-extrabold text-xs tracking-widest uppercase bg-primary/10 px-3 py-1 rounded-full w-fit">
                   {SLIDES[currentIndex].subtitle}
                 </span>
-                
+
                 <h1 className="font-display font-extrabold text-4xl sm:text-5xl lg:text-6xl text-slate-900 tracking-tight leading-[1.1]">
                   {SLIDES[currentIndex].title.split('em ').map((part, index) => {
                     if (index === 1) {
@@ -318,7 +318,7 @@ export default function HeroCarousel({ onNavigate }: HeroCarouselProps) {
               <div className="flex items-center justify-center relative min-h-[300px] md:min-h-0">
                 <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-secondary/5 rounded-3xl -rotate-1 scale-95" />
                 <div className="absolute inset-0 bg-gradient-to-bl from-slate-100 to-white/10 rounded-3xl rotate-1 scale-98" />
-                
+
                 {/* Visual content */}
                 <div className="relative z-10 w-full">
                   {renderIllustration(SLIDES[currentIndex].illustrationType)}
@@ -336,9 +336,8 @@ export default function HeroCarousel({ onNavigate }: HeroCarouselProps) {
               <button
                 key={slide.id}
                 onClick={() => handleDotClick(index)}
-                className={`transition-all duration-300 rounded-full h-2.5 ${
-                  currentIndex === index ? 'w-9 bg-primary' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
-                }`}
+                className={`transition-all duration-300 rounded-full h-2.5 ${currentIndex === index ? 'w-9 bg-primary' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+                  }`}
                 aria-label={`Ir para slide ${index + 1}`}
               />
             ))}

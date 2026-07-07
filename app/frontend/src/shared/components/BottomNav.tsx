@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { Home, Store, ShoppingCart, LayoutGrid } from 'lucide-react';
-import { AppRoute } from '../../app/routes/types';
+import type { AppRoute } from '../../app/routes/types';
 
 interface BottomNavProps {
   currentPath: AppRoute;
