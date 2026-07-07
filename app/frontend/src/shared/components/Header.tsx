@@ -31,13 +31,12 @@ export default function Header({ currentPath, onNavigate, onCartClick }: HeaderP
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${isScrolled
           ? 'bg-white/95 backdrop-blur-md shadow-sm border-slate-200/80 py-3'
           : 'bg-white border-outline-variant py-4'
-      }`}
+        }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between">
         {/* Logo */}
         <div
           onClick={handleLogoClick}
@@ -62,11 +61,10 @@ export default function Header({ currentPath, onNavigate, onCartClick }: HeaderP
                 onNavigate('/');
               }
             }}
-            className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${
-              currentPath === '/'
+            className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${currentPath === '/'
                 ? 'text-primary'
                 : 'text-on-surface-variant hover:text-primary'
-            }`}
+              }`}
           >
             <Home size={16} />
             Início
@@ -103,7 +101,7 @@ export default function Header({ currentPath, onNavigate, onCartClick }: HeaderP
           >
             Entrar
           </button>
-          
+
           <button
             onClick={() => onNavigate('/register', 1)}
             className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
