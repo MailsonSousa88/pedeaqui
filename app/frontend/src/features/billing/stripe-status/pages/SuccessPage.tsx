@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
 import { Check, ShieldCheck, Store } from "lucide-react";
-import Logo from "../../../../shared/components/Logo";
 import type { SuccessPageProps } from "../types/billing.types";
 
 export default function SuccessPage({
@@ -17,13 +16,9 @@ export default function SuccessPage({
       transition={{ duration: 0.5, ease: "easeOut" }}
       className="w-full min-h-screen bg-white relative flex flex-col font-sans"
     >
-        {/* Fixed Header */}
-        <div className="fixed top-0 left-0 right-0 w-full px-6 sm:px-10 py-5 border-b border-gray-100 flex items-center justify-between z-30 bg-white/90 backdrop-blur-md">
-          <Logo className="h-9 object-contain" />
-        </div>
 
         {/* Content Body with decorative elements mirroring registration layout */}
-        <div className="flex-1 w-full relative flex items-center justify-center pt-[calc(69px+2.5rem)] pb-10 px-4 sm:px-10 bg-[#fbfbfd]">
+        <div className="flex-1 w-full relative flex items-center justify-center pt-10 pb-10 px-4 sm:px-10 bg-[#fbfbfd]">
           
           {/* Decorative Dot Grid Top Right */}
           <div className="absolute top-6 right-10 opacity-30 pointer-events-none hidden md:block">

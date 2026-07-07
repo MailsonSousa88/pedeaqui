@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles, X } from 'lucide-react';
 
@@ -97,10 +97,10 @@ export default function App() {
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
 
   return (
-    <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${isBillingPage ? '' : 'pt-[72px]'}`}>
+    <div className="min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark pt-[56px]">
 
-      {/* Header — hidden on billing pages which have their own internal header */}
-      {!isBillingPage && <Header currentPath={currentPath} onNavigate={handleNavigate} onCartClick={handleCartClick} />}
+      {/* Header — minimal on billing pages (logo only, no nav buttons) */}
+      <Header currentPath={currentPath} onNavigate={handleNavigate} onCartClick={handleCartClick} minimal={isBillingPage} />
 
       {/* Main content container with smooth page Transitions */}
       <main className="flex-grow">
