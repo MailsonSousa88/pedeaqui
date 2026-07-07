@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Home, Store, LayoutGrid } from 'lucide-react';
-import { AppRoute } from '../../app/routes/types';
+import type { AppRoute } from '../../app/routes/types';
 
 interface HeaderProps {
   currentPath: AppRoute;
