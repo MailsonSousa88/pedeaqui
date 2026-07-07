@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Slide, Feature, Plan } from '../types';
+import type { Slide, Feature, Plan } from '../types';
 
 export const SLIDES: Slide[] = [
   {

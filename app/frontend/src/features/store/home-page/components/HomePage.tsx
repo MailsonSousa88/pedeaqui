@@ -7,7 +7,7 @@ import React from 'react';
 import HeroCarousel from './HeroCarousel';
 import Features from './Features';
 import Plans from './Plans';
-import { AppRoute } from '../../../../app/routes/types';
+import type { AppRoute } from '../../../../app/routes/types';
 
 interface HomePageProps {
   onNavigate: (route: AppRoute, planId?: number) => void;
