@@ -100,7 +100,7 @@ export default function App() {
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${isBillingPage ? '' : 'pt-[72px]'}`}>
 
       {/* Header — hidden on billing pages which have their own internal header */}
-      {!isBillingPage && <Header currentPath={currentPath} onNavigate={handleNavigate} />}
+      {!isBillingPage && <Header currentPath={currentPath} onNavigate={handleNavigate} onCartClick={handleCartClick} />}
 
       {/* Main content container with smooth page Transitions */}
       <main className="flex-grow">

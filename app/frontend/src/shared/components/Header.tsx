@@ -4,15 +4,16 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Home, Store, LayoutGrid } from 'lucide-react';
+import { Home, Store, ShoppingCart, LayoutGrid } from 'lucide-react';
 import type { AppRoute } from '../../app/routes/types';
 
 interface HeaderProps {
   currentPath: AppRoute;
   onNavigate: (route: AppRoute, planId?: number) => void;
+  onCartClick: () => void;
 }
 
-export default function Header({ currentPath, onNavigate }: HeaderProps) {
+export default function Header({ currentPath, onNavigate, onCartClick }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -77,7 +78,15 @@ export default function Header({ currentPath, onNavigate }: HeaderProps) {
             <Store size={16} />
             Lojas
           </div>
-          
+
+          <button
+            onClick={onCartClick}
+            className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-500 hover:text-primary transition-colors cursor-pointer"
+          >
+            <ShoppingCart size={16} />
+            Carrinho
+          </button>
+
           <div
             className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none"
           >
