@@ -6,7 +6,7 @@
 import React from 'react';
 import { CheckCircle2, Clock, Gem, Star, ShoppingBag, ShieldCheck } from 'lucide-react';
 import { PLANS } from '../services/storeService';
-import { AppRoute } from '../../../../app/routes/types';
+import type { AppRoute } from '../../../../app/routes/types';
 
 interface PlansProps {
   onNavigate: (route: AppRoute, planId?: number) => void;
