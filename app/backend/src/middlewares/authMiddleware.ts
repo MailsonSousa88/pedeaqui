@@ -5,6 +5,7 @@ export interface AuthenticatedRequest extends Request {
   user?: {
     id: string;
     email?: string;
+    tenantId: string;
   };
 }
 
@@ -33,6 +34,7 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
     req.user = {
       id: data.user.id,
       email: data.user.email,
+      tenantId: data.user.id,
     };
 
     next();

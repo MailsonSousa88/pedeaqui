@@ -99,3 +99,39 @@ Para que possamos encerrar este módulo com perfeição e passá-lo para a defin
 2. **Revisar Tratamento de Erro do Supabase**: Deseja padronizar as respostas de erro do Supabase antes de repassá-las ao usuário (ex: tradução de mensagens em inglês como "Email not confirmed")?
 3. **Testes de Integração (Consolidação)**: Conforme o `AGENTS.md`, testes de integração (`supertest` + banco isolado) só devem ser escritos na **Fase de Consolidação**. 
    - **Ação necessária**: Após você revisar os contratos e aprovar este TDD, você precisa me dar o comando para transacionar para a Fase de Consolidação (`consolidar módulo`). A partir daí, irei gerar os testes de API (E2E) para fechar o ciclo da funcionalidade.
+
+---
+
+## 8. Contexto: Fluxo Principal do Lojista (Onboarding)
+
+> **Adicionado em:** 2026-07-02 — referência ao plano de onboarding aprovado.
+
+O módulo de autenticação (`SignUpUseCase` + `SupabaseAuthRepository` + `authMiddleware`) é o **ponto de entrada obrigatório** do fluxo de onboarding do lojista. A sequência completa aprovada para entrega é:
+
+```
+[Auth] POST /api/auth/signup        → SignUpUseCase         (cria Profile com CPF)
+[Auth] PATCH /api/profile/me        → UpdateProfileUseCase  (novo — corrige dados do perfil)
+[Tenant] POST /api/tenants          → RegisterTenantUseCase (cria Tenant + subscription de trial)
+[Store] POST /api/stores            → CreateStoreUseCase    (cria Loja 1:1 + categoria "Todos")
+[Product] POST /api/products        → CreateProductUseCase  (insere produto com category_id obrigatório)
+```
+
+### Decisões aprovadas que impactam Auth
+
+| Decisão | Detalhe |
+|---|---|
+| **Trial automático** | `RegisterTenantUseCase` criará uma `subscription` com `status='active'` e `ends_at = now() + 30 dias` ao registrar o tenant. `plan_id` será tornado nullable via migration. Isso desbloqueia `CreateStoreUseCase` sem quebrar sua guarda de subscription. |
+| **UpdateProfileUseCase** | Novo Use Case e rota `PATCH /api/profile/me`. Está no escopo desta entrega (confirmado em 2026-07-02). |
+
+### Decisão Pendente: Escopo do Teste de Fluxo
+
+> **Status: Em discussão** — ver Seção de Bibliotecas no plano de onboarding.
+
+Há duas opções em avaliação para o teste que valida o fluxo completo:
+
+| Opção | Descrição | Fase |
+|---|---|---|
+| **A — Teste unitário orquestrado** | `shopkeeper-onboarding.flow.spec.ts` executa os 4 Use Cases em sequência com mocks compartilhados. Nenhuma conexão com banco. | Exploração ✅ |
+| **B — Supertest + banco real** | Teste de integração E2E chamando os endpoints HTTP contra o Supabase local. Requer `consolidar módulo`. | Consolidação ⚠️ |
+
+A escolha entre A e B está **vinculada à decisão de bibliotecas** (ver discussão em andamento). A Opção B exige `@faker-js/faker` para geração de dados únicos por execução e ambiente de banco isolado configurado.
