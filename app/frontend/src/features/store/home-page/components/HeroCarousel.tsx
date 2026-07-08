@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import { Fragment, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, TrendingUp, DollarSign, Smartphone, Plus, BarChart3, Clock, CheckCircle2, ShoppingBag, Truck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, TrendingUp, DollarSign, Plus, Clock, CheckCircle2, ShoppingBag, Truck } from 'lucide-react';
 import { SLIDES } from '../services/storeService';
 import type { AppRoute } from '../../../../app/routes/types';
 
@@ -265,25 +265,25 @@ export default function HeroCarousel({ onNavigate }: HeroCarouselProps) {
                   {SLIDES[currentIndex].title.split('em ').map((part, index) => {
                     if (index === 1) {
                       return (
-                        <React.Fragment key={index}>
+                        <Fragment key={index}>
                           em <span className="text-primary">{part}</span>
-                        </React.Fragment>
+                        </Fragment>
                       );
                     }
                     if (part.includes('com ')) {
                       const splitCom = part.split('com ');
                       return (
-                        <React.Fragment key={index}>
+                        <Fragment key={index}>
                           {splitCom[0]} com <span className="text-secondary">{splitCom[1]}</span>
-                        </React.Fragment>
+                        </Fragment>
                       );
                     }
                     if (part.includes('que ')) {
                       const splitQue = part.split('que ');
                       return (
-                        <React.Fragment key={index}>
+                        <Fragment key={index}>
                           {splitQue[0]} que <span className="text-primary">{splitQue[1]}</span>
-                        </React.Fragment>
+                        </Fragment>
                       );
                     }
                     return part;

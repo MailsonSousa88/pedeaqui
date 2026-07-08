@@ -27,10 +27,9 @@ const weekdayOrder = new Map<Weekday, number>(
 )
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/
-const brazilianWhatsappPattern = /^\(\d{2}\) 9\d{4}-\d{4}$/
 
 const requiredText = (fieldName: string) =>
-  z.string().trim().min(1, `${fieldName} é obrigatório.`)
+  z.string().trim().min(1, `${fieldName} e obrigatorio.`)
 
 const timeToMinutes = (time: string) => {
   const [hours = '0', minutes = '0'] = time.split(':')
@@ -50,11 +49,11 @@ const businessHoursSchema = z
   .object({
     startDay: requiredWeekdaySchema,
     endDay: requiredWeekdaySchema,
-    opensAt: requiredText('Horário de abertura').regex(
+    opensAt: requiredText('Horario de abertura').regex(
       timePattern,
       'Informe a abertura no formato HH:mm.',
     ),
-    closesAt: requiredText('Horário de fechamento').regex(
+    closesAt: requiredText('Horario de fechamento').regex(
       timePattern,
       'Informe o fechamento no formato HH:mm.',
     ),
@@ -80,18 +79,14 @@ const businessHoursSchema = z
         code: 'custom',
         path: ['closesAt'],
         message:
-          'O horário de fechamento deve ser posterior ao horário de abertura. Atendimento atravessando meia-noite não é aceito no MVP.',
+          'O horario de fechamento deve ser posterior ao horario de abertura. Atendimento atravessando meia-noite nao e aceito no MVP.',
       })
     }
   })
 
 export const identityStepSchema = z.object({
   storeName: requiredText('Nome da loja'),
-  contactEmail: requiredText('E-mail de contato').email('Informe um e-mail válido.'),
-  whatsapp: requiredText('Número de WhatsApp').regex(
-    brazilianWhatsappPattern,
-    'Informe um WhatsApp brasileiro no formato (11) 91234-5678.',
-  ),
+  contactEmail: requiredText('E-mail de contato').email('Informe um e-mail valido.'),
   businessHours: businessHoursSchema,
 })
 
@@ -101,7 +96,7 @@ export const addressStepSchema = z.object({
     city: requiredText('Cidade'),
     neighborhood: requiredText('Bairro'),
     street: requiredText('Rua'),
-    number: requiredText('Número residencial ou comercial'),
+    number: requiredText('Numero residencial ou comercial'),
   }),
 })
 
@@ -109,20 +104,16 @@ export const storePreconfigurationFormSchema = identityStepSchema.merge(addressS
 
 export const storePreconfigurationPayloadSchema = z.object({
   storeName: requiredText('Nome da loja'),
-  contactEmail: requiredText('E-mail de contato').email('Informe um e-mail válido.'),
-  whatsapp: requiredText('Número de WhatsApp').regex(
-    brazilianWhatsappPattern,
-    'Informe um WhatsApp brasileiro no formato (11) 91234-5678.',
-  ),
+  contactEmail: requiredText('E-mail de contato').email('Informe um e-mail valido.'),
   businessHours: z
     .object({
       startDay: weekdaySchema,
       endDay: weekdaySchema,
-      opensAt: requiredText('Horário de abertura').regex(
+      opensAt: requiredText('Horario de abertura').regex(
         timePattern,
         'Informe a abertura no formato HH:mm.',
       ),
-      closesAt: requiredText('Horário de fechamento').regex(
+      closesAt: requiredText('Horario de fechamento').regex(
         timePattern,
         'Informe o fechamento no formato HH:mm.',
       ),
@@ -144,7 +135,7 @@ export const storePreconfigurationPayloadSchema = z.object({
           code: 'custom',
           path: ['closesAt'],
           message:
-            'O horário de fechamento deve ser posterior ao horário de abertura. Atendimento atravessando meia-noite não é aceito no MVP.',
+            'O horario de fechamento deve ser posterior ao horario de abertura. Atendimento atravessando meia-noite nao e aceito no MVP.',
         })
       }
     }),

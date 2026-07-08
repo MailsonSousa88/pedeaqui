@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sparkles, X } from 'lucide-react';
 
@@ -11,9 +11,11 @@ import Header from './shared/components/Header';
 import BottomNav from './shared/components/BottomNav';
 import Footer from './shared/components/Footer';
 import HomePage from './features/store/home-page/components/HomePage';
-import type { AppRoute } from './app/routes/types';
-
-// Billing feature imports
+import { LoginPage } from './features/auth/login/pages/LoginPage';
+import { RegisterPage } from './features/auth/register/pages/RegisterPage';
+import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
+import { localStores } from './features/store/store-list/data/localStores';
+import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
 import { useToast } from './features/billing/stripe-status/hooks/useToast';
 import { useBillingRetry } from './features/billing/stripe-status/hooks/useBillingRetry';
 import { useBillingStatus } from './features/billing/stripe-status/hooks/useBillingStatus';
@@ -21,37 +23,47 @@ import RetryOverlay from './features/billing/stripe-status/components/RetryOverl
 import ToastContainer from './features/billing/stripe-status/components/ToastContainer';
 import SuccessPage from './features/billing/stripe-status/pages/SuccessPage';
 import FailedPage from './features/billing/stripe-status/pages/FailedPage';
+import type { AppRoute } from './app/routes/types';
+
+const getRouteFromLocation = (): AppRoute => {
+  const path = window.location.pathname;
+
+  if (
+    path === '/login' ||
+    path === '/register' ||
+    path === '/stores' ||
+    path === '/store-preconfiguration' ||
+    path === '/billing/success' ||
+    path === '/billing/failed'
+  ) {
+    return path;
+  }
+
+  return '/';
+};
 
 export default function App() {
-  const [currentPath, setCurrentPath] = useState<AppRoute>('/');
+  const [currentPath, setCurrentPath] = useState<AppRoute>(getRouteFromLocation);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
-  const [selectedPlanId, setSelectedPlanId] = useState<number | null>(() => {
+  const [, setSelectedPlanId] = useState<number | null>(() => {
     const saved = localStorage.getItem('selectedPlanId');
     return saved ? parseInt(saved, 10) : null;
   });
 
-  // Billing hooks
   const { status: billingStatus, setStatus: setBillingStatus } = useBillingStatus();
   const { toasts: billingToasts, addToast: addBillingToast, removeToast: removeBillingToast } = useToast();
   const { isProcessingRetry, handleRetry } = useBillingRetry({
     setStatus: setBillingStatus,
     onProcessing: () =>
-      addBillingToast("info", "Processando pagamento", "Verificando saldo e tentando novamente via Stripe..."),
+      addBillingToast('info', 'Processando pagamento', 'Verificando saldo e tentando novamente via Stripe...'),
     onSuccess: () =>
-      addBillingToast("success", "Pagamento concluído!", "Sua assinatura básica do PedeAqui foi ativada."),
+      addBillingToast('success', 'Pagamento concluido!', 'Sua assinatura basica do PedeAqui foi ativada.'),
   });
 
-  // Sync virtual routing with browser navigation
   useEffect(() => {
-    const path = window.location.pathname;
-    if (path === '/billing/success' || path === '/billing/failed') {
-      setCurrentPath(path as AppRoute);
-    } else {
-      setCurrentPath('/');
-      if (path !== '/') {
-        window.history.replaceState(null, '', '/');
-      }
-    }
+    const handlePopState = () => setCurrentPath(getRouteFromLocation());
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const triggerToast = (message: string) => {
@@ -61,106 +73,135 @@ export default function App() {
     }, 4500);
   };
 
-  const handleNavigate = (route: AppRoute, planId?: number) => {
-    if (route === '/login') {
-      triggerToast('🔐 Área de Login: A plataforma administrativa para lojistas estará disponível em breve no lançamento oficial!');
-      return;
-    }
-    if (route === '/register') {
-      const activePlanId = planId || 1; // Default to basic plan (ID 1) since it's currently the only active plan
-      setSelectedPlanId(activePlanId);
-      localStorage.setItem('selectedPlanId', activePlanId.toString());
-
-      triggerToast('🚀 Cadastro de Lojas: O assistente de configuração e criação de novas vitrines estará disponível em breve no lançamento oficial!');
-      return;
-    }
-    if (route === '/stores') {
-      triggerToast('🛍️ Lojas Parceiras: O catálogo integrado de parceiros estará disponível em breve no lançamento oficial!');
-      return;
-    }
-
-    if (route === '/billing/success' || route === '/billing/failed') {
-      setCurrentPath(route);
-      window.history.pushState(null, '', route);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    setCurrentPath('/');
+  const navigateTo = (route: AppRoute) => {
+    setCurrentPath(route);
+    window.history.pushState(null, '', route);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleCartClick = () => {
-    triggerToast('🛒 Carrinho: Esta é uma simulação de vitrine. Os pedidos são finalizados diretamente no WhatsApp da loja parceira!');
+  const handleNavigate = (route: AppRoute, planId?: number) => {
+    if (route === '/register') {
+      const activePlanId = planId || 1;
+      setSelectedPlanId(activePlanId);
+      localStorage.setItem('selectedPlanId', activePlanId.toString());
+    }
+
+    navigateTo(route);
   };
 
+  const handleCartClick = () => {
+    triggerToast('Carrinho: esta e uma simulacao de vitrine. Os pedidos sao finalizados diretamente no WhatsApp da loja parceira.');
+  };
+
+  const renderPage = () => {
+    if (currentPath === '/login') {
+      return <LoginPage onNavigate={handleNavigate} />;
+    }
+
+    if (currentPath === '/register') {
+      return <RegisterPage onNavigate={handleNavigate} />;
+    }
+
+    if (currentPath === '/stores') {
+      return (
+        <StoreListPage
+          state={{ status: 'success', stores: localStores }}
+          onSearchChange={() => undefined}
+          onSelectStore={() => {
+            triggerToast('Vitrine da loja: essa tela sera conectada em uma proxima etapa.');
+          }}
+          onRetry={() => undefined}
+        />
+      );
+    }
+
+    if (currentPath === '/store-preconfiguration') {
+      return (
+        <StorePreconfigurationPage
+          onBackToRegister={() => handleNavigate('/register')}
+          onSuccess={() => {
+            triggerToast('Pre-registro concluido. A proxima etapa sera conectada em seguida.');
+          }}
+        />
+      );
+    }
+
+    if (currentPath === '/billing/success') {
+      return (
+        <div className="relative">
+          <RetryOverlay isVisible={isProcessingRetry} />
+          <SuccessPage
+            onConfigureStore={() =>
+              addBillingToast(
+                'success',
+                'Configuracao de Loja',
+                'Redirecionando para a area de integracao e configuracao...',
+              )
+            }
+            onGoToDashboard={() =>
+              addBillingToast('info', 'Carregando Painel', 'Redirecionando para o dashboard central do PedeAqui...')
+            }
+          />
+          <ToastContainer toasts={billingToasts} onRemove={removeBillingToast} />
+        </div>
+      );
+    }
+
+    if (currentPath === '/billing/failed') {
+      return (
+        <div className="relative">
+          <RetryOverlay isVisible={isProcessingRetry} />
+          <FailedPage
+            onTryAgain={handleRetry}
+            onBackToPlans={() =>
+              addBillingToast(
+                'info',
+                'Voltando aos planos',
+                'Redirecionando para a selecao de planos de assinatura...',
+              )
+            }
+          />
+          <ToastContainer toasts={billingToasts} onRemove={removeBillingToast} />
+        </div>
+      );
+    }
+
+    return <HomePage onNavigate={handleNavigate} />;
+  };
+
+  const isHome = currentPath === '/';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
+  const showHeader = isHome || isBillingPage;
 
   return (
-    <div className="min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark pt-[56px]">
+    <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>
 
-      {/* Header — minimal on billing pages (logo only, no nav buttons) */}
-      <Header currentPath={currentPath} onNavigate={handleNavigate} onCartClick={handleCartClick} minimal={isBillingPage} />
+      {showHeader && (
+        <Header
+          currentPath={currentPath}
+          onNavigate={handleNavigate}
+          onCartClick={handleCartClick}
+          minimal={isBillingPage}
+        />
+      )}
 
-      {/* Main content container with smooth page Transitions */}
       <main className="flex-grow">
         <AnimatePresence mode="wait">
-          {isBillingPage ? (
-            <motion.div
-              key={currentPath}
-              initial={{ opacity: 0, x: currentPath === '/billing/success' ? -10 : 10 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: currentPath === '/billing/success' ? 10 : -10 }}
-              transition={{ duration: 0.3 }}
-              className="relative"
-            >
-              <RetryOverlay isVisible={isProcessingRetry} />
-              {currentPath === '/billing/success' ? (
-                <SuccessPage
-                  onConfigureStore={() =>
-                    addBillingToast(
-                      "success",
-                      "Configuração de Loja",
-                      "Redirecionando para a área de integração e configuração..."
-                    )
-                  }
-                  onGoToDashboard={() =>
-                    addBillingToast("info", "Carregando Painel", "Redirecionando para o dashboard central do PedeAqui...")
-                  }
-                />
-              ) : (
-                <FailedPage
-                  onTryAgain={handleRetry}
-                  onBackToPlans={() =>
-                    addBillingToast(
-                      "info",
-                      "Voltando aos planos",
-                      "Redirecionando para a seleção de planos de assinatura..."
-                    )
-                  }
-                />
-              )}
-              <ToastContainer toasts={billingToasts} onRemove={removeBillingToast} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="home"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <HomePage onNavigate={handleNavigate} />
-            </motion.div>
-          )}
+          <motion.div
+            key={`${currentPath}-${billingStatus}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderPage()}
+          </motion.div>
         </AnimatePresence>
       </main>
 
-      {/* Footer — hidden on billing pages which have their own layout */}
-      {!isBillingPage && <Footer />}
+      {isHome && <Footer />}
 
-      {/* Persistent Mobile Bottom Navigation — hidden on billing pages */}
-      {!isBillingPage && (
+      {isHome && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}
@@ -168,7 +209,6 @@ export default function App() {
         />
       )}
 
-      {/* Elegant Toast Notifications using motion */}
       <AnimatePresence>
         {toastMessage && (
           <motion.div
@@ -196,4 +236,3 @@ export default function App() {
     </div>
   );
 }
-

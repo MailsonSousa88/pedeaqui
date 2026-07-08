@@ -1,5 +1,5 @@
-import { CalendarDays, Clock, Mail, Phone, Store } from 'lucide-react'
-import type { ChangeEvent, MouseEvent } from 'react'
+import { CalendarDays, Clock, Mail, Store } from 'lucide-react'
+import type { MouseEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 
 import {
@@ -30,35 +30,11 @@ const weekdayOptions: WeekdayOption[] = [
 const describedBy = (fieldId: string, hasError: boolean) =>
   hasError ? `${fieldId}-hint ${fieldId}-error` : `${fieldId}-hint`
 
-const formatBrazilianWhatsapp = (value: string) => {
-  const digits = value.replace(/\D/g, '').slice(0, 11)
-  const areaCode = digits.slice(0, 2)
-  const firstPart = digits.slice(2, 7)
-  const secondPart = digits.slice(7, 11)
-
-  if (digits.length <= 2) {
-    return areaCode ? `(${areaCode}` : ''
-  }
-
-  if (digits.length <= 7) {
-    return `(${areaCode}) ${firstPart}`
-  }
-
-  return `(${areaCode}) ${firstPart}-${secondPart}`
-}
-
 const openNativePicker = (event: MouseEvent<HTMLInputElement>) => {
   event.currentTarget.showPicker?.()
 }
 
 export function IdentityStep({ disabled = false, errors, register }: IdentityStepProps) {
-  const whatsappRegistration = register('whatsapp')
-
-  const handleWhatsappChange = (event: ChangeEvent<HTMLInputElement>) => {
-    event.target.value = formatBrazilianWhatsapp(event.target.value)
-    void whatsappRegistration.onChange(event)
-  }
-
   return (
     <section className="space-y-6" aria-labelledby="identity-step-title">
       <div className="space-y-1">
@@ -66,7 +42,7 @@ export function IdentityStep({ disabled = false, errors, register }: IdentitySte
           Identidade da loja
         </h2>
         <p className="text-sm leading-6 text-gray-500">
-          Preencha os dados usados para identificar e contatar sua loja.
+          Preencha os dados usados para identificar sua loja.
         </p>
       </div>
 
@@ -93,7 +69,7 @@ export function IdentityStep({ disabled = false, errors, register }: IdentitySte
 
         <FormField
           error={errors.contactEmail?.message}
-          hint="Este e-mail será usado como contato principal da loja."
+          hint="Este e-mail sera usado como contato principal da loja."
           htmlFor="contactEmail"
           icon={<Mail aria-hidden="true" size={18} />}
           label="E-mail de contato"
@@ -108,29 +84,6 @@ export function IdentityStep({ disabled = false, errors, register }: IdentitySte
             id="contactEmail"
             placeholder="contato@sualoja.com"
             type="email"
-          />
-        </FormField>
-
-        <FormField
-          error={errors.whatsapp?.message}
-          hint="Digite seu número de WhatsApp brasileiro."
-          htmlFor="whatsapp"
-          icon={<Phone aria-hidden="true" size={18} />}
-          label="Numero de WhatsApp"
-          required
-        >
-          <input
-            {...whatsappRegistration}
-            aria-describedby={describedBy('whatsapp', Boolean(errors.whatsapp))}
-            aria-invalid={Boolean(errors.whatsapp)}
-            className={formFieldInputWithIconClassName}
-            disabled={disabled}
-            id="whatsapp"
-            inputMode="tel"
-            maxLength={15}
-            onChange={handleWhatsappChange}
-            placeholder="(11) 91234-5678"
-            type="tel"
           />
         </FormField>
 

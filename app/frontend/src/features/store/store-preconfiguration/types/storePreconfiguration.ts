@@ -34,7 +34,6 @@ export type StoreAddressFormValues = {
 export type StorePreconfigurationFormValues = {
   storeName: string
   contactEmail: string
-  whatsapp: string
   businessHours: BusinessHoursFormValues
   address: StoreAddressFormValues
 }
@@ -42,7 +41,6 @@ export type StorePreconfigurationFormValues = {
 export type StorePreconfigurationPayload = {
   storeName: string
   contactEmail: string
-  whatsapp: string
   businessHours: {
     startDay: Weekday
     endDay: Weekday

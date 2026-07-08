@@ -4,10 +4,8 @@ import type { SuccessPageProps } from "../types/billing.types";
 
 export default function SuccessPage({
   onConfigureStore,
-  onGoToDashboard,
   planName = "Plano Básico",
   planPrice = "R$ 29,99",
-  billingCycle = "mês"
 }: SuccessPageProps) {
   return (
     <motion.div

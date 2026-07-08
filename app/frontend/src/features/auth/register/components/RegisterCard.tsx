@@ -3,7 +3,11 @@ import { UserRoundPlus } from 'lucide-react'
 import { RegisterForm } from './RegisterForm'
 import { RegisterLegalNotice } from './RegisterLegalNotice'
 
-export function RegisterCard() {
+type RegisterCardProps = {
+  onSuccess?: () => void
+}
+
+export function RegisterCard({ onSuccess }: RegisterCardProps) {
   const shouldReduceMotion = useReducedMotion()
 
   return (
@@ -41,7 +45,7 @@ export function RegisterCard() {
       </div>
 
       <div className="mt-8 md:mt-9">
-        <RegisterForm />
+        <RegisterForm onSuccess={onSuccess} />
       </div>
 
       <div className="mt-6 md:mt-7">

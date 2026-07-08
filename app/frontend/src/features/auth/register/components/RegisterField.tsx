@@ -15,6 +15,8 @@ type RegisterFieldProps = {
   type: 'email' | 'password' | 'text'
   placeholder: string
   autoComplete: string
+  inputMode?: 'email' | 'numeric' | 'text'
+  maxLength?: number
   icon: ReactNode
   trailingAction?: TrailingAction
   registration: UseFormRegisterReturn
@@ -27,6 +29,8 @@ export function RegisterField({
   type,
   placeholder,
   autoComplete,
+  inputMode,
+  maxLength,
   icon,
   trailingAction,
   registration,
@@ -57,6 +61,8 @@ export function RegisterField({
           type={type}
           placeholder={placeholder}
           autoComplete={autoComplete}
+          inputMode={inputMode}
+          maxLength={maxLength}
           aria-describedby={error ? errorId : undefined}
           aria-invalid={error ? 'true' : 'false'}
           className={inputClassName}

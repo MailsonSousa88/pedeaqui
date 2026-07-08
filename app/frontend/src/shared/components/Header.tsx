@@ -3,8 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
-import { Home, Store, ShoppingCart, LayoutGrid } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Home, LayoutGrid, ShoppingCart, Store } from 'lucide-react';
 import type { AppRoute } from '../../app/routes/types';
 
 interface HeaderProps {
@@ -32,29 +32,27 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${isScrolled
-        ? 'bg-white/95 backdrop-blur-md shadow-sm border-slate-200/80 py-3'
-        : 'bg-white border-outline-variant py-4'
-        }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md shadow-sm border-slate-200/80 py-3'
+          : 'bg-white border-outline-variant py-4'
+      }`}
     >
       <div className="w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between">
-        {/* Logo */}
         <div
           onClick={handleLogoClick}
           className="flex items-center gap-2 cursor-pointer group"
           id="header-logo-container"
         >
           <img
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmnrgwdnt0j_VUBvlRZvBFnqkZCGcFjW7NarZRMLPt6KzpVMxQ-ROzq5cPANLCYHdMXGSkptRPjWKkvtG5dzJiFPjWYEdeOBMRpNswXuwWUdkNHbYTBCl8AaXxloWiXZSuxdPAf7heK144LmHLdHe9KlCWcClZZVrrchmzXpz4MWXBYqdYluv3ezxE8E8IrAh2lYJH21ldxhWl6Z6-DzrjZmCm3UWUf7wnIpnWY4EUzvIg553pkUBTa2rSwdwXV2v_YWDz4NE6nHV3"
+            src="/logo-pedeaqui-traced.png"
             alt="PedeAqui Logo"
             className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
-            referrerPolicy="no-referrer"
           />
         </div>
 
         {!minimal && (
           <>
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-8 ml-auto mr-8">
               <button
                 onClick={() => {
@@ -64,21 +62,27 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
                     onNavigate('/');
                   }
                 }}
-                className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${currentPath === '/'
-                  ? 'text-primary'
-                  : 'text-on-surface-variant hover:text-primary'
-                  }`}
+                className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${
+                  currentPath === '/'
+                    ? 'text-primary'
+                    : 'text-on-surface-variant hover:text-primary'
+                }`}
               >
                 <Home size={16} />
-                Início
+                Inicio
               </button>
 
-              <div
-                className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none"
+              <button
+                onClick={() => onNavigate('/stores')}
+                className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${
+                  currentPath === '/stores'
+                    ? 'text-primary'
+                    : 'text-on-surface-variant hover:text-primary'
+                }`}
               >
                 <Store size={16} />
                 Lojas
-              </div>
+              </button>
 
               <button
                 onClick={onCartClick}
@@ -88,15 +92,12 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
                 Carrinho
               </button>
 
-              <div
-                className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none"
-              >
+              <div className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none">
                 <LayoutGrid size={16} />
                 Vitrine
               </div>
             </nav>
 
-            {/* Desktop Authentication & Actions */}
             <div className="hidden md:flex items-center gap-4">
               <button
                 onClick={() => onNavigate('/login')}
@@ -109,11 +110,10 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
                 onClick={() => onNavigate('/register', 1)}
                 className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
               >
-                Começar Agora
+                Comecar Agora
               </button>
             </div>
 
-            {/* Mobile Authentication Button */}
             <div className="flex items-center gap-2 md:hidden">
               <button
                 onClick={() => onNavigate('/login')}

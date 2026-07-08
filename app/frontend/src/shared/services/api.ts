@@ -23,7 +23,7 @@ export const apiClient = {
     return response.json() as Promise<T>;
   },
 
-  async post<T>(path: string, body: any, options?: RequestInit): Promise<T> {
+  async post<T>(path: string, body: unknown, options?: RequestInit): Promise<T> {
     const response = await fetch(`${BASE_URL}${path}`, {
       method: 'POST',
       headers: {

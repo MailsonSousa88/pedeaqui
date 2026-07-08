@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import HeroCarousel from './HeroCarousel';
 import Features from './Features';
 import Plans from './Plans';

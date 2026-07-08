@@ -1,6 +1,11 @@
 import { UserRoundPlus } from 'lucide-react'
+import type { AppRoute } from '../../../../app/routes/types'
 
-export function LoginHeader() {
+type LoginHeaderProps = {
+  onNavigate: (route: AppRoute, planId?: number) => void
+}
+
+export function LoginHeader({ onNavigate }: LoginHeaderProps) {
   return (
     <header className="sticky inset-x-0 top-0 z-50 flex w-full min-w-0 items-center justify-between gap-2 border-b border-[#e5e7eb] bg-white px-3 py-3 shadow-sm sm:gap-4 sm:px-6 sm:py-4 md:px-10 lg:px-12">
       <img
@@ -15,6 +20,7 @@ export function LoginHeader() {
         </span>
         <button
           type="button"
+          onClick={() => onNavigate('/register', 1)}
           className="inline-flex items-center gap-1 rounded-lg border border-[#e30507] bg-white px-2 py-1.5 text-xs font-semibold text-[#e30507] outline-none transition-colors hover:bg-[#e30507] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] sm:gap-2 sm:rounded-xl sm:px-4 sm:py-2 sm:text-sm md:px-6 md:py-3 md:text-base"
         >
           Cadastrar
