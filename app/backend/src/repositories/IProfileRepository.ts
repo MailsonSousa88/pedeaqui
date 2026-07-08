@@ -4,4 +4,5 @@ export interface IProfileRepository {
   create(profile: Profile): Promise<Profile>;
   findById(id: string): Promise<Profile | null>;
   findByDocument(document: string): Promise<Profile | null>;
+  update(profile: Profile): Promise<Profile>;
 }

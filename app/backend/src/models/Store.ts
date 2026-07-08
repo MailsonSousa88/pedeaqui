@@ -3,8 +3,8 @@ export interface IStoreProps {
   tenantId: string;
   slug: string;
   storeName: string;
-  horarioAbertura: string;
-  horarioFechamento: string;
+  horarioAbertura: string | null;
+  horarioFechamento: string | null;
   endereco: string;
   descricao: string | null;
   logoUrl: string | null;
@@ -20,8 +20,8 @@ export class Store {
   public readonly tenantId: string;
   public slug: string;
   public storeName: string;
-  public horarioAbertura: string;
-  public horarioFechamento: string;
+  public horarioAbertura: string | null;
+  public horarioFechamento: string | null;
   public endereco: string;
   public descricao: string | null;
   public logoUrl: string | null;

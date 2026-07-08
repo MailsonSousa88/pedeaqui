@@ -20,7 +20,8 @@ describe('SignUpUseCase', () => {
     mockProfileRepo = {
       create: jest.fn(),
       findById: jest.fn(),
-      findByDocument: jest.fn().mockResolvedValue(null)
+      findByDocument: jest.fn().mockResolvedValue(null),
+      update: jest.fn()
     };
     signUpUseCase = new SignUpUseCase(mockAuthRepo, mockProfileRepo);
   });

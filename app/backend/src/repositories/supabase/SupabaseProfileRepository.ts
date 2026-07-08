@@ -81,4 +81,31 @@ export class SupabaseProfileRepository implements IProfileRepository {
       updatedAt: data.updated_at ? new Date(data.updated_at) : undefined
     });
   }
+
+  async update(profile: Profile): Promise<Profile> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({
+        name: profile.name,
+        phone: profile.phone,
+        document: profile.document,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', profile.id)
+      .select()
+      .single();
+
+    if (error) {
+      throw new Error(`Failed to update profile: ${error.message}`);
+    }
+
+    return new Profile({
+      id: data.id,
+      name: data.name,
+      phone: data.phone,
+      document: data.document,
+      createdAt: data.created_at ? new Date(data.created_at) : undefined,
+      updatedAt: data.updated_at ? new Date(data.updated_at) : undefined
+    });
+  }
 }
