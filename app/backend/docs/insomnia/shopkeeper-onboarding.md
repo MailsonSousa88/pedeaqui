@@ -35,25 +35,35 @@ npm run dev
 - `13 - Listar produtos da loja`
 - `14 - Atualizar produto`
 - `15 - Alternar disponibilidade do produto`
-- `16 - Deletar produto`
-- `17 - Deletar categoria`
-- `18 - Atualizar loja`
-- `19 - Desativar loja`
-- `20 - Reativar loja`
-- `21 - Atualizar perfil`
-- `22 - Atualizar tenant`
-- `23 - Listar planos disponiveis`
-- `24 - Criar plano`
+- `16 - Criar variacao do produto`
+- copie `id` da resposta de criacao de variacao para a variavel de ambiente `variation_id`
+- `17 - Listar variacoes do produto`
+- `18 - Atualizar variacao do produto`
+- `19 - Criar opcao da variacao`
+- copie `id` da resposta de criacao de opcao para a variavel de ambiente `variation_option_id`
+- `20 - Listar opcoes da variacao`
+- `21 - Atualizar opcao da variacao`
+- `22 - Deletar opcao da variacao`
+- `23 - Deletar variacao do produto`
+- `24 - Deletar produto`
+- `25 - Deletar categoria`
+- `26 - Atualizar loja`
+- `27 - Desativar loja`
+- `28 - Reativar loja`
+- `29 - Atualizar perfil`
+- `30 - Atualizar tenant`
+- `31 - Listar planos disponiveis`
+- `32 - Criar plano`
 - copie `id` da resposta de criacao de plano para a variavel de ambiente `plan_id`
-- `25 - Listar planos autenticado`
-- `26 - Atualizar status do plano`
-- `27 - Criar checkout de assinatura`
-- `28 - Webhook Stripe`
-- `29 - Atualizar sessao`
-- `30 - Solicitar recuperacao de senha`
-- `31 - Redefinir senha`
-- `32 - Deletar loja`
-- `33 - Logout`
+- `33 - Listar planos autenticado`
+- `34 - Atualizar status do plano`
+- `35 - Criar checkout de assinatura`
+- `36 - Webhook Stripe`
+- `37 - Atualizar sessao`
+- `38 - Solicitar recuperacao de senha`
+- `39 - Redefinir senha`
+- `40 - Deletar loja`
+- `41 - Logout`
 
 As requests protegidas usam o header `Authorization: Bearer {{ _.access_token }}`. O token nao deve ir no body.
 
@@ -74,12 +84,14 @@ A colecao cria um ambiente com estes valores:
 - `store_id`: preencher com `id` retornado em `07 - Criar loja`
 - `category_id`: preencher com `id` retornado em `10 - Criar categoria`
 - `product_id`: preencher com `id` retornado em `12 - Criar produto`
+- `variation_id`: preencher com `id` retornado em `16 - Criar variacao do produto`
+- `variation_option_id`: preencher com `id` retornado em `19 - Criar opcao da variacao`
 - `refresh_token`: preencher com `refreshToken` retornado em `03 - Login lojista`
-- `plan_id`: preencher com `id` retornado em `24 - Criar plano`
+- `plan_id`: preencher com `id` retornado em `32 - Criar plano`
 - `stripe_price_id`: id de Price do Stripe para planos/checkout
 - `stripe_signature`: assinatura valida para testar webhook Stripe
 
-Troque `email`, `profile_document`, `updated_profile_document`, `tenant_document`, `tenant_update_document`, `store_slug` e `stripe_price_id` antes de repetir o fluxo no mesmo banco, porque o backend pode rejeitar dados ja usados. Depois de criar tenant, loja, categoria, produto ou plano, atualize tambem `tenant_id`, `store_id`, `category_id`, `product_id` e `plan_id`.
+Troque `email`, `profile_document`, `updated_profile_document`, `tenant_document`, `tenant_update_document`, `store_slug` e `stripe_price_id` antes de repetir o fluxo no mesmo banco, porque o backend pode rejeitar dados ja usados. Depois de criar tenant, loja, categoria, produto, variacao, opcao ou plano, atualize tambem `tenant_id`, `store_id`, `category_id`, `product_id`, `variation_id`, `variation_option_id` e `plan_id`.
 
 ## Resultado esperado
 
@@ -97,6 +109,14 @@ Troque `email`, `profile_document`, `updated_profile_document`, `tenant_document
 - Listar produtos da loja: `200`
 - Atualizar produto: `200`
 - Alternar disponibilidade do produto: `200`
+- Criar variacao do produto: `201`
+- Listar variacoes do produto: `200`
+- Atualizar variacao do produto: `200`
+- Criar opcao da variacao: `201`
+- Listar opcoes da variacao: `200`
+- Atualizar opcao da variacao: `200`
+- Deletar opcao da variacao: `204`
+- Deletar variacao do produto: `204`
 - Deletar produto: `204`
 - Deletar categoria: `204`
 - Atualizar loja: `200`
@@ -121,7 +141,7 @@ Erros comuns:
 - `403`: usuario autenticado sem subscription ativa; rode o registro de tenant antes da loja.
 - `409`: tenant ja possui loja ou slug ja existe.
 - `409` ao deletar categoria: delete primeiro os produtos ativos dessa categoria, ou mantenha pelo menos outra categoria ativa na loja.
-- `404` em categorias/produtos: confira se `store_id`, `category_id` ou `product_id` foram copiados da resposta correta.
+- `404` em categorias/produtos/variacoes/opcoes: confira se `store_id`, `category_id`, `product_id`, `variation_id` ou `variation_option_id` foram copiados da resposta correta.
 - Checkout pode retornar erro se o tenant ja possuir subscription ativa; o registro de tenant cria trial ativa.
 - Criacao/atualizacao de planos pode depender das politicas do banco para escrita em `plans`.
 - Rode `Logout` por ultimo, porque ele pode invalidar o token usado pelas outras requests.
@@ -134,5 +154,7 @@ Erros comuns:
 - Store: criar, consultar por slug, atualizar, alternar active e deletar.
 - Category: criar, listar por loja, atualizar e deletar.
 - Product: criar, listar por loja, atualizar, alternar disponibilidade e deletar.
+- Product variations: criar, listar por produto, atualizar e deletar.
+- Variation options: criar, listar por variacao, atualizar e deletar.
 - Plans: criar, listar e atualizar status.
 - Subscription: criar checkout e representar webhook Stripe.

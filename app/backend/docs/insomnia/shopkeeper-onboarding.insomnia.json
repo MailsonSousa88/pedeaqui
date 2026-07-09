@@ -37,7 +37,9 @@
         "refresh_token": "COLE_AQUI_O_REFRESH_TOKEN_DO_LOGIN",
         "plan_id": "COLE_AQUI_O_ID_DO_PLANO_CRIADO",
         "stripe_price_id": "price_test_insomnia",
-        "stripe_signature": "COLE_AQUI_UMA_STRIPE_SIGNATURE_VALIDA"
+        "stripe_signature": "COLE_AQUI_UMA_STRIPE_SIGNATURE_VALIDA",
+        "variation_id": "COLE_AQUI_O_ID_DA_VARIACAO_CRIADA",
+        "variation_option_id": "COLE_AQUI_O_ID_DA_OPCAO_CRIADA"
       },
       "dataPropertyOrder": {
         "&": [
@@ -54,6 +56,8 @@
           "store_id",
           "category_id",
           "product_id",
+          "variation_id",
+          "variation_option_id",
           "refresh_token",
           "plan_id",
           "stripe_price_id",
@@ -526,20 +530,27 @@
       "_type": "request"
     },
     {
-      "_id": "req_delete_product",
+      "_id": "req_create_product_variation",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}",
-      "name": "16 - Deletar produto",
-      "description": "Remove logicamente o produto. Faca isso antes de deletar a categoria usada por ele.",
-      "method": "DELETE",
-      "body": {},
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations",
+      "name": "16 - Criar variacao do produto",
+      "description": "Cria uma variacao para o produto. Copie o id retornado para variation_id.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"label\": \"Tamanho\",\n  \"sortOrder\": 0\n}"
+      },
       "parameters": [],
       "headers": [
         {
           "name": "Authorization",
           "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
         }
       ],
       "authentication": {},
@@ -554,14 +565,14 @@
       "_type": "request"
     },
     {
-      "_id": "req_delete_category",
+      "_id": "req_list_product_variations",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/categories/{{ _.category_id }}",
-      "name": "17 - Deletar categoria",
-      "description": "Remove logicamente a categoria. A loja deve manter outra categoria ativa e a categoria nao pode ter produtos ativos.",
-      "method": "DELETE",
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations",
+      "name": "17 - Listar variacoes do produto",
+      "description": "",
+      "method": "GET",
       "body": {},
       "parameters": [],
       "headers": [
@@ -582,17 +593,17 @@
       "_type": "request"
     },
     {
-      "_id": "req_update_store",
+      "_id": "req_update_product_variation",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}",
-      "name": "18 - Atualizar loja",
-      "description": "Testa UpdateStoreUseCase. Preencha store_id com o id retornado em 07 - Criar loja.",
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations/{{ _.variation_id }}",
+      "name": "18 - Atualizar variacao do produto",
+      "description": "",
       "method": "PUT",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"storeName\": \"Loja Teste Insomnia Atualizada\",\n  \"horarioAbertura\": \"09:00\",\n  \"horarioFechamento\": \"19:00\",\n  \"endereco\": \"Rua Teste Atualizada, 200\",\n  \"descricao\": \"Loja atualizada via Insomnia\"\n}"
+        "text": "{\n  \"label\": \"Tamanho da pizza\",\n  \"sortOrder\": 1\n}"
       },
       "parameters": [],
       "headers": [
@@ -617,17 +628,17 @@
       "_type": "request"
     },
     {
-      "_id": "req_toggle_store_inactive",
+      "_id": "req_create_variation_option",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}/toggle",
-      "name": "19 - Desativar loja",
-      "description": "Testa ToggleStoreUseCase alterando active para false.",
-      "method": "PATCH",
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations/{{ _.variation_id }}/options",
+      "name": "19 - Criar opcao da variacao",
+      "description": "Cria uma opcao para a variacao. Copie o id retornado para variation_option_id.",
+      "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"active\": false\n}"
+        "text": "{\n  \"value\": \"Grande\",\n  \"priceModifierCents\": 500,\n  \"sortOrder\": 0\n}"
       },
       "parameters": [],
       "headers": [
@@ -652,27 +663,20 @@
       "_type": "request"
     },
     {
-      "_id": "req_toggle_store_active",
+      "_id": "req_list_variation_options",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}/toggle",
-      "name": "20 - Reativar loja",
-      "description": "Reativa a loja para manter o fluxo manual usavel.",
-      "method": "PATCH",
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"active\": true\n}"
-      },
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations/{{ _.variation_id }}/options",
+      "name": "20 - Listar opcoes da variacao",
+      "description": "",
+      "method": "GET",
+      "body": {},
       "parameters": [],
       "headers": [
         {
           "name": "Authorization",
           "value": "Bearer {{ _.access_token }}"
-        },
-        {
-          "name": "Content-Type",
-          "value": "application/json"
         }
       ],
       "authentication": {},
@@ -687,17 +691,17 @@
       "_type": "request"
     },
     {
-      "_id": "req_update_profile_me",
+      "_id": "req_update_variation_option",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/profile/me",
-      "name": "21 - Atualizar perfil",
-      "description": "Testa UpdateProfileUseCase. Use CPF unico em updated_profile_document.",
-      "method": "PATCH",
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations/{{ _.variation_id }}/options/{{ _.variation_option_id }}",
+      "name": "21 - Atualizar opcao da variacao",
+      "description": "",
+      "method": "PUT",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"name\": \"Lojista Teste Insomnia Atualizado\",\n  \"phone\": \"11999990009\",\n  \"document\": \"{{ _.updated_profile_document }}\"\n}"
+        "text": "{\n  \"value\": \"Grande 35cm\",\n  \"priceModifierCents\": 700,\n  \"sortOrder\": 1\n}"
       },
       "parameters": [],
       "headers": [
@@ -722,27 +726,20 @@
       "_type": "request"
     },
     {
-      "_id": "req_update_tenant_me",
+      "_id": "req_delete_variation_option",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/tenants/me",
-      "name": "22 - Atualizar tenant",
-      "description": "Testa UpdateTenantUseCase. Use CNPJ unico em tenant_update_document.",
-      "method": "PATCH",
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"document\": \"{{ _.tenant_update_document }}\"\n}"
-      },
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations/{{ _.variation_id }}/options/{{ _.variation_option_id }}",
+      "name": "22 - Deletar opcao da variacao",
+      "description": "",
+      "method": "DELETE",
+      "body": {},
       "parameters": [],
       "headers": [
         {
           "name": "Authorization",
           "value": "Bearer {{ _.access_token }}"
-        },
-        {
-          "name": "Content-Type",
-          "value": "application/json"
         }
       ],
       "authentication": {},
@@ -757,17 +754,22 @@
       "_type": "request"
     },
     {
-      "_id": "req_list_available_plans",
+      "_id": "req_delete_product_variation",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/plans/available",
-      "name": "23 - Listar planos disponiveis",
-      "description": "Testa ListPlansUseCase pela rota publica, filtrando active=true.",
-      "method": "GET",
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}/variations/{{ _.variation_id }}",
+      "name": "23 - Deletar variacao do produto",
+      "description": "",
+      "method": "DELETE",
       "body": {},
       "parameters": [],
-      "headers": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
       "authentication": {},
       "metaSortKey": 2300,
       "isPrivate": false,
@@ -780,27 +782,20 @@
       "_type": "request"
     },
     {
-      "_id": "req_create_plan",
+      "_id": "req_delete_product",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/plans",
-      "name": "24 - Criar plano",
-      "description": "Testa CreatePlanUseCase. Copie o id retornado para plan_id. Pode depender das politicas do banco para escrita em plans.",
-      "method": "POST",
-      "body": {
-        "mimeType": "application/json",
-        "text": "{\n  \"name\": \"Plano Insomnia\",\n  \"priceBrlCents\": 9900,\n  \"stripePriceId\": \"{{ _.stripe_price_id }}\",\n  \"active\": true\n}"
-      },
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}",
+      "name": "24 - Deletar produto",
+      "description": "Remove logicamente o produto. Faca isso antes de deletar a categoria usada por ele.",
+      "method": "DELETE",
+      "body": {},
       "parameters": [],
       "headers": [
         {
           "name": "Authorization",
           "value": "Bearer {{ _.access_token }}"
-        },
-        {
-          "name": "Content-Type",
-          "value": "application/json"
         }
       ],
       "authentication": {},
@@ -815,21 +810,16 @@
       "_type": "request"
     },
     {
-      "_id": "req_list_plans_admin",
+      "_id": "req_delete_category",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/plans",
-      "name": "25 - Listar planos autenticado",
-      "description": "Testa ListPlansUseCase pela rota autenticada. Query active=true esta configurada em parametros.",
-      "method": "GET",
+      "url": "{{ _.base_url }}/api/categories/{{ _.category_id }}",
+      "name": "25 - Deletar categoria",
+      "description": "Remove logicamente a categoria. A loja deve manter outra categoria ativa e a categoria nao pode ter produtos ativos.",
+      "method": "DELETE",
       "body": {},
-      "parameters": [
-        {
-          "name": "active",
-          "value": "true"
-        }
-      ],
+      "parameters": [],
       "headers": [
         {
           "name": "Authorization",
@@ -848,17 +838,17 @@
       "_type": "request"
     },
     {
-      "_id": "req_update_plan_status",
+      "_id": "req_update_store",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/plans/{{ _.plan_id }}/status",
-      "name": "26 - Atualizar status do plano",
-      "description": "Testa UpdatePlanStatusUseCase. Preencha plan_id com o id retornado em 24 - Criar plano.",
-      "method": "PATCH",
+      "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}",
+      "name": "26 - Atualizar loja",
+      "description": "Testa UpdateStoreUseCase. Preencha store_id com o id retornado em 07 - Criar loja.",
+      "method": "PUT",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"active\": false\n}"
+        "text": "{\n  \"storeName\": \"Loja Teste Insomnia Atualizada\",\n  \"horarioAbertura\": \"09:00\",\n  \"horarioFechamento\": \"19:00\",\n  \"endereco\": \"Rua Teste Atualizada, 200\",\n  \"descricao\": \"Loja atualizada via Insomnia\"\n}"
       },
       "parameters": [],
       "headers": [
@@ -883,17 +873,17 @@
       "_type": "request"
     },
     {
-      "_id": "req_subscription_checkout",
+      "_id": "req_toggle_store_inactive",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/subscriptions/checkout",
-      "name": "27 - Criar checkout de assinatura",
-      "description": "Testa CreateCheckoutSessionUseCase. Use stripe_price_id valido do Stripe. Se o tenant ja tiver trial/subscription ativa, a API deve retornar erro de assinatura ativa.",
-      "method": "POST",
+      "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}/toggle",
+      "name": "27 - Desativar loja",
+      "description": "Testa ToggleStoreUseCase alterando active para false.",
+      "method": "PATCH",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"planId\": \"{{ _.stripe_price_id }}\"\n}"
+        "text": "{\n  \"active\": false\n}"
       },
       "parameters": [],
       "headers": [
@@ -918,23 +908,23 @@
       "_type": "request"
     },
     {
-      "_id": "req_stripe_webhook",
+      "_id": "req_toggle_store_active",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/webhooks/stripe",
-      "name": "28 - Webhook Stripe",
-      "description": "Representa ProcessStripeWebhookUseCase. Precisa de Stripe-Signature valida gerada com STRIPE_WEBHOOK_SECRET; sem isso deve retornar 400.",
-      "method": "POST",
+      "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}/toggle",
+      "name": "28 - Reativar loja",
+      "description": "Reativa a loja para manter o fluxo manual usavel.",
+      "method": "PATCH",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"id\": \"evt_test_webhook\",\n  \"type\": \"checkout.session.completed\",\n  \"data\": {\n    \"object\": {\n      \"metadata\": {\n        \"tenant_id\": \"{{ _.tenant_id }}\",\n        \"plan_id\": \"{{ _.plan_id }}\"\n      },\n      \"subscription\": \"sub_test_insomnia\"\n    }\n  }\n}"
+        "text": "{\n  \"active\": true\n}"
       },
       "parameters": [],
       "headers": [
         {
-          "name": "Stripe-Signature",
-          "value": "{{ _.stripe_signature }}"
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
         },
         {
           "name": "Content-Type",
@@ -953,20 +943,24 @@
       "_type": "request"
     },
     {
-      "_id": "req_refresh_session",
+      "_id": "req_update_profile_me",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/auth/refresh",
-      "name": "29 - Atualizar sessao",
-      "description": "Testa RefreshSessionUseCase. Copie refreshToken do login para refresh_token.",
-      "method": "POST",
+      "url": "{{ _.base_url }}/api/profile/me",
+      "name": "29 - Atualizar perfil",
+      "description": "Testa UpdateProfileUseCase. Use CPF unico em updated_profile_document.",
+      "method": "PATCH",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"refreshToken\": \"{{ _.refresh_token }}\"\n}"
+        "text": "{\n  \"name\": \"Lojista Teste Insomnia Atualizado\",\n  \"phone\": \"11999990009\",\n  \"document\": \"{{ _.updated_profile_document }}\"\n}"
       },
       "parameters": [],
       "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
         {
           "name": "Content-Type",
           "value": "application/json"
@@ -984,20 +978,24 @@
       "_type": "request"
     },
     {
-      "_id": "req_recover_password",
+      "_id": "req_update_tenant_me",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
-      "url": "{{ _.base_url }}/api/auth/recover-password",
-      "name": "30 - Solicitar recuperacao de senha",
-      "description": "Testa RecoverPasswordUseCase. Pode depender das configuracoes de email do Supabase.",
-      "method": "POST",
+      "url": "{{ _.base_url }}/api/tenants/me",
+      "name": "30 - Atualizar tenant",
+      "description": "Testa UpdateTenantUseCase. Use CNPJ unico em tenant_update_document.",
+      "method": "PATCH",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"email\": \"{{ _.email }}\"\n}"
+        "text": "{\n  \"document\": \"{{ _.tenant_update_document }}\"\n}"
       },
       "parameters": [],
       "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
         {
           "name": "Content-Type",
           "value": "application/json"
@@ -1015,12 +1013,270 @@
       "_type": "request"
     },
     {
+      "_id": "req_list_available_plans",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/plans/available",
+      "name": "31 - Listar planos disponiveis",
+      "description": "Testa ListPlansUseCase pela rota publica, filtrando active=true.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 3100,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_create_plan",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/plans",
+      "name": "32 - Criar plano",
+      "description": "Testa CreatePlanUseCase. Copie o id retornado para plan_id. Pode depender das politicas do banco para escrita em plans.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Plano Insomnia\",\n  \"priceBrlCents\": 9900,\n  \"stripePriceId\": \"{{ _.stripe_price_id }}\",\n  \"active\": true\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3200,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_list_plans_admin",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/plans",
+      "name": "33 - Listar planos autenticado",
+      "description": "Testa ListPlansUseCase pela rota autenticada. Query active=true esta configurada em parametros.",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "name": "active",
+          "value": "true"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3300,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_plan_status",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/plans/{{ _.plan_id }}/status",
+      "name": "34 - Atualizar status do plano",
+      "description": "Testa UpdatePlanStatusUseCase. Preencha plan_id com o id retornado em 32 - Criar plano.",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"active\": false\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3400,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_subscription_checkout",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/subscriptions/checkout",
+      "name": "35 - Criar checkout de assinatura",
+      "description": "Testa CreateCheckoutSessionUseCase. Use stripe_price_id valido do Stripe. Se o tenant ja tiver trial/subscription ativa, a API deve retornar erro de assinatura ativa.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"planId\": \"{{ _.stripe_price_id }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3500,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_stripe_webhook",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/webhooks/stripe",
+      "name": "36 - Webhook Stripe",
+      "description": "Representa ProcessStripeWebhookUseCase. Precisa de Stripe-Signature valida gerada com STRIPE_WEBHOOK_SECRET; sem isso deve retornar 400.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"id\": \"evt_test_webhook\",\n  \"type\": \"checkout.session.completed\",\n  \"data\": {\n    \"object\": {\n      \"metadata\": {\n        \"tenant_id\": \"{{ _.tenant_id }}\",\n        \"plan_id\": \"{{ _.plan_id }}\"\n      },\n      \"subscription\": \"sub_test_insomnia\"\n    }\n  }\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Stripe-Signature",
+          "value": "{{ _.stripe_signature }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3600,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_refresh_session",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/auth/refresh",
+      "name": "37 - Atualizar sessao",
+      "description": "Testa RefreshSessionUseCase. Copie refreshToken do login para refresh_token.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"refreshToken\": \"{{ _.refresh_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3700,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_recover_password",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/auth/recover-password",
+      "name": "38 - Solicitar recuperacao de senha",
+      "description": "Testa RecoverPasswordUseCase. Pode depender das configuracoes de email do Supabase.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"{{ _.email }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 3800,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_reset_password",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
       "created": 1783216241000,
       "url": "{{ _.base_url }}/api/auth/reset-password",
-      "name": "31 - Redefinir senha",
+      "name": "39 - Redefinir senha",
       "description": "Representa ResetPasswordUseCase. O controller atual depende do estado de sessao do cliente Supabase; em teste manual simples pode retornar erro.",
       "method": "POST",
       "body": {
@@ -1035,7 +1291,7 @@
         }
       ],
       "authentication": {},
-      "metaSortKey": 3100,
+      "metaSortKey": 3900,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -1051,7 +1307,7 @@
       "modified": 1783216241000,
       "created": 1783216241000,
       "url": "{{ _.base_url }}/api/stores/{{ _.store_id }}",
-      "name": "32 - Deletar loja",
+      "name": "40 - Deletar loja",
       "description": "Testa DeleteStoreUseCase. Rode no fim, porque a loja deixa de aparecer nos fluxos publicos.",
       "method": "DELETE",
       "body": {},
@@ -1063,7 +1319,7 @@
         }
       ],
       "authentication": {},
-      "metaSortKey": 3200,
+      "metaSortKey": 4000,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
@@ -1079,7 +1335,7 @@
       "modified": 1783216241000,
       "created": 1783216241000,
       "url": "{{ _.base_url }}/api/auth/logout",
-      "name": "33 - Logout",
+      "name": "41 - Logout",
       "description": "Testa LogoutUseCase. Rode por ultimo, porque pode invalidar o access_token.",
       "method": "POST",
       "body": {},
@@ -1091,7 +1347,7 @@
         }
       ],
       "authentication": {},
-      "metaSortKey": 3300,
+      "metaSortKey": 4100,
       "isPrivate": false,
       "settingStoreCookies": true,
       "settingSendCookies": true,
