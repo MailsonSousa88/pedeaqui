@@ -4,6 +4,7 @@ import { UpdateStoreUseCase } from '../../useCases/store/UpdateStoreUseCase';
 import { ToggleStoreUseCase } from '../../useCases/store/ToggleStoreUseCase';
 import { DeleteStoreUseCase } from '../../useCases/store/DeleteStoreUseCase';
 import { GetStoreBySlugUseCase } from '../../useCases/store/GetStoreBySlugUseCase';
+import { ListPublicStoresUseCase } from '../../useCases/store/ListPublicStoresUseCase';
 import { SupabaseStoreRepository } from '../../repositories/supabase/SupabaseStoreRepository';
 import { SupabaseSubscriptionRepository } from '../../repositories/supabase/SupabaseSubscriptionRepository';
 import { SupabaseCategoryRepository } from '../../repositories/supabase/SupabaseCategoryRepository';
@@ -14,6 +15,7 @@ export class StoreController {
   private toggleStoreUseCase: ToggleStoreUseCase;
   private deleteStoreUseCase: DeleteStoreUseCase;
   private getStoreBySlugUseCase: GetStoreBySlugUseCase;
+  private listPublicStoresUseCase: ListPublicStoresUseCase;
 
   constructor() {
     const storeRepo = new SupabaseStoreRepository();
@@ -25,6 +27,7 @@ export class StoreController {
     this.toggleStoreUseCase = new ToggleStoreUseCase(storeRepo);
     this.deleteStoreUseCase = new DeleteStoreUseCase(storeRepo);
     this.getStoreBySlugUseCase = new GetStoreBySlugUseCase(storeRepo);
+    this.listPublicStoresUseCase = new ListPublicStoresUseCase(storeRepo);
   }
 
   create = async (req: Request, res: Response): Promise<Response> => {
@@ -95,6 +98,15 @@ export class StoreController {
       return res.status(200).json(store);
     } catch (error: any) {
       if (error.message.includes('Not Found')) return res.status(404).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
+    }
+  };
+
+  listPublic = async (_req: Request, res: Response): Promise<Response> => {
+    try {
+      const stores = await this.listPublicStoresUseCase.execute();
+      return res.status(200).json(stores);
+    } catch (error: any) {
       return res.status(400).json({ error: error.message });
     }
   };
