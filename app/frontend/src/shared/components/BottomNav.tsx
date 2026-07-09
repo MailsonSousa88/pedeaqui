@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import { Home, Store, ShoppingCart, LayoutGrid } from 'lucide-react';
 import type { AppRoute } from '../../app/routes/types';
 
@@ -16,7 +15,7 @@ interface BottomNavProps {
 export default function BottomNav({ currentPath, onNavigate, onCartClick }: BottomNavProps) {
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-50 py-2 flex justify-around items-center shadow-lg">
-      {/* Início Tab */}
+      {/* Inicio Tab */}
       <button
         onClick={() => {
           if (currentPath === '/') {
@@ -41,21 +40,29 @@ export default function BottomNav({ currentPath, onNavigate, onCartClick }: Bott
             currentPath === '/' ? 'text-primary' : 'text-slate-500'
           }`}
         >
-          Início
+          Inicio
         </span>
       </button>
 
       {/* Lojas Tab */}
       <button
-        onClick={() => {
-          // Does nothing as requested: "Não tem nada, caso clique não acontece nada"
-        }}
-        className="flex flex-col items-center gap-1 focus:outline-none cursor-default w-24"
+        onClick={() => onNavigate('/stores')}
+        className="flex flex-col items-center gap-1 focus:outline-none transition-colors w-24"
       >
-        <div className="flex items-center justify-center text-slate-400">
+        <div
+          className={`flex items-center justify-center transition-all duration-200 ${
+            currentPath === '/stores'
+              ? 'text-primary'
+              : 'text-slate-500 hover:text-primary'
+          }`}
+        >
           <Store size={20} />
         </div>
-        <span className="text-[10px] font-sans font-bold tracking-tight text-slate-400">
+        <span
+          className={`text-[10px] font-sans font-bold tracking-tight ${
+            currentPath === '/stores' ? 'text-primary' : 'text-slate-500'
+          }`}
+        >
           Lojas
         </span>
       </button>
@@ -75,9 +82,7 @@ export default function BottomNav({ currentPath, onNavigate, onCartClick }: Bott
 
       {/* Vitrine Tab */}
       <button
-        onClick={() => {
-          // Does nothing as requested: "Não tem nada, caso clique não acontece nada"
-        }}
+        onClick={() => undefined}
         className="flex flex-col items-center gap-1 focus:outline-none cursor-default w-24"
       >
         <div className="flex items-center justify-center text-slate-400">

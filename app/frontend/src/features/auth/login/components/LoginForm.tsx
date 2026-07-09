@@ -63,10 +63,10 @@ export function LoginForm() {
 
       <motion.button
         type="submit"
-        className="mt-1 w-full rounded-xl bg-[#e30507] px-6 py-3.5 text-sm font-semibold text-white shadow-sm outline-none transition-colors hover:bg-[#b80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] md:py-4 md:text-base"
-        whileHover={shouldReduceMotion ? undefined : { scale: 1.03 }}
-        whileTap={shouldReduceMotion ? undefined : { scale: 0.97 }}
-        transition={{ duration: shouldReduceMotion ? 0 : 0.2 }}
+        className="mt-2 w-full rounded-xl bg-[#e30507] px-6 py-4 text-sm font-semibold text-white shadow-sm focus:outline-2 focus:outline-solid focus:outline-offset-2 focus:outline-[#e30507] focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 md:text-base"
+        whileHover={shouldReduceMotion ? undefined : { scale: 1.015 }}
+        whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
+        transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
       >
         Entrar
       </motion.button>

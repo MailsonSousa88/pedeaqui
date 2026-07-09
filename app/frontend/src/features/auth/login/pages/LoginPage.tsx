@@ -1,12 +1,17 @@
 import { LoginCard } from '../components/LoginCard'
 import { LoginHeader } from '../components/LoginHeader'
 import styles from '../styles/LoginPage.module.css'
+import type { AppRoute } from '../../../../app/routes/types'
 
-export function LoginPage() {
+type LoginPageProps = {
+  onNavigate: (route: AppRoute, planId?: number) => void
+}
+
+export function LoginPage({ onNavigate }: LoginPageProps) {
   return (
     <div className={`${styles.page} flex min-h-screen flex-col bg-[#f5f5f5]`}>
       <div className="fixed inset-x-0 top-0 z-50">
-        <LoginHeader />
+        <LoginHeader onNavigate={onNavigate} />
       </div>
       <div aria-hidden="true" className="h-[61px] shrink-0 sm:h-[73px] md:h-[81px]" />
       <main

@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import * as Icons from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { FEATURES } from '../services/storeService';
 
 // Dynamic icon helper
 const FeatureIcon = ({ name, className }: { name: string; className?: string }) => {
-  const IconComponent = (Icons as any)[name];
+  const iconMap = Icons as unknown as Record<string, LucideIcon>;
+  const IconComponent = iconMap[name];
   if (!IconComponent) return <Icons.HelpCircle className={className} />;
   return <IconComponent className={className} />;
 };
@@ -33,7 +34,7 @@ export default function Features() {
 
         {/* Features Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
-          {FEATURES.map((feature, idx) => (
+          {FEATURES.map((feature) => (
             <div
               key={feature.id}
               className="bg-white p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-primary/20 transition-all duration-300 group flex flex-col justify-between"

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import { CheckCircle2, Clock, Gem, Star, ShoppingBag, ShieldCheck } from 'lucide-react';
 import { PLANS } from '../services/storeService';
 import type { AppRoute } from '../../../../app/routes/types';

@@ -3,7 +3,6 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React from 'react';
 import { FOOTER_LINKS } from '../../features/store/home-page/services/storeService';
 
 export default function Footer() {

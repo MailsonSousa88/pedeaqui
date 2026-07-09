@@ -29,7 +29,6 @@ const stepByKey = {
 const defaultValues: StorePreconfigurationFormValues = {
   storeName: '',
   contactEmail: '',
-  whatsapp: '',
   businessHours: {
     startDay: '',
     endDay: '',
