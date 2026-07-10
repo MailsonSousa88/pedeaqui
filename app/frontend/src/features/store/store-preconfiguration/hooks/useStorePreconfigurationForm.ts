@@ -28,7 +28,8 @@ const stepByKey = {
 
 const defaultValues: StorePreconfigurationFormValues = {
   storeName: '',
-  contactEmail: '',
+  businessDocument: '',
+  whatsappNumber: '',
   businessHours: {
     startDay: '',
     endDay: '',
@@ -65,6 +66,20 @@ const toFieldPath = (issue: ZodIssue): Path<StorePreconfigurationFormValues> | n
 
   return issue.path.join('.') as Path<StorePreconfigurationFormValues>
 }
+
+const toSlug = (value: string) =>
+  value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+
+const toDigits = (value: string) => value.replace(/\D/g, '')
+
+const toAddressLine = (address: StorePreconfigurationFormValues['address']) =>
+  `${address.street.trim()}, ${address.number.trim()} - ${address.neighborhood.trim()}, ${address.city.trim()} - ${address.state.trim().toUpperCase()}`
 
 export const useStorePreconfigurationForm = ({
   submitStore = submitStorePreconfiguration,
@@ -167,7 +182,28 @@ export const useStorePreconfigurationForm = ({
       return null
     }
 
-    return result.data
+    const businessDocument = toDigits(result.data.businessDocument)
+
+    return {
+      tenant: {
+        document: businessDocument || null,
+      },
+      store: {
+        slug: toSlug(result.data.storeName),
+        storeName: result.data.storeName.trim(),
+        horarioAbertura: result.data.businessHours.opensAt,
+        horarioFechamento: result.data.businessHours.closesAt,
+        endereco: toAddressLine(result.data.address),
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: toDigits(result.data.whatsappNumber),
+      },
+      source: {
+        businessDocument: businessDocument || null,
+        businessHours: result.data.businessHours,
+        address: result.data.address,
+      },
+    }
   }
 
   const submit = form.handleSubmit(async () => {
@@ -182,7 +218,7 @@ export const useStorePreconfigurationForm = ({
     const result = await submitStore(payload)
 
     if (!result.ok) {
-      setSubmissionError(result.message)
+      setSubmissionError('Nao foi possivel finalizar o pre-registro. Revise os dados e tente novamente.')
       return result
     }
 

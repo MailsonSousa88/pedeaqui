@@ -1,3 +1,4 @@
+import { ApiError, apiClient } from '../../../../shared/services/api'
 import { getCpfDigits } from '../utils/documentNormalize'
 import { getPhoneDigits } from '../utils/phoneNormalize'
 import type {
@@ -5,10 +6,6 @@ import type {
   RegisterPayload,
   RegisterResponse,
 } from '../types/register'
-
-type ApiErrorResponse = {
-  error?: string
-}
 
 export interface RegisterService {
   register(payload: RegisterPayload): Promise<RegisterResponse>
@@ -26,20 +23,22 @@ export function buildRegisterPayload(values: RegisterFormValues): RegisterPayloa
 
 export const registerService: RegisterService = {
   async register(payload) {
-    const response = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
+    try {
+      return await apiClient.post<RegisterResponse>('/api/auth/signup', payload)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        console.error('[registerService] Signup API rejected the request', {
+          status: error.status,
+          response: error.body,
+          url: error.url,
+        })
+      } else {
+        console.error('[registerService] Signup API request failed', error)
+      }
 
-    const data = (await response.json().catch(() => ({}))) as RegisterResponse & ApiErrorResponse
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Nao foi possivel concluir o cadastro.')
+      throw new Error('Nao foi possivel concluir o cadastro. Revise os dados e tente novamente.', {
+        cause: error,
+      })
     }
-
-    return data
   },
 }

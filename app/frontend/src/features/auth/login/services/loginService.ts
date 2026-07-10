@@ -1,8 +1,5 @@
+import { ApiError, apiClient } from '../../../../shared/services/api'
 import type { LoginFormValues, LoginPayload, LoginResponse } from '../types/login'
-
-type ApiErrorResponse = {
-  error?: string
-}
 
 export interface LoginService {
   login(payload: LoginPayload): Promise<LoginResponse>
@@ -17,20 +14,22 @@ export function buildLoginPayload(values: LoginFormValues): LoginPayload {
 
 export const loginService: LoginService = {
   async login(payload) {
-    const response = await fetch('/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
+    try {
+      return await apiClient.post<LoginResponse>('/api/auth/login', payload)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        console.error('[loginService] Login API rejected the request', {
+          status: error.status,
+          response: error.body,
+          url: error.url,
+        })
+      } else {
+        console.error('[loginService] Login API request failed', error)
+      }
 
-    const data = (await response.json().catch(() => ({}))) as LoginResponse & ApiErrorResponse
-
-    if (!response.ok) {
-      throw new Error(data.error || 'Nao foi possivel entrar.')
+      throw new Error('Nao foi possivel entrar. Verifique seus dados e tente novamente.', {
+        cause: error,
+      })
     }
-
-    return data
   },
 }

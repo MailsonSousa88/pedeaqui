@@ -33,21 +33,36 @@ export type StoreAddressFormValues = {
 
 export type StorePreconfigurationFormValues = {
   storeName: string
-  contactEmail: string
+  businessDocument: string
+  whatsappNumber: string
   businessHours: BusinessHoursFormValues
   address: StoreAddressFormValues
 }
 
 export type StorePreconfigurationPayload = {
-  storeName: string
-  contactEmail: string
-  businessHours: {
-    startDay: Weekday
-    endDay: Weekday
-    opensAt: string
-    closesAt: string
+  tenant: {
+    document: string | null
   }
-  address: StoreAddressFormValues
+  store: {
+    slug: string
+    storeName: string
+    horarioAbertura: string
+    horarioFechamento: string
+    endereco: string
+    descricao: string | null
+    logoUrl: string | null
+    whatsappNumber: string
+  }
+  source: {
+    businessDocument: string | null
+    businessHours: {
+      startDay: Weekday
+      endDay: Weekday
+      opensAt: string
+      closesAt: string
+    }
+    address: StoreAddressFormValues
+  }
 }
 
 export type StorePreconfigurationResult =

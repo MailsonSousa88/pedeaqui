@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, Mail, Store } from 'lucide-react'
+import { Building2, CalendarDays, Clock, Phone, Store } from 'lucide-react'
 import type { MouseEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 
@@ -34,7 +34,34 @@ const openNativePicker = (event: MouseEvent<HTMLInputElement>) => {
   event.currentTarget.showPicker?.()
 }
 
+const formatCnpjInput = (value: string) => {
+  const digits = value.replace(/\D/g, '').slice(0, 14)
+
+  return digits
+    .replace(/^(\d{2})(\d)/, '$1.$2')
+    .replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3')
+    .replace(/\.(\d{3})(\d)/, '.$1/$2')
+    .replace(/(\d{4})(\d)/, '$1-$2')
+}
+
+const formatWhatsappInput = (value: string) => {
+  const digits = value.replace(/\D/g, '').slice(0, 11)
+
+  if (digits.length <= 10) {
+    return digits
+      .replace(/^(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+  }
+
+  return digits
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+}
+
 export function IdentityStep({ disabled = false, errors, register }: IdentityStepProps) {
+  const businessDocumentRegistration = register('businessDocument')
+  const whatsappNumberRegistration = register('whatsappNumber')
+
   return (
     <section className="space-y-6" aria-labelledby="identity-step-title">
       <div className="space-y-1">
@@ -68,22 +95,53 @@ export function IdentityStep({ disabled = false, errors, register }: IdentitySte
         </FormField>
 
         <FormField
-          error={errors.contactEmail?.message}
-          hint="Este e-mail sera usado como contato principal da loja."
-          htmlFor="contactEmail"
-          icon={<Mail aria-hidden="true" size={18} />}
-          label="E-mail de contato"
+          error={errors.businessDocument?.message}
+          hint="Opcional. Informe se sua loja usa CNPJ para faturamento."
+          htmlFor="businessDocument"
+          icon={<Building2 aria-hidden="true" size={18} />}
+          label="CNPJ da loja"
+        >
+          <input
+            {...businessDocumentRegistration}
+            aria-describedby={describedBy('businessDocument', Boolean(errors.businessDocument))}
+            aria-invalid={Boolean(errors.businessDocument)}
+            className={formFieldInputWithIconClassName}
+            disabled={disabled}
+            id="businessDocument"
+            inputMode="numeric"
+            maxLength={18}
+            onChange={(event) => {
+              event.target.value = formatCnpjInput(event.target.value)
+              return businessDocumentRegistration.onChange(event)
+            }}
+            placeholder="00.000.000/0000-00"
+            type="text"
+          />
+        </FormField>
+
+        <FormField
+          error={errors.whatsappNumber?.message}
+          hint="Esse numero sera usado para receber pedidos e mensagens."
+          htmlFor="whatsappNumber"
+          icon={<Phone aria-hidden="true" size={18} />}
+          label="Numero de WhatsApp"
           required
         >
           <input
-            {...register('contactEmail')}
-            aria-describedby={describedBy('contactEmail', Boolean(errors.contactEmail))}
-            aria-invalid={Boolean(errors.contactEmail)}
+            {...whatsappNumberRegistration}
+            aria-describedby={describedBy('whatsappNumber', Boolean(errors.whatsappNumber))}
+            aria-invalid={Boolean(errors.whatsappNumber)}
             className={formFieldInputWithIconClassName}
             disabled={disabled}
-            id="contactEmail"
-            placeholder="contato@sualoja.com"
-            type="email"
+            id="whatsappNumber"
+            inputMode="numeric"
+            maxLength={15}
+            onChange={(event) => {
+              event.target.value = formatWhatsappInput(event.target.value)
+              return whatsappNumberRegistration.onChange(event)
+            }}
+            placeholder="(11) 91234-5678"
+            type="tel"
           />
         </FormField>
 

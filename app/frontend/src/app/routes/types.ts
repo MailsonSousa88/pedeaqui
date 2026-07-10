@@ -8,6 +8,7 @@ export type AppRoute =
   | '/login'
   | '/register'
   | '/stores'
+  | '/storefront'
   | '/store-preconfiguration'
   | '/billing/success'
   | '/billing/failed';
