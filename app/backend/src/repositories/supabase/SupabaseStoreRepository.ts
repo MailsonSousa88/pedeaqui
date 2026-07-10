@@ -39,6 +39,18 @@ export class SupabaseStoreRepository implements IStoreRepository {
     return this.mapToModel(data);
   }
 
+  async findPublic(): Promise<Store[]> {
+    const { data, error } = await supabase
+      .from('stores')
+      .select('*')
+      .eq('active', true)
+      .is('deleted_at', null)
+      .order('store_name', { ascending: true });
+
+    if (error || !data) return [];
+    return data.map((store) => this.mapToModel(store));
+  }
+
   async create(store: Store): Promise<Store> {
     const { data, error } = await supabase
       .from('stores')

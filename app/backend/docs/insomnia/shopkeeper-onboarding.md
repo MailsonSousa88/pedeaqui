@@ -25,45 +25,36 @@ npm run dev
 - `06 - Consultar tenant`
 - `07 - Criar loja`
 - copie `id` da resposta de criacao de loja para a variavel de ambiente `store_id`
-- `08 - Consultar loja publica`
-- `09 - Listar categorias da loja`
-- `10 - Criar categoria`
+- `08 - Listar lojas publicas`
+- `09 - Consultar loja publica`
+- `10 - Listar categorias da loja`
+- `11 - Criar categoria`
 - copie `id` da resposta de criacao de categoria para a variavel de ambiente `category_id`
-- `11 - Atualizar categoria`
-- `12 - Criar produto`
+- `12 - Atualizar categoria`
+- `13 - Criar produto`
 - copie `id` da resposta de criacao de produto para a variavel de ambiente `product_id`
-- `13 - Listar produtos da loja`
-- `14 - Atualizar produto`
-- `15 - Alternar disponibilidade do produto`
-- `16 - Criar variacao do produto`
-- copie `id` da resposta de criacao de variacao para a variavel de ambiente `variation_id`
-- `17 - Listar variacoes do produto`
-- `18 - Atualizar variacao do produto`
-- `19 - Criar opcao da variacao`
-- copie `id` da resposta de criacao de opcao para a variavel de ambiente `variation_option_id`
-- `20 - Listar opcoes da variacao`
-- `21 - Atualizar opcao da variacao`
-- `22 - Deletar opcao da variacao`
-- `23 - Deletar variacao do produto`
-- `24 - Deletar produto`
-- `25 - Deletar categoria`
-- `26 - Atualizar loja`
-- `27 - Desativar loja`
-- `28 - Reativar loja`
-- `29 - Atualizar perfil`
-- `30 - Atualizar tenant`
-- `31 - Listar planos disponiveis`
-- `32 - Criar plano`
+- `14 - Listar produtos da loja`
+- `15 - Atualizar produto`
+- `16 - Alternar disponibilidade do produto`
+- `17 - Deletar produto`
+- `18 - Deletar categoria`
+- `19 - Atualizar loja`
+- `20 - Desativar loja`
+- `21 - Reativar loja`
+- `22 - Atualizar perfil`
+- `23 - Atualizar tenant`
+- `24 - Listar planos disponiveis`
+- `25 - Criar plano`
 - copie `id` da resposta de criacao de plano para a variavel de ambiente `plan_id`
-- `33 - Listar planos autenticado`
-- `34 - Atualizar status do plano`
-- `35 - Criar checkout de assinatura`
-- `36 - Webhook Stripe`
-- `37 - Atualizar sessao`
-- `38 - Solicitar recuperacao de senha`
-- `39 - Redefinir senha`
-- `40 - Deletar loja`
-- `41 - Logout`
+- `26 - Listar planos autenticado`
+- `27 - Atualizar status do plano`
+- `28 - Criar checkout de assinatura`
+- `29 - Webhook Stripe`
+- `30 - Atualizar sessao`
+- `31 - Solicitar recuperacao de senha`
+- `32 - Redefinir senha`
+- `33 - Deletar loja`
+- `34 - Logout`
 
 As requests protegidas usam o header `Authorization: Bearer {{ _.access_token }}`. O token nao deve ir no body.
 
@@ -82,12 +73,10 @@ A colecao cria um ambiente com estes valores:
 - `tenant_id`: preencher com `id` retornado em `05 - Registrar tenant`
 - `store_slug`: slug publico da loja
 - `store_id`: preencher com `id` retornado em `07 - Criar loja`
-- `category_id`: preencher com `id` retornado em `10 - Criar categoria`
-- `product_id`: preencher com `id` retornado em `12 - Criar produto`
-- `variation_id`: preencher com `id` retornado em `16 - Criar variacao do produto`
-- `variation_option_id`: preencher com `id` retornado em `19 - Criar opcao da variacao`
+- `category_id`: preencher com `id` retornado em `11 - Criar categoria`
+- `product_id`: preencher com `id` retornado em `13 - Criar produto`
 - `refresh_token`: preencher com `refreshToken` retornado em `03 - Login lojista`
-- `plan_id`: preencher com `id` retornado em `32 - Criar plano`
+- `plan_id`: preencher com `id` retornado em `25 - Criar plano`
 - `stripe_price_id`: id de Price do Stripe para planos/checkout
 - `stripe_signature`: assinatura valida para testar webhook Stripe
 
@@ -101,6 +90,7 @@ Troque `email`, `profile_document`, `updated_profile_document`, `tenant_document
 - Registrar tenant: `201`
 - Consultar tenant: `200`
 - Criar loja: `201`
+- Listar lojas publicas: `200`
 - Consultar loja publica: `200`
 - Listar categorias da loja: `200`
 - Criar categoria: `201`
@@ -151,7 +141,7 @@ Erros comuns:
 - Auth: signup, login, validar token, refresh, recover password, reset password, logout.
 - Profile: atualizar perfil.
 - Tenant: registrar, consultar e atualizar tenant.
-- Store: criar, consultar por slug, atualizar, alternar active e deletar.
+- Store: criar, listar lojas publicas, consultar por slug, atualizar, alternar active e deletar.
 - Category: criar, listar por loja, atualizar e deletar.
 - Product: criar, listar por loja, atualizar, alternar disponibilidade e deletar.
 - Product variations: criar, listar por produto, atualizar e deletar.
