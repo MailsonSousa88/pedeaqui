@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 
 interface CheckoutProgressProps {
@@ -18,8 +18,8 @@ export function CheckoutProgress({ step }: CheckoutProgressProps) {
         {step === 1
           ? "Transmitindo pedido ao estabelecimento..."
           : step === 2
-          ? "Verificando disponibilidade de estoque..."
-          : "Finalizando seu pedido com segurança..."}
+            ? "Verificando disponibilidade de estoque..."
+            : "Finalizando seu pedido com segurança..."}
       </h4>
 
       <p className="text-xs text-gray-400 mt-2 max-w-xs mx-auto leading-relaxed">
@@ -42,9 +42,8 @@ export function CheckoutProgress({ step }: CheckoutProgressProps) {
       {/* Progress Steps Indicators */}
       <div className="mt-8 space-y-3.5 text-left w-full max-w-xs mx-auto">
         <div className="flex items-center gap-3">
-          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-            step >= 1 ? "bg-[#e30507] text-white" : "bg-gray-100 text-gray-400"
-          }`}>
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${step >= 1 ? "bg-[#e30507] text-white" : "bg-gray-100 text-gray-400"
+            }`}>
             {step > 1 ? <Check className="w-3 h-3" /> : "1"}
           </div>
           <span className={`text-xs font-bold ${step >= 1 ? "text-gray-800" : "text-gray-400"}`}>
@@ -53,9 +52,8 @@ export function CheckoutProgress({ step }: CheckoutProgressProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-            step >= 2 ? "bg-[#e30507] text-white" : "bg-gray-100 text-gray-400"
-          }`}>
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${step >= 2 ? "bg-[#e30507] text-white" : "bg-gray-100 text-gray-400"
+            }`}>
             {step > 2 ? <Check className="w-3 h-3" /> : "2"}
           </div>
           <span className={`text-xs font-bold ${step >= 2 ? "text-gray-800" : "text-gray-400"}`}>
@@ -64,9 +62,8 @@ export function CheckoutProgress({ step }: CheckoutProgressProps) {
         </div>
 
         <div className="flex items-center gap-3">
-          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${
-            step >= 3 ? "bg-[#e30507] text-white" : "bg-gray-100 text-gray-400"
-          }`}>
+          <div className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold ${step >= 3 ? "bg-[#e30507] text-white" : "bg-gray-100 text-gray-400"
+            }`}>
             3
           </div>
           <span className={`text-xs font-bold ${step >= 3 ? "text-gray-800" : "text-gray-400"}`}>

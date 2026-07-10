@@ -1,5 +1,5 @@
 import React from "react";
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import {
   User,
   MapPin,
@@ -145,7 +145,7 @@ export function CheckoutForm({
                   <User className="w-3.5 h-3.5 text-[#e30507]" />
                   Identificação
                 </div>
-                
+
                 <div className="space-y-1">
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                     Nome Completo <span className="text-red-500">*</span>
@@ -160,9 +160,8 @@ export function CheckoutForm({
                       }
                     }}
                     placeholder="Ex: Mateus Silva"
-                    className={`w-full px-3.5 py-3 bg-white border ${
-                      validationErrors.fullName ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                    } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
+                    className={`w-full px-3.5 py-3 bg-white border ${validationErrors.fullName ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
                   />
                   {validationErrors.fullName && (
                     <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.fullName}</p>
@@ -176,7 +175,7 @@ export function CheckoutForm({
                   <MapPin className="w-3.5 h-3.5 text-[#e30507]" />
                   Endereço de Entrega
                 </div>
-                
+
                 <div className="grid grid-cols-12 gap-3">
                   {/* Endereço / Rua */}
                   <div className="col-span-8 sm:col-span-9 space-y-1">
@@ -193,9 +192,8 @@ export function CheckoutForm({
                         }
                       }}
                       placeholder="Ex: Av. Aderson Ferreira"
-                      className={`w-full px-3.5 py-3 bg-white border ${
-                        validationErrors.addressStreet ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
+                      className={`w-full px-3.5 py-3 bg-white border ${validationErrors.addressStreet ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                        } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
                     />
                     {validationErrors.addressStreet && (
                       <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.addressStreet}</p>
@@ -217,9 +215,8 @@ export function CheckoutForm({
                         }
                       }}
                       placeholder="Ex: 123"
-                      className={`w-full px-3.5 py-3 bg-white border ${
-                        validationErrors.addressNumber ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
+                      className={`w-full px-3.5 py-3 bg-white border ${validationErrors.addressNumber ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                        } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
                     />
                     {validationErrors.addressNumber && (
                       <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.addressNumber}</p>
@@ -241,9 +238,8 @@ export function CheckoutForm({
                         }
                       }}
                       placeholder="Ex: Paciência"
-                      className={`w-full px-3.5 py-3 bg-white border ${
-                        validationErrors.addressNeighborhood ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
+                      className={`w-full px-3.5 py-3 bg-white border ${validationErrors.addressNeighborhood ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                        } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
                     />
                     {validationErrors.addressNeighborhood && (
                       <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.addressNeighborhood}</p>
@@ -265,9 +261,8 @@ export function CheckoutForm({
                         }
                       }}
                       placeholder="Ex: Próximo à Igreja Matriz"
-                      className={`w-full px-3.5 py-3 bg-white border ${
-                        validationErrors.addressReference ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
+                      className={`w-full px-3.5 py-3 bg-white border ${validationErrors.addressReference ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                        } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
                     />
                     {validationErrors.addressReference && (
                       <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.addressReference}</p>
@@ -289,9 +284,8 @@ export function CheckoutForm({
                         }
                       }}
                       placeholder="Ex: Piripiri"
-                      className={`w-full px-3.5 py-3 bg-white border ${
-                        validationErrors.addressCity ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
+                      className={`w-full px-3.5 py-3 bg-white border ${validationErrors.addressCity ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                        } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400`}
                     />
                     {validationErrors.addressCity && (
                       <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.addressCity}</p>
@@ -314,9 +308,8 @@ export function CheckoutForm({
                       }}
                       placeholder="Ex: PI"
                       maxLength={2}
-                      className={`w-full px-3.5 py-3 bg-white border ${
-                        validationErrors.addressState ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                      } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400 uppercase`}
+                      className={`w-full px-3.5 py-3 bg-white border ${validationErrors.addressState ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                        } rounded-xl text-xs focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400 uppercase`}
                     />
                     {validationErrors.addressState && (
                       <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.addressState}</p>
@@ -331,7 +324,7 @@ export function CheckoutForm({
                   <CreditCard className="w-3.5 h-3.5 text-[#e30507]" />
                   Forma de Pagamento <span className="text-red-500">*</span>
                 </div>
-                
+
                 <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
@@ -341,11 +334,10 @@ export function CheckoutForm({
                         clearError("paymentMethod");
                       }
                     }}
-                    className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                      paymentMethod === "pix"
+                    className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${paymentMethod === "pix"
                         ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
                         : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
-                    }`}
+                      }`}
                   >
                     <QrCode className="w-5 h-5 mb-1.5 text-[#e30507]" />
                     <span className="text-xs font-bold">Pix</span>
@@ -359,11 +351,10 @@ export function CheckoutForm({
                         clearError("paymentMethod");
                       }
                     }}
-                    className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                      paymentMethod === "cartao"
+                    className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${paymentMethod === "cartao"
                         ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
                         : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
-                    }`}
+                      }`}
                   >
                     <CreditCard className="w-5 h-5 mb-1.5 text-[#e30507]" />
                     <span className="text-xs font-bold">Cartão</span>
@@ -377,11 +368,10 @@ export function CheckoutForm({
                         clearError("paymentMethod");
                       }
                     }}
-                    className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${
-                      paymentMethod === "dinheiro"
+                    className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${paymentMethod === "dinheiro"
                         ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
                         : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
-                    }`}
+                      }`}
                   >
                     <Coins className="w-5 h-5 mb-1.5 text-[#e30507]" />
                     <span className="text-xs font-bold">Dinheiro</span>
@@ -408,9 +398,8 @@ export function CheckoutForm({
                   }}
                   placeholder="Ex: troco para 50, sem cebola, entregar no portão..."
                   rows={3}
-                  className={`w-full px-4 py-3 bg-white border ${
-                    validationErrors.orderObservation ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
-                  } rounded-xl text-sm focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400 resize-none`}
+                  className={`w-full px-4 py-3 bg-white border ${validationErrors.orderObservation ? "border-red-500 focus:border-red-500 focus:ring-red-500/10" : "border-gray-200 hover:border-gray-300 focus:border-[#e30507] focus:ring-[#e30507]/10"
+                    } rounded-xl text-sm focus:outline-none focus:ring-2 transition-all text-gray-800 placeholder-gray-400 resize-none`}
                 />
                 {validationErrors.orderObservation && (
                   <p className="text-[10px] font-semibold text-red-500 mt-0.5">{validationErrors.orderObservation}</p>

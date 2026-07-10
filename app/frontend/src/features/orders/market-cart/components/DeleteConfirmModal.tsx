@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import type { DeleteConfirmState } from "../types/cart";
 
@@ -32,11 +32,11 @@ export function DeleteConfirmModal({ state, onCancel, onConfirm }: DeleteConfirm
             <h3 className="text-lg font-black text-gray-900 tracking-tight">
               Remover item?
             </h3>
-            
+
             <p className="text-sm text-gray-500 mt-2 leading-relaxed">
               O produto será excluido, você tem certeza?
             </p>
-            
+
             <p className="text-xs font-bold text-gray-400 mt-1 italic">
               "{state.itemName}"
             </p>

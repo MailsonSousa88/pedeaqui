@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ShoppingBag, ShieldCheck } from "lucide-react";
 import type { StoreCart, ActiveStoreStats } from "../types/cart";
 import { CartItemRow } from "./CartItemRow";
@@ -42,7 +42,7 @@ export function CartSummaryPanel({ store, stats, onBack, onUpdateQuantity, onRem
               </div>
             </div>
 
-            
+
           </div>
 
           {/* Items in the active store cart */}

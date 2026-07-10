@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import {
   Check,
   User,
@@ -138,10 +138,10 @@ export function OrderSuccessCard({ order, onBack }: OrderSuccessCardProps) {
               {order.paymentMethod === "pix"
                 ? "Total via Pix"
                 : order.paymentMethod === "cartao"
-                ? "Total no Cartão"
-                : order.paymentMethod === "dinheiro"
-                ? "Total em Dinheiro"
-                : "Total do Pedido"}
+                  ? "Total no Cartão"
+                  : order.paymentMethod === "dinheiro"
+                    ? "Total em Dinheiro"
+                    : "Total do Pedido"}
             </span>
             <span className="text-lg font-black text-[#e30507]">
               R$ {order.total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}

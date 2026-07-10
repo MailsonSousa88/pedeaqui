@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
 import type { StoreCart } from "../types/cart";
 
@@ -19,11 +19,10 @@ export function StoreCard({ store, isSelected, onSelect }: StoreCardProps) {
     <motion.div
       layoutId={`store-card-${store.id}`}
       onClick={() => onSelect(store.id)}
-      className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden bg-white ${
-        isSelected
+      className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden bg-white ${isSelected
           ? "border-[#e30507] shadow-lg shadow-red-500/5 ring-2 ring-[#e30507]/10 bg-red-50/5"
           : "border-gray-200 hover:shadow-md"
-      }`}
+        }`}
       whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.99 }}
     >
@@ -39,7 +38,7 @@ export function StoreCard({ store, isSelected, onSelect }: StoreCardProps) {
             <h3 className="font-bold text-gray-800 text-sm sm:text-base leading-snug mt-0.5">
               {store.name}
             </h3>
-            
+
           </div>
         </div>
 
