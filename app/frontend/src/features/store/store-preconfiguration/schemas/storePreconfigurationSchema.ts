@@ -27,9 +27,50 @@ const weekdayOrder = new Map<Weekday, number>(
 )
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/
+const cnpjDigitLength = 14
+const whatsappMinLength = 10
+const whatsappMaxLength = 11
 
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} e obrigatorio.`)
+
+export const getOnlyDigits = (value: string) => value.replace(/\D/g, '')
+
+const isValidCnpj = (value: string) => {
+  const digits = getOnlyDigits(value)
+
+  if (digits.length !== cnpjDigitLength || /^(\d)\1+$/.test(digits)) {
+    return false
+  }
+
+  const calculateCheckDigit = (base: string, weights: number[]) => {
+    const sum = weights.reduce((total, weight, index) => total + Number(base[index]) * weight, 0)
+    const remainder = sum % 11
+
+    return remainder < 2 ? 0 : 11 - remainder
+  }
+
+  const firstDigit = calculateCheckDigit(digits.slice(0, 12), [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2])
+  const secondDigit = calculateCheckDigit(digits.slice(0, 13), [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2])
+
+  return firstDigit === Number(digits[12]) && secondDigit === Number(digits[13])
+}
+
+const optionalCnpjSchema = z
+  .string()
+  .trim()
+  .refine((value) => value === '' || getOnlyDigits(value).length === cnpjDigitLength, {
+    message: 'Informe um CNPJ com 14 digitos ou deixe em branco.',
+  })
+  .refine((value) => value === '' || isValidCnpj(value), {
+    message: 'Informe um CNPJ valido.',
+  })
+
+const whatsappSchema = requiredText('Numero de WhatsApp').refine((value) => {
+  const digits = getOnlyDigits(value)
+
+  return digits.length >= whatsappMinLength && digits.length <= whatsappMaxLength
+}, 'Informe um WhatsApp valido com DDD.')
 
 const timeToMinutes = (time: string) => {
   const [hours = '0', minutes = '0'] = time.split(':')
@@ -86,7 +127,8 @@ const businessHoursSchema = z
 
 export const identityStepSchema = z.object({
   storeName: requiredText('Nome da loja'),
-  contactEmail: requiredText('E-mail de contato').email('Informe um e-mail valido.'),
+  businessDocument: optionalCnpjSchema,
+  whatsappNumber: whatsappSchema,
   businessHours: businessHoursSchema,
 })
 
@@ -104,7 +146,8 @@ export const storePreconfigurationFormSchema = identityStepSchema.merge(addressS
 
 export const storePreconfigurationPayloadSchema = z.object({
   storeName: requiredText('Nome da loja'),
-  contactEmail: requiredText('E-mail de contato').email('Informe um e-mail valido.'),
+  businessDocument: optionalCnpjSchema,
+  whatsappNumber: whatsappSchema,
   businessHours: z
     .object({
       startDay: weekdaySchema,

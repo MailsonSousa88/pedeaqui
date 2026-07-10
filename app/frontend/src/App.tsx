@@ -15,6 +15,7 @@ import { LoginPage } from './features/auth/login/pages/LoginPage';
 import { RegisterPage } from './features/auth/register/pages/RegisterPage';
 import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
 import { localStores } from './features/store/store-list/data/localStores';
+import { StorefrontPage } from './features/store/storefront/pages/StorefrontPage';
 import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
 import { useToast } from './features/billing/stripe-status/hooks/useToast';
 import { useBillingRetry } from './features/billing/stripe-status/hooks/useBillingRetry';
@@ -32,6 +33,7 @@ const getRouteFromLocation = (): AppRoute => {
     path === '/login' ||
     path === '/register' ||
     path === '/stores' ||
+    path === '/storefront' ||
     path === '/store-preconfiguration' ||
     path === '/billing/success' ||
     path === '/billing/failed'
@@ -108,11 +110,15 @@ export default function App() {
           state={{ status: 'success', stores: localStores }}
           onSearchChange={() => undefined}
           onSelectStore={() => {
-            triggerToast('Vitrine da loja: essa tela sera conectada em uma proxima etapa.');
+            handleNavigate('/storefront');
           }}
           onRetry={() => undefined}
         />
       );
+    }
+
+    if (currentPath === '/storefront') {
+      return <StorefrontPage />;
     }
 
     if (currentPath === '/store-preconfiguration') {

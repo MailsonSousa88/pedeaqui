@@ -1,5 +1,5 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { Eye, EyeOff, IdCard, LockKeyhole, Mail, Phone, UserRound } from 'lucide-react'
+import { Eye, EyeOff, IdCard, Loader2, LockKeyhole, Mail, Phone, UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { useRegisterForm } from '../hooks/useRegisterForm'
 import { formatCpfInput } from '../utils/documentNormalize'
@@ -106,12 +106,19 @@ export function RegisterForm({ onSuccess }: RegisterFormProps) {
       <motion.button
         type="submit"
         disabled={isSubmitting}
-        className="mt-2 w-full rounded-xl bg-[#e30507] px-6 py-4 text-sm font-semibold text-white shadow-sm focus:outline-2 focus:outline-solid focus:outline-offset-2 focus:outline-[#e30507] focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 md:text-base"
+        className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#e30507] px-6 py-4 text-sm font-semibold text-white shadow-sm focus:outline-2 focus:outline-solid focus:outline-offset-2 focus:outline-[#e30507] focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-80 md:text-base"
         whileHover={shouldReduceMotion ? undefined : { scale: 1.015 }}
         whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
       >
-        {isSubmitting ? 'Cadastrando...' : 'Cadastrar'}
+        {isSubmitting ? (
+          <>
+            <Loader2 aria-hidden="true" className="animate-spin" size={18} />
+            <span>Cadastrando...</span>
+          </>
+        ) : (
+          'Cadastrar'
+        )}
       </motion.button>
     </form>
   )

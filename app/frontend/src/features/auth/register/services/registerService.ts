@@ -1,3 +1,4 @@
+import { ApiError, apiClient } from '../../../../shared/services/api'
 import { getCpfDigits } from '../utils/documentNormalize'
 import { getPhoneDigits } from '../utils/phoneNormalize'
 import type {
@@ -6,12 +7,28 @@ import type {
   RegisterResponse,
 } from '../types/register'
 
-type ApiErrorResponse = {
-  error?: string
-}
-
 export interface RegisterService {
   register(payload: RegisterPayload): Promise<RegisterResponse>
+}
+
+const getApiErrorText = (body: unknown) => {
+  if (typeof body === 'object' && body !== null && 'error' in body) {
+    const error = String((body as { error: unknown }).error)
+
+    if (error === 'Invalid CPF') {
+      return 'Informe um CPF valido.'
+    }
+
+    if (error === 'CPF already registered') {
+      return 'Este CPF ja esta cadastrado. Entre na sua conta ou use outro CPF.'
+    }
+
+    if (error === 'Missing required fields') {
+      return 'Preencha todos os campos obrigatorios.'
+    }
+  }
+
+  return 'Nao foi possivel concluir o cadastro. Revise os dados e tente novamente.'
 }
 
 export function buildRegisterPayload(values: RegisterFormValues): RegisterPayload {
@@ -26,20 +43,26 @@ export function buildRegisterPayload(values: RegisterFormValues): RegisterPayloa
 
 export const registerService: RegisterService = {
   async register(payload) {
-    const response = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    })
+    try {
+      return await apiClient.post<RegisterResponse>('/api/auth/signup', payload)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        console.error('[registerService] Signup API rejected the request', {
+          status: error.status,
+          response: error.body,
+          url: error.url,
+        })
 
-    const data = (await response.json().catch(() => ({}))) as RegisterResponse & ApiErrorResponse
+        throw new Error(getApiErrorText(error.body), {
+          cause: error,
+        })
+      } else {
+        console.error('[registerService] Signup API request failed', error)
+      }
 
-    if (!response.ok) {
-      throw new Error(data.error || 'Nao foi possivel concluir o cadastro.')
+      throw new Error('Nao foi possivel concluir o cadastro. Revise os dados e tente novamente.', {
+        cause: error,
+      })
     }
-
-    return data
   },
 }
