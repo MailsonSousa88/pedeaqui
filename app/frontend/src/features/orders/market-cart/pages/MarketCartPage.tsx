@@ -2,13 +2,8 @@ import { useState } from "react";
 import {
   ShoppingBag,
   Store,
-  ShoppingCart,
-  LayoutGrid,
   RotateCcw,
-  Home,
 } from "lucide-react";
-// @ts-ignore
-import logoPng from "@/assets/pedeaqui_logo.png";
 import { useCart } from "../hooks/useCart";
 import { useCheckoutForm } from "../hooks/useCheckoutForm";
 import { StoreCard } from "../components/StoreCard";
@@ -17,25 +12,12 @@ import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 import { CheckoutForm } from "../components/CheckoutForm";
 import { OrderSuccessCard } from "../components/OrderSuccessCard";
 import type { CompletedOrder } from "../types/cart";
-import type { AppRoute } from "../../../../app/routes/types";
-
-const Logo = ({ className = "h-8" }: { className?: string }) => {
-  return (
-    <img
-      src={logoPng}
-      alt="PedeAqui Logo"
-      className={className}
-      referrerPolicy="no-referrer"
-    />
-  );
-};
 
 interface MarketCartPageProps {
-  onNavigate: (route: AppRoute, planId?: number) => void;
   addToast: (type: "success" | "error" | "info", title: string, message: string) => void;
 }
 
-export function MarketCartPage({ onNavigate, addToast }: MarketCartPageProps) {
+export function MarketCartPage({ addToast }: MarketCartPageProps) {
   const [isFillingCheckoutForm, setIsFillingCheckoutForm] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
 
@@ -57,55 +39,6 @@ export function MarketCartPage({ onNavigate, addToast }: MarketCartPageProps) {
 
   return (
     <div className="w-full min-h-screen bg-[#f8f9fa] flex flex-col font-sans relative pb-24 md:pb-0">
-      {/* Header */}
-      <header className="sticky top-0 w-full border-b border-gray-100 bg-white z-40 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          {/* Left: Logo */}
-          <div className="flex items-center gap-4">
-            <Logo className="h-9 sm:h-11 object-contain cursor-pointer" />
-          </div>
-
-          {/* Center/Right: Navigation links and Auth buttons */}
-          <nav className="hidden md:flex items-center gap-8">
-            <div className="flex items-center gap-6">
-              <button onClick={() => onNavigate('/')} className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
-                <Home className="w-4.5 h-4.5" />
-                <span>Início</span>
-              </button>
-              <button onClick={() => onNavigate('/stores')} className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
-                <Store className="w-4.5 h-4.5" />
-                <span>Lojas</span>
-              </button>
-              <button className="flex items-center gap-1.5 font-bold text-sm text-[#e30507] transition-colors cursor-pointer">
-                <ShoppingCart className="w-4.5 h-4.5 text-[#e30507]" />
-                <span>Carrinho</span>
-                {cart.globalStats.totalItemsCount > 0 && (
-                  <span className="bg-[#e30507] text-white text-[10px] font-black px-1.5 py-0.5 rounded-full">
-                    {cart.globalStats.totalItemsCount}
-                  </span>
-                )}
-              </button>
-              <button className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
-                <LayoutGrid className="w-4.5 h-4.5 text-[#8a94a6] hover:text-[#e30507]" />
-                <span>Vitrine</span>
-              </button>
-            </div>
-
-            <div className="h-5 w-px bg-gray-200"></div>
-
-            <div className="flex items-center gap-3">
-              <button onClick={() => onNavigate('/login')} className="px-5 py-2.5 bg-[#e30507] text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-red-500/10 hover:bg-[#c20406] active:scale-95 transition-all cursor-pointer">
-                Entrar
-              </button>
-              <button onClick={() => onNavigate('/register', 1)} className="px-5 py-2.5 bg-[#e30507] text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-red-500/10 hover:bg-[#c20406] active:scale-95 transition-all cursor-pointer">
-                Começar Agora
-              </button>
-            </div>
-          </nav>
-
-        </div>
-      </header>
-
       {/* Conditional page render */}
       {completedOrder ? (
         /* ==================== 1. ORDER COMPLETED SUMMARY SCREEN ==================== */
@@ -217,33 +150,6 @@ export function MarketCartPage({ onNavigate, addToast }: MarketCartPageProps) {
           cart.setDeleteConfirmState(null);
         }}
       />
-
-      {/* Mobile Bottom Navigation Bar */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.05)] rounded-t-[2rem] z-45 px-6 py-3 pb-safe grid grid-cols-4">
-        <button onClick={() => onNavigate('/')} className="flex flex-col items-center justify-center py-1 cursor-pointer">
-          <Home className="w-5.5 h-5.5 text-[#8a94a6]" />
-          <span className="text-[10px] font-bold text-[#8a94a6] mt-1">Início</span>
-        </button>
-        <button onClick={() => onNavigate('/stores')} className="flex flex-col items-center justify-center py-1 cursor-pointer">
-          <Store className="w-5.5 h-5.5 text-[#8a94a6]" />
-          <span className="text-[10px] font-bold text-[#8a94a6] mt-1">Lojas</span>
-        </button>
-        <button className="flex flex-col items-center justify-center py-1 cursor-pointer">
-          <div className="relative">
-            <ShoppingCart className="w-5.5 h-5.5 text-[#e30507]" />
-            {cart.globalStats.totalItemsCount > 0 && (
-              <span className="absolute -top-1.5 -right-3 text-[#e30507] text-[10px] font-black leading-none">
-                {cart.globalStats.totalItemsCount}
-              </span>
-            )}
-          </div>
-          <span className="text-[10px] font-black text-[#e30507] mt-1">Carrinho</span>
-        </button>
-        <button className="flex flex-col items-center justify-center py-1 cursor-pointer">
-          <LayoutGrid className="w-5.5 h-5.5 text-[#8a94a6]" />
-          <span className="text-[10px] font-bold text-[#8a94a6] mt-1">Vitrine</span>
-        </button>
-      </div>
     </div>
   );
 }
