@@ -1,16 +1,22 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react'
+import { Eye, EyeOff, Loader2, LockKeyhole, Mail } from 'lucide-react'
 import { useLoginForm } from '../hooks/useLoginForm'
 import { LoginField } from './LoginField'
 
-export function LoginForm() {
+type LoginFormProps = {
+  onSuccess?: () => void
+}
+
+export function LoginForm({ onSuccess }: LoginFormProps) {
   const {
     errors,
     isPasswordVisible,
+    isSubmitting,
     onSubmit,
     register,
+    submissionError,
     togglePasswordVisibility,
-  } = useLoginForm()
+  } = useLoginForm({ onSuccess })
   const shouldReduceMotion = useReducedMotion()
 
   return (
@@ -61,14 +67,28 @@ export function LoginForm() {
         </button>
       </div>
 
+      {submissionError ? (
+        <p className="rounded-xl border border-red-100 bg-red-50 px-4 py-3 text-sm font-medium text-[#e30507]" role="alert">
+          {submissionError}
+        </p>
+      ) : null}
+
       <motion.button
         type="submit"
-        className="mt-2 w-full rounded-xl bg-[#e30507] px-6 py-4 text-sm font-semibold text-white shadow-sm focus:outline-2 focus:outline-solid focus:outline-offset-2 focus:outline-[#e30507] focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 md:text-base"
+        disabled={isSubmitting}
+        className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#e30507] px-6 py-4 text-sm font-semibold text-white shadow-sm focus:outline-2 focus:outline-solid focus:outline-offset-2 focus:outline-[#e30507] focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-80 md:text-base"
         whileHover={shouldReduceMotion ? undefined : { scale: 1.015 }}
         whileTap={shouldReduceMotion ? undefined : { scale: 0.985 }}
         transition={{ duration: shouldReduceMotion ? 0 : 0.12 }}
       >
-        Entrar
+        {isSubmitting ? (
+          <>
+            <Loader2 aria-hidden="true" className="animate-spin" size={18} />
+            <span>Entrando...</span>
+          </>
+        ) : (
+          'Entrar'
+        )}
       </motion.button>
     </form>
   )

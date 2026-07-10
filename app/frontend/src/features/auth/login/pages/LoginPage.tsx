@@ -19,7 +19,10 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
         aria-label="Login de lojista"
       >
         <div className="relative z-10 flex w-full justify-center">
-          <LoginCard />
+          <LoginCard
+            onRegisterClick={() => onNavigate('/register')}
+            onSuccess={() => onNavigate('/store-preconfiguration')}
+          />
         </div>
       </main>
     </div>

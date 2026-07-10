@@ -3,12 +3,18 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import type { ZodType } from 'zod'
 import { loginSchema } from '../schemas/loginSchema'
-import type { LoginFormValues } from '../types/login'
+import { buildLoginPayload, loginService } from '../services/loginService'
+import type { LoginFormValues, LoginResponse } from '../types/login'
 
-export function useLoginForm() {
+type UseLoginFormOptions = {
+  onSuccess?: (response: LoginResponse) => void
+}
+
+export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
+  const [submissionError, setSubmissionError] = useState<string | null>(null)
   const {
-    formState: { errors },
+    formState: { errors, isSubmitting },
     handleSubmit,
     register,
   } = useForm<LoginFormValues>({
@@ -21,7 +27,18 @@ export function useLoginForm() {
     },
   })
 
-  const onSubmit = handleSubmit(() => undefined)
+  const onSubmit = handleSubmit(async (values) => {
+    setSubmissionError(null)
+
+    try {
+      const payload = buildLoginPayload(values)
+      const response = await loginService.login(payload)
+      onSuccess?.(response)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Nao foi possivel entrar. Verifique seus dados e tente novamente.'
+      setSubmissionError(message)
+    }
+  })
 
   function togglePasswordVisibility() {
     setIsPasswordVisible((isVisible) => !isVisible)
@@ -30,8 +47,10 @@ export function useLoginForm() {
   return {
     errors,
     isPasswordVisible,
+    isSubmitting,
     onSubmit,
     register,
+    submissionError,
     togglePasswordVisibility,
   }
 }

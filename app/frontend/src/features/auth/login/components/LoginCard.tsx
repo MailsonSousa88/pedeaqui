@@ -2,7 +2,12 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { LogIn } from 'lucide-react'
 import { LoginForm } from './LoginForm'
 
-export function LoginCard() {
+type LoginCardProps = {
+  onRegisterClick?: () => void
+  onSuccess?: () => void
+}
+
+export function LoginCard({ onRegisterClick, onSuccess }: LoginCardProps) {
   const shouldReduceMotion = useReducedMotion()
 
   return (
@@ -39,7 +44,7 @@ export function LoginCard() {
       </div>
 
       <div className="mt-8">
-        <LoginForm />
+        <LoginForm onSuccess={onSuccess} />
       </div>
 
       <div className="my-5 flex items-center gap-3" aria-hidden="true">
@@ -53,6 +58,7 @@ export function LoginCard() {
         <button
           type="button"
           className="rounded-md border-0 bg-transparent p-1 font-semibold text-[#e30507] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507]"
+          onClick={onRegisterClick}
         >
           Cadastre-se
         </button>
