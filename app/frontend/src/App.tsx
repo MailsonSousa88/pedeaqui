@@ -16,6 +16,7 @@ import { RegisterPage } from './features/auth/register/pages/RegisterPage';
 import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
 import { localStores } from './features/store/store-list/data/localStores';
 import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
+import { MarketCartPage } from './features/orders/market-cart/pages/MarketCartPage';
 import { useToast } from './features/billing/stripe-status/hooks/useToast';
 import { useBillingRetry } from './features/billing/stripe-status/hooks/useBillingRetry';
 import { useBillingStatus } from './features/billing/stripe-status/hooks/useBillingStatus';
@@ -33,6 +34,7 @@ const getRouteFromLocation = (): AppRoute => {
     path === '/register' ||
     path === '/stores' ||
     path === '/store-preconfiguration' ||
+    path === '/market-cart' ||
     path === '/billing/success' ||
     path === '/billing/failed'
   ) {
@@ -90,7 +92,7 @@ export default function App() {
   };
 
   const handleCartClick = () => {
-    triggerToast('Carrinho: esta e uma simulacao de vitrine. Os pedidos sao finalizados diretamente no WhatsApp da loja parceira.');
+    navigateTo('/market-cart');
   };
 
   const renderPage = () => {
@@ -122,6 +124,15 @@ export default function App() {
           onSuccess={() => {
             triggerToast('Pre-registro concluido. A proxima etapa sera conectada em seguida.');
           }}
+        />
+      );
+    }
+
+    if (currentPath === '/market-cart') {
+      return (
+        <MarketCartPage
+          onNavigate={handleNavigate}
+          addToast={(_type, title, message) => triggerToast(`${title}: ${message}`)}
         />
       );
     }

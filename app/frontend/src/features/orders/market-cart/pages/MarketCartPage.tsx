@@ -17,6 +17,7 @@ import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 import { CheckoutForm } from "../components/CheckoutForm";
 import { OrderSuccessCard } from "../components/OrderSuccessCard";
 import type { CompletedOrder } from "../types/cart";
+import type { AppRoute } from "../../../../app/routes/types";
 
 const Logo = ({ className = "h-8" }: { className?: string }) => {
   return (
@@ -30,10 +31,11 @@ const Logo = ({ className = "h-8" }: { className?: string }) => {
 };
 
 interface MarketCartPageProps {
+  onNavigate: (route: AppRoute, planId?: number) => void;
   addToast: (type: "success" | "error" | "info", title: string, message: string) => void;
 }
 
-export function MarketCartPage({ addToast }: MarketCartPageProps) {
+export function MarketCartPage({ onNavigate, addToast }: MarketCartPageProps) {
   const [isFillingCheckoutForm, setIsFillingCheckoutForm] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
 
@@ -66,12 +68,12 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
           {/* Center/Right: Navigation links and Auth buttons */}
           <nav className="hidden md:flex items-center gap-8">
             <div className="flex items-center gap-6">
-              <button className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
-                <Home className="w-4.5 h-4.5 text-[#8a94a6] hover:text-[#e30507]" />
+              <button onClick={() => onNavigate('/')} className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
+                <Home className="w-4.5 h-4.5" />
                 <span>Início</span>
               </button>
-              <button className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
-                <Store className="w-4.5 h-4.5 text-[#8a94a6] hover:text-[#e30507]" />
+              <button onClick={() => onNavigate('/stores')} className="flex items-center gap-1.5 font-bold text-sm text-[#8a94a6] hover:text-[#e30507] transition-colors cursor-pointer">
+                <Store className="w-4.5 h-4.5" />
                 <span>Lojas</span>
               </button>
               <button className="flex items-center gap-1.5 font-bold text-sm text-[#e30507] transition-colors cursor-pointer">
@@ -92,10 +94,10 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
             <div className="h-5 w-px bg-gray-200"></div>
 
             <div className="flex items-center gap-3">
-              <button className="px-5 py-2.5 bg-[#e30507] text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-red-500/10 hover:bg-[#c20406] active:scale-95 transition-all cursor-pointer">
+              <button onClick={() => onNavigate('/login')} className="px-5 py-2.5 bg-[#e30507] text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-red-500/10 hover:bg-[#c20406] active:scale-95 transition-all cursor-pointer">
                 Entrar
               </button>
-              <button className="px-5 py-2.5 bg-[#e30507] text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-red-500/10 hover:bg-[#c20406] active:scale-95 transition-all cursor-pointer">
+              <button onClick={() => onNavigate('/register', 1)} className="px-5 py-2.5 bg-[#e30507] text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-md shadow-red-500/10 hover:bg-[#c20406] active:scale-95 transition-all cursor-pointer">
                 Começar Agora
               </button>
             </div>
@@ -218,11 +220,11 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
 
       {/* Mobile Bottom Navigation Bar */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 shadow-[0_-8px_30px_rgba(0,0,0,0.05)] rounded-t-[2rem] z-45 px-6 py-3 pb-safe grid grid-cols-4">
-        <button className="flex flex-col items-center justify-center py-1 cursor-pointer">
+        <button onClick={() => onNavigate('/')} className="flex flex-col items-center justify-center py-1 cursor-pointer">
           <Home className="w-5.5 h-5.5 text-[#8a94a6]" />
           <span className="text-[10px] font-bold text-[#8a94a6] mt-1">Início</span>
         </button>
-        <button className="flex flex-col items-center justify-center py-1 cursor-pointer">
+        <button onClick={() => onNavigate('/stores')} className="flex flex-col items-center justify-center py-1 cursor-pointer">
           <Store className="w-5.5 h-5.5 text-[#8a94a6]" />
           <span className="text-[10px] font-bold text-[#8a94a6] mt-1">Lojas</span>
         </button>

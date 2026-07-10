@@ -72,10 +72,20 @@ export default function BottomNav({ currentPath, onNavigate, onCartClick }: Bott
         onClick={onCartClick}
         className="flex flex-col items-center gap-1 focus:outline-none transition-colors w-24"
       >
-        <div className="flex items-center justify-center text-slate-500 hover:text-primary transition-all duration-200">
+        <div
+          className={`flex items-center justify-center transition-all duration-200 ${
+            currentPath === '/market-cart'
+              ? 'text-primary'
+              : 'text-slate-500 hover:text-primary'
+          }`}
+        >
           <ShoppingCart size={20} />
         </div>
-        <span className="text-[10px] font-sans font-bold tracking-tight text-slate-500">
+        <span
+          className={`text-[10px] font-sans font-bold tracking-tight ${
+            currentPath === '/market-cart' ? 'text-primary' : 'text-slate-500'
+          }`}
+        >
           Carrinho
         </span>
       </button>

@@ -9,5 +9,6 @@ export type AppRoute =
   | '/register'
   | '/stores'
   | '/store-preconfiguration'
+  | '/market-cart'
   | '/billing/success'
   | '/billing/failed';
