@@ -10,6 +10,8 @@ import {
 import { formatCurrencyInput } from '../utils/currencyInput'
 
 type ProductPromotionSectionProps = {
+  initialPromoEndsAt?: string | null
+  initialPromoPrice?: string
   isFeatured: boolean
   isPromotionEnabled: boolean
   onToggleFeatured: () => void
@@ -17,12 +19,15 @@ type ProductPromotionSectionProps = {
 }
 
 export function ProductPromotionSection({
+  initialPromoEndsAt = '',
+  initialPromoPrice = '',
   isFeatured,
   isPromotionEnabled,
   onToggleFeatured,
   onTogglePromotion,
 }: ProductPromotionSectionProps) {
-  const [promoPrice, setPromoPrice] = useState('')
+  const [promoEndsAt, setPromoEndsAt] = useState(initialPromoEndsAt ?? '')
+  const [promoPrice, setPromoPrice] = useState(initialPromoPrice)
   const promoEndsAtInputRef = useRef<HTMLInputElement>(null)
 
   const openPromoEndsAtPicker = () => {
@@ -111,6 +116,7 @@ export function ProductPromotionSection({
               <input
                 className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
                 inputMode="numeric"
+                name="promoPrice"
                 onChange={(event) => setPromoPrice(formatCurrencyInput(event.target.value))}
                 placeholder="0,00"
                 type="text"
@@ -142,8 +148,11 @@ export function ProductPromotionSection({
               />
               <input
                 className="w-full cursor-pointer rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+                name="promoEndsAt"
+                onChange={(event) => setPromoEndsAt(event.target.value)}
                 ref={promoEndsAtInputRef}
                 type="datetime-local"
+                value={promoEndsAt}
               />
             </span>
           </label>

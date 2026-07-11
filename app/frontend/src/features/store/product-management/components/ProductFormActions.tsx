@@ -3,7 +3,11 @@ import { Save, X } from 'lucide-react'
 
 import type { ProductFormActionHandlers } from '../types/productManagement'
 
-export function ProductFormActions({ onCancel, onSave }: ProductFormActionHandlers) {
+export function ProductFormActions({
+  onCancel,
+  onSave,
+  saveLabel = 'Salvar produto',
+}: ProductFormActionHandlers) {
   return (
     <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
       <motion.button
@@ -27,7 +31,7 @@ export function ProductFormActions({ onCancel, onSave }: ProductFormActionHandle
         whileTap={{ scale: 0.97 }}
       >
         <Save aria-hidden="true" size={16} />
-        Salvar produto
+        {saveLabel}
       </motion.button>
     </div>
   )
