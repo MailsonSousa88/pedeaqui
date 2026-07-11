@@ -1,11 +1,29 @@
 import { useState } from 'react'
 import { CircleDollarSign, FileText, Package, ToggleLeft, ToggleRight } from 'lucide-react'
 
+import type { ProductManagementFormMode } from '../types/productManagement'
 import { formatCurrencyInput } from '../utils/currencyInput'
 
-export function ProductBasicInfoSection() {
-  const [basePrice, setBasePrice] = useState('')
-  const [isAvailable, setIsAvailable] = useState(true)
+type ProductBasicInfoSectionProps = {
+  initialAvailable?: boolean
+  initialDescription?: string | null
+  initialName?: string
+  initialPrice?: string
+  mode?: ProductManagementFormMode
+}
+
+export function ProductBasicInfoSection({
+  initialAvailable = true,
+  initialDescription = '',
+  initialName = '',
+  initialPrice = '',
+  mode = 'create',
+}: ProductBasicInfoSectionProps) {
+  const [basePrice, setBasePrice] = useState(initialPrice)
+  const [description, setDescription] = useState(initialDescription ?? '')
+  const [isAvailable, setIsAvailable] = useState(initialAvailable)
+  const [name, setName] = useState(initialName)
+  const isEditMode = mode === 'edit'
 
   return (
     <section className="flex flex-col gap-4" aria-labelledby="product-basic-info-title">
@@ -33,9 +51,12 @@ export function ProductBasicInfoSection() {
               size={16}
             />
             <input
-              className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+              className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] transition-all placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+              name="name"
+              onChange={(event) => setName(event.target.value)}
               placeholder="Ex: X-Burguer artesanal"
               type="text"
+              value={name}
             />
           </span>
         </label>
@@ -49,8 +70,9 @@ export function ProductBasicInfoSection() {
               size={16}
             />
             <input
-              className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+              className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] transition-all placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
               inputMode="numeric"
+              name="price"
               onChange={(event) => setBasePrice(formatCurrencyInput(event.target.value))}
               placeholder="0,00"
               type="text"
@@ -68,8 +90,13 @@ export function ProductBasicInfoSection() {
               isAvailable
                 ? 'border-[#16a34a] bg-[#f0fdf4] text-[#111111]'
                 : 'border-gray-200 text-[#6b7280] hover:border-[#e30507]/60 hover:text-[#111111]',
+              isEditMode ? 'cursor-not-allowed opacity-75' : '',
             ].join(' ')}
-            onClick={() => setIsAvailable((currentValue) => !currentValue)}
+            onClick={() => {
+              if (!isEditMode) {
+                setIsAvailable((currentValue) => !currentValue)
+              }
+            }}
             type="button"
           >
             {isAvailable ? (
@@ -79,6 +106,11 @@ export function ProductBasicInfoSection() {
             )}
             {isAvailable ? 'Produto disponível' : 'Produto indisponível'}
           </button>
+          {isEditMode && (
+            <span className="text-xs leading-5 text-[#6b7280]">
+              A disponibilidade deve ser alterada pela ação Pausar ou Reativar na lista.
+            </span>
+          )}
         </div>
 
         <label className="flex flex-col gap-1.5 sm:col-span-2">
@@ -90,8 +122,11 @@ export function ProductBasicInfoSection() {
               size={16}
             />
             <textarea
-              className="min-h-28 w-full resize-none rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+              className="min-h-28 w-full resize-none rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] transition-all placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+              name="description"
+              onChange={(event) => setDescription(event.target.value)}
               placeholder="Descreva ingredientes, detalhes ou características do produto."
+              value={description}
             />
           </span>
         </label>

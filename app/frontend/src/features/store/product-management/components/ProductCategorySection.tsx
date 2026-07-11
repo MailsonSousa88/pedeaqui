@@ -1,10 +1,17 @@
 import { useMemo, useState } from 'react'
-import type { FormEvent } from 'react'
 import { CirclePlus, Tags } from 'lucide-react'
+
+import type { ProductManagementFormMode } from '../types/productManagement'
 
 type VisualCategory = {
   id: string
   label: string
+}
+
+type ProductCategorySectionProps = {
+  initialCategoryId?: string | null
+  initialCategoryLabel?: string | null
+  mode?: ProductManagementFormMode
 }
 
 function normalizeCategoryLabel(value: string) {
@@ -20,19 +27,31 @@ function createCategoryId(label: string) {
     .replace(/(^-|-$)/g, '')
 }
 
-export function ProductCategorySection() {
+export function ProductCategorySection({
+  initialCategoryId = null,
+  initialCategoryLabel = null,
+  mode = 'create',
+}: ProductCategorySectionProps) {
   const [categoryInput, setCategoryInput] = useState('')
-  const [selectedCategoryId, setSelectedCategoryId] = useState('')
-  const [visualCategories, setVisualCategories] = useState<VisualCategory[]>([])
+  const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryId ?? '')
+  const [visualCategories, setVisualCategories] = useState<VisualCategory[]>(
+    initialCategoryId
+      ? [
+          {
+            id: initialCategoryId,
+            label: initialCategoryLabel ?? 'Categoria atual',
+          },
+        ]
+      : [],
+  )
+  const isEditMode = mode === 'edit'
 
   const normalizedCategoryInput = useMemo(
     () => normalizeCategoryLabel(categoryInput),
     [categoryInput],
   )
 
-  const handleCreateCategory = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
+  const handleCreateCategory = () => {
     if (!normalizedCategoryInput) {
       return
     }
@@ -68,7 +87,8 @@ export function ProductCategorySection() {
             Categoria
           </h4>
           <p className="text-sm leading-6 text-[#6b7280]">
-            Todo produto aparece em Todos. A categoria específica é opcional.
+            Todo produto aparece em Todos. A categoria especifica deve seguir o cadastro real da
+            loja.
           </p>
         </div>
       </div>
@@ -90,14 +110,15 @@ export function ProductCategorySection() {
 
         <label className="flex flex-col gap-1.5">
           <span className="text-sm font-semibold text-[#111111]">
-            Categoria específica opcional
+            Categoria especifica opcional
           </span>
           <select
             className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#111111] transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+            name="categoryId"
             onChange={(event) => setSelectedCategoryId(event.target.value)}
             value={selectedCategoryId}
           >
-            <option value="">Nenhuma categoria específica</option>
+            <option value="">Nenhuma categoria especifica</option>
             {visualCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.label}
@@ -106,7 +127,7 @@ export function ProductCategorySection() {
           </select>
         </label>
 
-        <form className="flex flex-col gap-1.5" onSubmit={handleCreateCategory}>
+        <div className="flex flex-col gap-1.5">
           <span className="text-sm font-semibold text-[#111111]">Criar categoria visual</span>
           <div className="flex flex-col gap-2 sm:flex-row">
             <span className="relative flex-1">
@@ -116,7 +137,7 @@ export function ProductCategorySection() {
                 size={16}
               />
               <input
-                className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+                className="w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] transition-all placeholder:text-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
                 onChange={(event) => setCategoryInput(event.target.value)}
                 placeholder="Ex: Lanches"
                 type="text"
@@ -125,17 +146,19 @@ export function ProductCategorySection() {
             </span>
             <button
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e30507] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
-              type="submit"
+              onClick={handleCreateCategory}
+              type="button"
             >
               <CirclePlus aria-hidden="true" size={16} />
               Adicionar
             </button>
           </div>
           <span className="text-xs leading-5 text-[#6b7280]">
-            Esta categoria ainda não será salva de verdade. Por enquanto, apenas Todos permanece
-            como categoria fixa.
+            {isEditMode
+              ? 'A edição usa somente categorias válidas da loja quando a integração estiver conectada.'
+              : 'Esta categoria ainda não será salva de verdade. Por enquanto, apenas Todos permanece como categoria fixa.'}
           </span>
-        </form>
+        </div>
       </div>
     </section>
   )
