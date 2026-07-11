@@ -10,5 +10,6 @@ export type AppRoute =
   | '/stores'
   | '/storefront'
   | '/store-preconfiguration'
+  | '/market-cart'
   | '/billing/success'
   | '/billing/failed';
