@@ -10,7 +10,7 @@
     "build": "tsc",
     "dev": "ts-node src/app.ts",
     "test": "jest",
-    "test:unit": "jest --testPathPatterns 'integration\\.spec\\.ts$' --invert --coverage",
+    "test:unit": "jest --testPathIgnorePatterns 'integration\\.spec\\.ts$' --coverage",
     "test:integration": "jest --testPathPatterns 'integration\\.spec\\.ts$' --forceExit",
     "test:coverage": "jest --coverage"
   },
