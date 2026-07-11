@@ -289,6 +289,8 @@ describe("Fluxo de Onboarding do Lojista", () => {
         horarioAbertura: "08:00",
         horarioFechamento: "20:00",
         endereco: STORE_ADDRESS,
+        city: "Sao Paulo",
+        state: "SP",
         descricao: "A melhor loja",
         logoUrl: null,
         whatsappNumber: STORE_WHATSAPP,
@@ -327,6 +329,8 @@ describe("Fluxo de Onboarding do Lojista", () => {
         horarioAbertura: "08:00",
         horarioFechamento: "20:00",
         endereco: STORE_ADDRESS,
+        city: "Sao Paulo",
+        state: "SP",
         descricao: "A melhor loja",
         whatsappNumber: STORE_WHATSAPP,
       });
