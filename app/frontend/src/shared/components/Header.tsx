@@ -86,7 +86,11 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
 
               <button
                 onClick={onCartClick}
-                className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-500 hover:text-primary transition-colors cursor-pointer"
+                className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors cursor-pointer ${
+                  currentPath === '/market-cart'
+                    ? 'text-primary'
+                    : 'text-on-surface-variant hover:text-primary'
+                }`}
               >
                 <ShoppingCart size={16} />
                 Carrinho

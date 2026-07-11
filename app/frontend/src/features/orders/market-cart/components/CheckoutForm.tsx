@@ -61,7 +61,7 @@ export function CheckoutForm({
   onSubmit,
 }: CheckoutFormProps) {
   return (
-    <div className="flex-1 w-full relative flex items-center justify-center py-10 px-4 sm:px-10 bg-[#fbfbfd]">
+    <div className="flex-1 min-h-0 w-full relative flex items-center justify-center px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:p-6 bg-[#fbfbfd] overflow-hidden">
       {/* Decorative Dot Grid Top Right */}
       <div className="absolute top-6 right-10 opacity-30 pointer-events-none hidden md:block">
         <div className="grid grid-cols-5 gap-3">
@@ -96,7 +96,7 @@ export function CheckoutForm({
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-xl bg-white rounded-3xl border border-[#e5e7eb]/80 shadow-xl p-6 sm:p-8 z-10 text-center flex flex-col"
+        className="w-full max-w-xl max-h-full overflow-y-auto overscroll-contain bg-white rounded-3xl border border-[#e5e7eb]/80 shadow-xl p-6 sm:p-8 z-10 text-center flex flex-col"
       >
         {isPlacingOrder ? (
           <CheckoutProgress step={checkoutStep} />
@@ -335,8 +335,8 @@ export function CheckoutForm({
                       }
                     }}
                     className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${paymentMethod === "pix"
-                        ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
-                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
+                      ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
+                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
                       }`}
                   >
                     <QrCode className="w-5 h-5 mb-1.5 text-[#e30507]" />
@@ -352,8 +352,8 @@ export function CheckoutForm({
                       }
                     }}
                     className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${paymentMethod === "cartao"
-                        ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
-                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
+                      ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
+                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
                       }`}
                   >
                     <CreditCard className="w-5 h-5 mb-1.5 text-[#e30507]" />
@@ -369,8 +369,8 @@ export function CheckoutForm({
                       }
                     }}
                     className={`flex flex-col items-center justify-center p-3.5 rounded-2xl border text-center transition-all cursor-pointer ${paymentMethod === "dinheiro"
-                        ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
-                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
+                      ? "border-[#e30507] bg-red-50/50 text-[#e30507] ring-2 ring-[#e30507]/10"
+                      : "border-gray-200 hover:border-gray-300 hover:bg-gray-50/80 text-gray-600"
                       }`}
                   >
                     <Coins className="w-5 h-5 mb-1.5 text-[#e30507]" />
@@ -410,10 +410,12 @@ export function CheckoutForm({
               <div className="pt-2 space-y-3">
                 <button
                   type="submit"
-                  className="w-full py-4 bg-[#e30507] hover:bg-red-600 text-white font-black text-sm rounded-2xl transition-all cursor-pointer shadow-lg shadow-red-500/10 flex items-center justify-center gap-2"
+                  className="w-full min-h-[52px] px-4 py-3.5 bg-[#e30507] hover:bg-red-600 text-white font-black text-xs sm:text-sm leading-tight rounded-2xl transition-all cursor-pointer shadow-lg shadow-red-500/10 flex items-center justify-center gap-2 text-center"
                 >
-                  <ShieldCheck className="w-4 h-4" />
-                  Confirmar e Enviar Pedido (R$ {stats.total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })})
+                  <ShieldCheck className="h-4 w-4 shrink-0" />
+                  <span className="min-w-0">
+                    Confirmar Pedido (R$ {stats.total.toLocaleString("pt-BR", { minimumFractionDigits: 2 })})
+                  </span>
                 </button>
 
                 <button

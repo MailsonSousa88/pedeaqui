@@ -188,7 +188,7 @@ export default function App() {
   const isHome = currentPath === '/';
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
-  const showHeader = isHome || isBillingPage;
+  const showHeader = isHome || isMarketCart || isBillingPage;
 
   return (
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>
@@ -218,7 +218,7 @@ export default function App() {
 
       {isHome && <Footer />}
 
-      {isHome || isMarketCart && (
+      {(isHome || isMarketCart) && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}

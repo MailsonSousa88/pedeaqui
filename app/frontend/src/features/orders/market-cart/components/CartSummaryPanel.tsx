@@ -97,10 +97,13 @@ export function CartSummaryPanel({ store, stats, onBack, onUpdateQuantity, onRem
 
               <button
                 onClick={onCheckout}
-                className="w-full mt-2 bg-[#e30507] hover:bg-red-600 text-white font-extrabold text-sm py-4 rounded-2xl transition-colors cursor-pointer shadow-lg shadow-red-500/15 flex items-center justify-center gap-2"
+                className="w-full mt-2 min-h-[52px] bg-[#e30507] hover:bg-red-600 text-white font-extrabold text-xs sm:text-sm px-4 py-3.5 rounded-2xl transition-colors cursor-pointer shadow-lg shadow-red-500/15 flex items-center justify-center gap-2 text-center"
+                title={`Finalizar Pedido (${store.name})`}
               >
-                <ShieldCheck className="w-4 h-4" />
-                Finalizar Pedido ({store.name})
+                <ShieldCheck className="h-4 w-4 shrink-0" />
+                <span className="block min-w-0 truncate">
+                  Finalizar Pedido ({store.name})
+                </span>
               </button>
             </div>
           )}
