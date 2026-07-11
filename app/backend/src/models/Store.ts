@@ -6,6 +6,8 @@ export interface IStoreProps {
   horarioAbertura: string | null;
   horarioFechamento: string | null;
   endereco: string;
+  city: string;
+  state: string;
   descricao: string | null;
   logoUrl: string | null;
   whatsappNumber: string;
@@ -23,6 +25,8 @@ export class Store {
   public horarioAbertura: string | null;
   public horarioFechamento: string | null;
   public endereco: string;
+  public city: string;
+  public state: string;
   public descricao: string | null;
   public logoUrl: string | null;
   public whatsappNumber: string;
@@ -38,6 +42,12 @@ export class Store {
     if (!props.storeName || props.storeName.trim() === '') {
       throw new Error('Store name is required');
     }
+    if (!props.city || props.city.trim() === '') {
+      throw new Error('Store city is required');
+    }
+    if (!props.state || !/^[A-Z]{2}$/.test(props.state)) {
+      throw new Error('Store state must be a two-letter uppercase UF');
+    }
     this.id = props.id;
     this.tenantId = props.tenantId;
     this.slug = props.slug;
@@ -45,6 +55,8 @@ export class Store {
     this.horarioAbertura = props.horarioAbertura;
     this.horarioFechamento = props.horarioFechamento;
     this.endereco = props.endereco;
+    this.city = props.city;
+    this.state = props.state;
     this.descricao = props.descricao;
     this.logoUrl = props.logoUrl;
     this.whatsappNumber = props.whatsappNumber;
