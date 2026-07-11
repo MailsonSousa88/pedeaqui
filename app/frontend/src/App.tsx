@@ -25,6 +25,7 @@ import ToastContainer from './features/billing/stripe-status/components/ToastCon
 import SuccessPage from './features/billing/stripe-status/pages/SuccessPage';
 import FailedPage from './features/billing/stripe-status/pages/FailedPage';
 import type { AppRoute } from './app/routes/types';
+import { MarketCartPage } from './features/orders/market-cart/pages/MarketCartPage';
 
 const getRouteFromLocation = (): AppRoute => {
   const path = window.location.pathname;
@@ -35,6 +36,7 @@ const getRouteFromLocation = (): AppRoute => {
     path === '/stores' ||
     path === '/storefront' ||
     path === '/store-preconfiguration' ||
+    path === '/market-cart' ||
     path === '/billing/success' ||
     path === '/billing/failed'
   ) {
@@ -92,7 +94,7 @@ export default function App() {
   };
 
   const handleCartClick = () => {
-    triggerToast('Carrinho: esta e uma simulacao de vitrine. Os pedidos sao finalizados diretamente no WhatsApp da loja parceira.');
+    navigateTo('/market-cart');
   };
 
   const renderPage = () => {
@@ -128,6 +130,14 @@ export default function App() {
           onSuccess={() => {
             triggerToast('Pre-registro concluido. A proxima etapa sera conectada em seguida.');
           }}
+        />
+      );
+    }
+
+    if (currentPath === '/market-cart') {
+      return (
+        <MarketCartPage
+          addToast={(_type, title, message) => triggerToast(`${title}: ${message}`)}
         />
       );
     }
@@ -176,6 +186,7 @@ export default function App() {
   };
 
   const isHome = currentPath === '/';
+  const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
   const showHeader = isHome || isBillingPage;
 
@@ -207,7 +218,7 @@ export default function App() {
 
       {isHome && <Footer />}
 
-      {isHome && (
+      {isHome || isMarketCart && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}
