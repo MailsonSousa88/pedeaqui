@@ -129,7 +129,7 @@ O consumidor acessa `pedeaqui.store`, navega para a área de lojas ou abre um li
 - `RF002` - Visualização de produtos da loja.
 - `RF003` - Informações de um produto.
 - `RF007` - Busca e filtragem de produtos dentro da loja.
-- `RF008` - Exibição de produtos em destaque via banner dinâmico.
+- `RF008` - Exibição de produtos em promoção.
 - `RF009` - Compartilhamento de loja.
 - `RF032` - Exibição da vitrine pública.
 - Status Report I - Épico 1: Jornada de Compra do Consumidor.

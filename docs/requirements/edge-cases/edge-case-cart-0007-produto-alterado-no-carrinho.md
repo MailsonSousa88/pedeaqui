@@ -2,7 +2,7 @@
 
 ## Origem
 
-Levantamento de edge cases a partir dos requisitos de carrinho, estoque, checkout e validação server-side.
+Levantamento de edge cases a partir dos requisitos de carrinho, checkout e validação server-side.
 
 ## Contexto
 
@@ -16,7 +16,6 @@ Enquanto o consumidor mantém produtos no carrinho, o lojista pode:
 - alterar o preço;
 - alterar a imagem ou nome;
 - marcar produto como indisponível;
-- reduzir estoque;
 - encerrar uma promoção;
 - aplicar soft delete.
 
@@ -26,7 +25,6 @@ Sem revalidação, o consumidor pode:
 
 - tentar comprar produto removido;
 - finalizar pedido com preço antigo;
-- comprar item sem estoque;
 - ver produto no carrinho que não existe mais na vitrine;
 - enviar pedido via WhatsApp com dados desatualizados.
 
@@ -35,7 +33,7 @@ Sem revalidação, o consumidor pode:
 O sistema deve:
 
 1. Manter o snapshot no carrinho apenas como referência visual temporária.
-2. Revalidar preço, disponibilidade e estoque no backend antes de criar pedido.
+2. Revalidar preço e disponibilidade no backend antes de criar pedido.
 3. Informar itens inválidos ao consumidor.
 4. Impedir criação de pedido quando qualquer item estiver inválido.
 5. Atualizar totais usando preços retornados pelo backend.
@@ -44,7 +42,6 @@ O sistema deve:
 
 - Produto com soft delete não deve ser aceito no checkout.
 - Produto indisponível deve bloquear o pedido.
-- Produto sem estoque deve bloquear o pedido.
 - Preço usado no pedido deve vir do banco, não do `localStorage`.
 - Promoção expirada não deve ser aplicada no checkout.
 

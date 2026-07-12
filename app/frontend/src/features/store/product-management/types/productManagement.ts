@@ -2,8 +2,6 @@ export const PRODUCT_IMAGE_SLOT_LIMIT = 3
 
 export type ProductImageSlot = 1 | 2 | 3
 
-export type ProductStockMode = 'free' | 'controlled'
-
 export type ProductCategoryKind = 'system' | 'custom'
 
 export type ProductManagementFormMode = 'create' | 'edit'
@@ -53,15 +51,9 @@ export type ProductImagePlaceholder = {
 }
 
 export type ProductPromotionFormValues = {
-  featured: boolean
   promotionEnabled: boolean
   promoPrice: string
   promoEndsAt: string
-}
-
-export type ProductStockFormValues = {
-  mode: ProductStockMode
-  initialQuantity: string
 }
 
 export type ProductVariationOptionFormValues = {
@@ -84,7 +76,6 @@ export type AddProductFormValues = {
   imageSlots: typeof PRODUCT_IMAGE_SLOT_LIMIT
   activeImageSlot: ProductImageSlot
   promotion: ProductPromotionFormValues
-  stock: ProductStockFormValues
   variations: ProductVariationFormValues[]
 }
 
@@ -99,19 +90,15 @@ export type ProductVariationInput = {
 }
 
 export type AddProductPayload = {
+  storeId: string
+  categoryId: string
   name: string
   description?: string
   priceCents: number
-  categoryId?: string | null
-  available: boolean
-  featured: boolean
-  promotionEnabled: boolean
   promoPriceCents?: number
   promoEndsAt?: string
-  stockMode: ProductStockMode
-  initialStockQuantity?: number
-  imageSlots: typeof PRODUCT_IMAGE_SLOT_LIMIT
-  variations: ProductVariationInput[]
+  details?: Record<string, unknown>
+  available?: boolean
 }
 
 export type ProductManagementFilters = {
@@ -171,10 +158,7 @@ export type ProductManagementEditableFormValues = {
   description: string
   name: string
   price: string
-  promotion: Pick<
-    ProductPromotionFormValues,
-    'featured' | 'promotionEnabled' | 'promoEndsAt' | 'promoPrice'
-  >
+  promotion: ProductPromotionFormValues
 }
 
 export type ProductManagementState = {

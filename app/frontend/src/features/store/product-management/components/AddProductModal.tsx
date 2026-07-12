@@ -2,24 +2,22 @@ import { useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import { ProductBasicInfoSection } from './ProductBasicInfoSection'
 import { ProductCategorySection } from './ProductCategorySection'
 import { ProductFormActions } from './ProductFormActions'
 import { ProductImagePlaceholders } from './ProductImagePlaceholders'
 import { ProductPromotionSection } from './ProductPromotionSection'
-import { ProductStockSection } from './ProductStockSection'
 import { ProductVariationSection } from './ProductVariationSection'
 import type {
   ManageProductListItem,
   ProductManagementEditableFormValues,
   ProductManagementFormMode,
-  ProductStockMode,
 } from '../types/productManagement'
 
 type AddProductModalProps = {
   activeImageSlot: 1 | 2 | 3
   initialProduct?: ManageProductListItem | null
-  isFeatured: boolean
   isOpen: boolean
   isPromotionEnabled: boolean
   mode?: ProductManagementFormMode
@@ -27,10 +25,7 @@ type AddProductModalProps = {
   onNextImage: () => void
   onPreviousImage: () => void
   onSave?: (values: ProductManagementEditableFormValues) => void
-  onStockModeChange: (mode: ProductStockMode) => void
-  onToggleFeatured: () => void
   onTogglePromotion: () => void
-  stockMode: ProductStockMode
 }
 
 const formatCentsForInput = (priceCents?: number | null) => {
@@ -61,7 +56,6 @@ const formatDateForInput = (date?: string | null) => {
 export function AddProductModal({
   activeImageSlot,
   initialProduct = null,
-  isFeatured,
   isOpen,
   isPromotionEnabled,
   mode = 'create',
@@ -69,17 +63,14 @@ export function AddProductModal({
   onNextImage,
   onPreviousImage,
   onSave = onClose,
-  onStockModeChange,
-  onToggleFeatured,
   onTogglePromotion,
-  stockMode,
 }: AddProductModalProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const isEditMode = mode === 'edit'
   const modalTitle = isEditMode ? 'Editar produto' : 'Adicionar produto'
   const modalEyebrow = isEditMode ? 'Produto existente' : 'Novo produto'
   const modalDescription = isEditMode
-    ? 'Atualize os dados principais do produto. Disponibilidade, imagens, variações e estoque seguem fluxos próprios quando os contratos estiverem conectados.'
+    ? 'Atualize os dados principais do produto. Imagens e variações seguem fluxos próprios quando os contratos estiverem conectados.'
     : 'Preencha a estrutura visual do produto. Nada será salvo de verdade nesta versão.'
   const saveLabel = isEditMode ? 'Salvar alterações' : 'Salvar produto'
 
@@ -92,7 +83,6 @@ export function AddProductModal({
       name: String(formData.get('name') ?? ''),
       price: String(formData.get('price') ?? ''),
       promotion: {
-        featured: isFeatured,
         promoEndsAt: String(formData.get('promoEndsAt') ?? ''),
         promoPrice: String(formData.get('promoPrice') ?? ''),
         promotionEnabled: isPromotionEnabled,
@@ -135,14 +125,15 @@ export function AddProductModal({
                 </p>
               </div>
 
-              <button
+              <SecondaryButton
                 aria-label={`Fechar modal de ${modalTitle.toLowerCase()}`}
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+                className="text-gray-500"
                 onClick={onClose}
+                size="icon"
                 type="button"
               >
                 <X aria-hidden="true" size={18} />
-              </button>
+              </SecondaryButton>
             </div>
 
             <form ref={formRef} className="flex flex-col gap-8 overflow-y-auto p-5 sm:p-6">
@@ -166,12 +157,9 @@ export function AddProductModal({
               <ProductPromotionSection
                 initialPromoEndsAt={formatDateForInput(initialProduct?.promoEndsAt)}
                 initialPromoPrice={formatCentsForInput(initialProduct?.promoPriceCents)}
-                isFeatured={isFeatured}
                 isPromotionEnabled={isPromotionEnabled}
-                onToggleFeatured={onToggleFeatured}
                 onTogglePromotion={onTogglePromotion}
               />
-              <ProductStockSection onStockModeChange={onStockModeChange} stockMode={stockMode} />
               <ProductVariationSection />
               <ProductFormActions onCancel={onClose} onSave={handleSave} saveLabel={saveLabel} />
             </form>

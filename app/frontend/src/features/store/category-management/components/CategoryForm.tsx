@@ -2,6 +2,8 @@ import type { FormEvent } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Package, Save, Tags, X } from 'lucide-react'
 
+import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import type {
   CategoryManagementFormValues,
   CategoryManagementHandlers,
@@ -78,14 +80,15 @@ export function CategoryForm({
                 </div>
               </div>
 
-              <button
+              <SecondaryButton
                 aria-label="Fechar modal de edição de categoria"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 text-gray-500 transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+                className="text-gray-500"
                 onClick={onCancelEditCategory}
+                size="icon"
                 type="button"
               >
                 <X aria-hidden="true" size={18} />
-              </button>
+              </SecondaryButton>
             </div>
 
             <div className="flex flex-col gap-5 p-5">
@@ -135,21 +138,18 @@ export function CategoryForm({
             </div>
 
             <div className="flex flex-col gap-3 border-t border-gray-100 p-5 sm:flex-row sm:justify-end">
-              <button
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-[#111111] transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 sm:w-fit"
+              <SecondaryButton
+                className="w-full sm:w-fit"
                 onClick={onCancelEditCategory}
                 type="button"
               >
                 <X aria-hidden="true" size={16} />
                 Cancelar
-              </button>
-              <button
-                className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#e30507] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 sm:w-fit"
-                type="submit"
-              >
+              </SecondaryButton>
+              <PrimaryButton className="w-full sm:w-fit" type="submit">
                 <Save aria-hidden="true" size={16} />
                 Salvar edição
-              </button>
+              </PrimaryButton>
             </div>
           </motion.form>
         </div>

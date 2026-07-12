@@ -17,7 +17,6 @@ const currencyStringToCents = (value: string) => {
 const isPositiveCurrency = (value: string) => currencyStringToCents(value) > 0
 
 const productPromotionSchema = z.object({
-  featured: z.boolean(),
   promotionEnabled: z.boolean(),
   promoEndsAt: z.string().trim(),
   promoPrice: z.string().trim(),
@@ -39,14 +38,6 @@ export const productFormSchema = z
     const promoPriceCents = currencyStringToCents(values.promotion.promoPrice)
     const hasPromoPrice = promoPriceCents > 0
     const hasPromoEndsAt = values.promotion.promoEndsAt.length > 0
-
-    if (values.promotion.promotionEnabled && !values.promotion.featured) {
-      context.addIssue({
-        code: 'custom',
-        message: 'Marque o produto como destaque antes de configurar promoção.',
-        path: ['promotion', 'promotionEnabled'],
-      })
-    }
 
     if (values.promotion.promotionEnabled && !hasPromoPrice) {
       context.addIssue({

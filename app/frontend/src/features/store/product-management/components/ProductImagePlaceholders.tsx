@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, ImageIcon } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import type { ProductImageSlot } from '../types/productManagement'
 
 type ProductImagePlaceholdersProps = {
@@ -33,14 +34,15 @@ export function ProductImagePlaceholders({
 
       <div className="rounded-2xl border border-gray-100 bg-[#f5f5f5] p-4">
         <div className="flex items-center gap-3">
-          <button
+          <SecondaryButton
             aria-label="Ver imagem anterior"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+            className="text-gray-500"
             onClick={onPrevious}
+            size="icon"
             type="button"
           >
             <ChevronLeft aria-hidden="true" size={18} />
-          </button>
+          </SecondaryButton>
 
           <div className="flex min-h-44 flex-1 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-[#e30507]/30 bg-white text-center text-[#e30507]">
             <ImageIcon aria-hidden="true" size={36} strokeWidth={1.8} />
@@ -52,14 +54,15 @@ export function ProductImagePlaceholders({
             </div>
           </div>
 
-          <button
+          <SecondaryButton
             aria-label="Ver próxima imagem"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+            className="text-gray-500"
             onClick={onNext}
+            size="icon"
             type="button"
           >
             <ChevronRight aria-hidden="true" size={18} />
-          </button>
+          </SecondaryButton>
         </div>
 
         <div className="mt-4 flex justify-center gap-2" aria-label="Posição das imagens">
