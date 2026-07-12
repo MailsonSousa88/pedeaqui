@@ -86,6 +86,8 @@ describe('E2E — Fluxo completo de Onboarding do Lojista', () => {
         horarioAbertura: '08:00',
         horarioFechamento: '18:00',
         endereco: 'Rua E2E, 100',
+        city: 'Sao Paulo',
+        state: 'SP',
         whatsappNumber: '11999990007',
       });
 

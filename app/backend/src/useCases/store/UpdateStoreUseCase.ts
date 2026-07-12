@@ -28,6 +28,18 @@ export class UpdateStoreUseCase {
     if (data.horarioAbertura !== undefined) store.horarioAbertura = data.horarioAbertura || null;
     if (data.horarioFechamento !== undefined) store.horarioFechamento = data.horarioFechamento || null;
     if (data.endereco !== undefined) store.endereco = data.endereco;
+    if (data.city !== undefined) {
+      if (!data.city || data.city.trim() === '') {
+        throw new Error('Store city is required');
+      }
+      store.city = data.city;
+    }
+    if (data.state !== undefined) {
+      if (!/^[A-Z]{2}$/.test(data.state)) {
+        throw new Error('Store state must be a two-letter uppercase UF');
+      }
+      store.state = data.state;
+    }
     if (data.descricao !== undefined) store.descricao = data.descricao || null;
     if (data.logoUrl !== undefined) store.logoUrl = data.logoUrl || null;
     if (data.whatsappNumber !== undefined) store.whatsappNumber = data.whatsappNumber;

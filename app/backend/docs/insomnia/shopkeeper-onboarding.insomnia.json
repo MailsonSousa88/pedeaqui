@@ -268,7 +268,7 @@
       "method": "POST",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"slug\": \"{{ _.store_slug }}\",\n  \"storeName\": \"Loja Teste Insomnia\",\n  \"horarioAbertura\": \"08:00\",\n  \"horarioFechamento\": \"18:00\",\n  \"endereco\": \"Rua Teste, 100\",\n  \"whatsappNumber\": \"11999990001\"\n}"
+        "text": "{\n  \"slug\": \"{{ _.store_slug }}\",\n  \"storeName\": \"Loja Teste Insomnia\",\n  \"horarioAbertura\": \"08:00\",\n  \"horarioFechamento\": \"18:00\",\n  \"endereco\": \"Rua Teste, 100\",\n  \"city\": \"Sao Paulo\",\n  \"state\": \"SP\",\n  \"whatsappNumber\": \"11999990001\"\n}"
       },
       "parameters": [],
       "headers": [
@@ -871,7 +871,7 @@
       "method": "PUT",
       "body": {
         "mimeType": "application/json",
-        "text": "{\n  \"storeName\": \"Loja Teste Insomnia Atualizada\",\n  \"horarioAbertura\": \"09:00\",\n  \"horarioFechamento\": \"19:00\",\n  \"endereco\": \"Rua Teste Atualizada, 200\",\n  \"descricao\": \"Loja atualizada via Insomnia\"\n}"
+        "text": "{\n  \"storeName\": \"Loja Teste Insomnia Atualizada\",\n  \"horarioAbertura\": \"09:00\",\n  \"horarioFechamento\": \"19:00\",\n  \"endereco\": \"Rua Teste Atualizada, 200\",\n  \"city\": \"Teresina\",\n  \"state\": \"PI\",\n  \"descricao\": \"Loja atualizada via Insomnia\"\n}"
       },
       "parameters": [],
       "headers": [

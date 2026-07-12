@@ -42,6 +42,8 @@ export class CreateStoreUseCase {
       horarioAbertura: data.horarioAbertura || null,
       horarioFechamento: data.horarioFechamento || null,
       endereco: data.endereco,
+      city: data.city,
+      state: data.state,
       descricao: data.descricao || null,
       logoUrl: data.logoUrl || null,
       whatsappNumber: data.whatsappNumber,

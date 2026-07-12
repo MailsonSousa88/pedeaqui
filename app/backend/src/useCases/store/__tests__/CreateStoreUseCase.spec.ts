@@ -22,6 +22,8 @@ describe('CreateStoreUseCase', () => {
     horarioAbertura: '08:00',
     horarioFechamento: '18:00',
     endereco: 'Rua Teste',
+    city: 'Sao Paulo',
+    state: 'SP',
     whatsappNumber: '11999999999'
   };
 
@@ -81,12 +83,33 @@ describe('CreateStoreUseCase', () => {
 
     expect(result).toBeInstanceOf(Store);
     expect(result.slug).toBe('my-store');
+    expect(result.city).toBe('Sao Paulo');
+    expect(result.state).toBe('SP');
     expect(mockSubscriptionRepository.findByTenantId).toHaveBeenCalledWith('tenant-123');
     expect(mockStoreRepository.create).toHaveBeenCalled();
     // Categoria padrão "Todos" deve ser criada
     expect(mockCategoryRepository.create).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Todos', tenantId: 'tenant-123' })
     );
+  });
+
+  it('should create a store with nullable optional fields when they are omitted', async () => {
+    mockStoreRepository.create.mockImplementation(async (store) => store);
+
+    const result = await createStoreUseCase.execute({
+      tenantId: 'tenant-123',
+      slug: 'minimal-store',
+      storeName: 'Minimal Store',
+      endereco: 'Rua Minima',
+      city: 'Sao Paulo',
+      state: 'SP',
+      whatsappNumber: '11999999999'
+    });
+
+    expect(result.horarioAbertura).toBeNull();
+    expect(result.horarioFechamento).toBeNull();
+    expect(result.descricao).toBeNull();
+    expect(result.logoUrl).toBeNull();
   });
 
   it('should not be able to create a store with an existing slug', async () => {
@@ -98,6 +121,8 @@ describe('CreateStoreUseCase', () => {
       horarioAbertura: '08:00',
       horarioFechamento: '18:00',
       endereco: 'Rua Existente',
+      city: 'Sao Paulo',
+      state: 'SP',
       descricao: null,
       logoUrl: null,
       whatsappNumber: '11988888888',
@@ -151,6 +176,8 @@ describe('CreateStoreUseCase', () => {
       horarioAbertura: '08:00',
       horarioFechamento: '18:00',
       endereco: 'Rua Velha',
+      city: 'Sao Paulo',
+      state: 'SP',
       descricao: null,
       logoUrl: null,
       whatsappNumber: '11999999999',
