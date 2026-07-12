@@ -9,6 +9,7 @@ import {
   XCircle,
 } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import {
   type ManageProductListItem,
   type ProductManagementActionState,
@@ -130,18 +131,18 @@ export function ManagedProductCard({
         </div>
 
         <div className="grid gap-2 sm:grid-cols-3 lg:min-w-80">
-          <button
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+          <SecondaryButton
+            className="px-4"
             disabled={isActionLoading}
             onClick={() => onEditProduct(product)}
             type="button"
           >
             <Edit3 aria-hidden="true" size={16} />
             Editar
-          </button>
+          </SecondaryButton>
 
-          <button
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+          <SecondaryButton
+            className="px-4"
             disabled={isActionLoading}
             onClick={() => onToggleAvailability(product)}
             type="button"
@@ -154,7 +155,7 @@ export function ManagedProductCard({
               <PlayCircle aria-hidden="true" size={16} />
             )}
             {product.available ? 'Pausar' : 'Reativar'}
-          </button>
+          </SecondaryButton>
 
           <button
             className="inline-flex items-center justify-center gap-2 rounded-xl border border-[#dc2626]/30 px-4 py-3 text-sm font-semibold text-[#dc2626] transition-all hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-[#dc2626] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"

@@ -129,16 +129,16 @@ O sistema deve armazenar valores monetários de forma segura contra erros de arr
 
 **[RNF0018] – Validação server-side de regras críticas**
 
-O sistema deve validar no backend todas as regras críticas que impactam segurança, pagamento, estoque, plano e criação de pedidos.
+O sistema deve validar no backend todas as regras críticas que impactam segurança, pagamento, disponibilidade, plano e criação de pedidos.
 
-> **Critério:** Regras como limite de produtos por plano, disponibilidade de produto, estoque, status da loja, status do lojista, preço atual e tenant do lojista não devem depender apenas de validação no frontend.
+> **Critério:** Regras como limite de produtos por plano, disponibilidade de produto, status da loja, status do lojista, preço atual e tenant do lojista não devem depender apenas de validação no frontend.
 ---
 
 **[RNF0019] – Criação consistente de pedidos**
 
 O sistema deve evitar criação parcial ou inconsistente de pedidos durante o checkout.
 
-> **Critério:** A criação de pedido deve ocorrer somente após validação completa dos itens, preços e disponibilidade. Se qualquer item for inválido, indisponível ou sem estoque, nenhum pedido deve ser criado.
+> **Critério:** A criação de pedido deve ocorrer somente após validação completa dos itens, preços e disponibilidade. Se qualquer item for inválido ou indisponível, nenhum pedido deve ser criado.
 ---
 
 ## Arquivos e imagens

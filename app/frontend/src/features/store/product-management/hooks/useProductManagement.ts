@@ -18,7 +18,6 @@ import {
   type ProductManagementError,
   type ProductManagementFilters,
   type ProductPromotionFilter,
-  type ProductStockMode,
   type UpdateProductPayload,
 } from '../types/productManagement'
 
@@ -149,9 +148,7 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false)
   const [isManageProductsPanelOpen, setIsManageProductsPanelOpen] = useState(false)
   const [activeImageSlot, setActiveImageSlot] = useState<ProductImageSlot>(firstImageSlot)
-  const [isFeatured, setIsFeatured] = useState(false)
   const [isPromotionEnabled, setIsPromotionEnabled] = useState(false)
-  const [stockMode, setStockMode] = useState<ProductStockMode>('free')
   const [products, setProducts] = useState<ManageProductListItem[]>([])
   const [filters, setFilters] = useState<ProductManagementFilters>(initialFilters)
   const [listStatus, setListStatus] = useState<ProductManagementAsyncStatus>('idle')
@@ -190,21 +187,9 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     )
   }, [])
 
-  const toggleFeatured = useCallback(() => {
-    setIsFeatured((currentValue) => {
-      const nextValue = !currentValue
-
-      if (!nextValue) {
-        setIsPromotionEnabled(false)
-      }
-
-      return nextValue
-    })
-  }, [])
-
   const togglePromotion = useCallback(() => {
-    setIsPromotionEnabled((currentValue) => (isFeatured ? !currentValue : false))
-  }, [isFeatured])
+    setIsPromotionEnabled((currentValue) => !currentValue)
+  }, [])
 
   const setSearchTerm = useCallback((searchTerm: string) => {
     setFilters((currentFilters) => ({
@@ -423,7 +408,6 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     hasStoreId,
     isAddProductModalOpen,
     isDeleteConfirmationOpen,
-    isFeatured,
     isManageProductsPanelOpen,
     isPromotionEnabled,
     listError,
@@ -445,12 +429,9 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     setProductActionSuccess,
     setSearchTerm,
     setPromotionFilter,
-    setStockMode,
-    stockMode,
     storeId,
     clearProductAction,
     handleToggleProductAvailability,
-    toggleFeatured,
     togglePromotion,
   }
 }

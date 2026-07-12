@@ -49,11 +49,11 @@ O sistema deve disponibilizar um campo de pesquisa dentro da loja e permitir que
 > **Critério:** O campo de busca deve aceitar termos parciais do nome do produto na vitrine pública da loja. O usuário deve poder aplicar filtros por faixa de valor, ordem alfabética (`A–Z` / `Z–A`), menor preço e maior preço. Os filtros devem ser aplicados sobre o resultado da busca sem recarregar a página. A combinação de filtros deve ser permitida. Os resultados devem ser paginados com máximo de 20 itens por página.
 ---
 
-**[RF008] – Exibição de produtos em destaque via banner dinâmico**
+**[RF008] – Exibição de produtos em promoção**
 
-O sistema deve exibir produtos selecionados pelo lojista como destaque dentro da loja.
+O sistema deve permitir que o lojista configure uma promoção para um produto.
 
-> **Critério:** Produtos em destaque devem aparecer em uma moldura ou área visual de destaque. Apenas produtos em destaque podem estar em promoção. Quando houver promoção, o sistema deve exibir o valor antigo cortado e o novo valor com destaque visual próprio.
+> **Critério:** A promoção deve possuir preço promocional maior que zero e menor que o preço base. A data de encerramento é opcional, mas só pode existir quando houver preço promocional. Quando houver promoção, o sistema deve exibir o valor antigo cortado e o novo valor com destaque visual próprio. Promoção não depende de um estado separado de destaque.
 ---
 
 **[RF009] – Compartilhamento de loja**
@@ -151,14 +151,14 @@ O sistema deve permitir que o lojista cadastre produtos vinculados à sua loja.
 
 O sistema deve permitir que o lojista atualize parcialmente os dados de produtos da sua loja.
 
-> **Critério:** A atualização deve permitir alteração de nome, preço, descrição, disponibilidade e destaque quando essa opção estiver habilitada no produto. A operação deve seguir semântica `PATCH`, sem zerar campos não enviados. Atualização bem-sucedida deve retornar HTTP 200 com os dados atualizados.
+> **Critério:** A atualização deve permitir alteração de nome, preço, descrição, disponibilidade, preço promocional e data de encerramento da promoção. A operação deve preservar campos não enviados. Atualização bem-sucedida deve retornar HTTP 200 com os dados atualizados.
 ---
 
 **[RF021] – Remoção de produtos por soft delete**
 
 O sistema deve permitir a remoção lógica de produtos, sem apagar imediatamente o registro do banco de dados.
 
-> **Critério:** Produto removido por soft delete não deve aparecer na vitrine nem no banner de destaque. A remoção bem-sucedida deve retornar HTTP 204. Tentativa de remover produto pertencente a outra loja ou outro lojista deve retornar HTTP 403. O tempo de retenção dos dados removidos deve seguir política de retenção definida pelo projeto.
+> **Critério:** Produto removido por soft delete não deve aparecer na vitrine. A remoção bem-sucedida deve retornar HTTP 204. Tentativa de remover produto pertencente a outra loja ou outro lojista deve retornar HTTP 403. O tempo de retenção dos dados removidos deve seguir política de retenção definida pelo projeto.
 ---
 
 **[RF022] – Listagem de produtos no painel administrativo**
@@ -173,13 +173,6 @@ O sistema deve listar os produtos ativos da loja no painel administrativo do loj
 O sistema deve permitir que o lojista envie imagens para produtos cadastrados.
 
 > **Critério:** O upload deve aceitar apenas formatos de imagem aprovados pelo projeto, inicialmente `JPEG` e `PNG`, e deve rejeitar arquivos inválidos com HTTP 422. A resposta deve retornar as URLs das imagens armazenadas. O limite de quantidade de imagens por produto e o tamanho máximo por arquivo devem seguir a regra de imagens definida pela equipe.
----
-
-**[RF024] – Controle de estoque misto**
-
-O sistema deve permitir que o lojista escolha o modo de controle de estoque de cada produto.
-
-> **Critério:** No modo `Estoque Livre`, o produto pode ser vendido enquanto estiver marcado como disponível. No modo `Estoque Controlado`, o sistema deve exigir quantidade inicial e bloquear novas compras automaticamente quando o saldo chegar a zero. Produto sem estoque ou marcado como indisponível deve permanecer visível na vitrine, mas com botão de compra desabilitado no frontend. Tentativa de inclusão no carrinho via API deve retornar HTTP 400 com `errors.product` indicando o motivo: `sem_estoque` ou `indisponivel`. Como não haverá inserção em lote, o controle de estoque deve ser definido individualmente durante o cadastro ou edição de cada produto.
 ---
 
 **[RF025] – Criação de categorias**
@@ -242,7 +235,7 @@ O sistema deve exibir a loja para consumidores por meio de um `slug` público, s
 
 O sistema deve receber os produtos selecionados pelo frontend e validar os dados no backend antes de criar o pedido.
 
-> **Critério:** O frontend deve enviar apenas IDs dos produtos e quantidades. O sistema deve ignorar qualquer valor financeiro enviado pelo consumidor e sempre consultar os preços atuais no banco de dados. Antes de criar o pedido, o backend deve verificar disponibilidade, estoque controlado e pausa manual de cada item. Se algum produto estiver indisponível, sem estoque ou inválido, a operação deve ser cancelada, nenhum pedido deve ser criado e o sistema deve retornar HTTP 400 com a lista de itens inválidos em `errors.items`. Em caso de sucesso, deve retornar HTTP 201 com o ID do pedido criado e a mensagem formatada para o WhatsApp.
+> **Critério:** O frontend deve enviar apenas IDs dos produtos e quantidades. O sistema deve ignorar qualquer valor financeiro enviado pelo consumidor e sempre consultar os preços atuais no banco de dados. Antes de criar o pedido, o backend deve verificar a disponibilidade manual e a validade de cada item. Se algum produto estiver indisponível ou inválido, a operação deve ser cancelada, nenhum pedido deve ser criado e o sistema deve retornar HTTP 400 com a lista de itens inválidos em `errors.items`. Em caso de sucesso, deve retornar HTTP 201 com o ID do pedido criado e a mensagem formatada para o WhatsApp.
 ---
 
 **[RF034] – Checkout via WhatsApp**

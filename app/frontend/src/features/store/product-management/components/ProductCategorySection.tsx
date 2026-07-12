@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { CirclePlus, Tags } from 'lucide-react'
 
+import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
 import type { ProductManagementFormMode } from '../types/productManagement'
 
 type VisualCategory = {
@@ -144,14 +145,10 @@ export function ProductCategorySection({
                 value={categoryInput}
               />
             </span>
-            <button
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#e30507] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
-              onClick={handleCreateCategory}
-              type="button"
-            >
+            <PrimaryButton onClick={handleCreateCategory} type="button">
               <CirclePlus aria-hidden="true" size={16} />
               Adicionar
-            </button>
+            </PrimaryButton>
           </div>
           <span className="text-xs leading-5 text-[#6b7280]">
             {isEditMode

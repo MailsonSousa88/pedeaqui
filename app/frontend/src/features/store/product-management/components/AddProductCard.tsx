@@ -24,7 +24,7 @@ export function AddProductCard({ onClick }: AddProductCardProps) {
         <span className="text-lg font-bold text-[#111111]">Adicionar novo produto</span>
         <span className="max-w-xl text-sm leading-6 text-[#6b7280]">
           Abra o formulário para preparar as informações básicas, categorias, imagens,
-          estoque e variações do produto.
+          promoção e variações do produto.
         </span>
       </span>
     </motion.button>

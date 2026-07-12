@@ -25,7 +25,6 @@ export function ProductManagementPage() {
     hasStoreId,
     isAddProductModalOpen,
     isDeleteConfirmationOpen,
-    isFeatured,
     isManageProductsPanelOpen,
     isPromotionEnabled,
     listError,
@@ -44,9 +43,6 @@ export function ProductManagementPage() {
     setCategoryFilter,
     setPromotionFilter,
     setSearchTerm,
-    setStockMode,
-    stockMode,
-    toggleFeatured,
     togglePromotion,
   } = useProductManagement()
 
@@ -102,7 +98,6 @@ export function ProductManagementPage() {
       <AddProductModal
         activeImageSlot={activeImageSlot}
         initialProduct={editingProduct}
-        isFeatured={isFeatured}
         isOpen={isAddProductModalOpen}
         isPromotionEnabled={isPromotionEnabled}
         mode={editingProduct ? 'edit' : 'create'}
@@ -110,10 +105,7 @@ export function ProductManagementPage() {
         onNextImage={goToNextImageSlot}
         onPreviousImage={goToPreviousImageSlot}
         onSave={editingProduct ? saveEditingProduct : closeAddProductModal}
-        onStockModeChange={setStockMode}
-        onToggleFeatured={toggleFeatured}
         onTogglePromotion={togglePromotion}
-        stockMode={stockMode}
       />
 
       <ProductDeleteConfirmation

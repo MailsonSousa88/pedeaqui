@@ -1,5 +1,7 @@
 import { AlertCircle, ArrowLeft, Loader2, PackageSearch, RefreshCw } from 'lucide-react'
 
+import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import {
   type ManageProductListItem,
   type ProductAvailabilityFilter,
@@ -96,14 +98,14 @@ export function ManageProductsPanel({
           </p>
         </div>
 
-        <button
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 sm:w-auto"
+        <SecondaryButton
+          className="w-full px-4 sm:w-auto"
           onClick={onBack}
           type="button"
         >
           <ArrowLeft aria-hidden="true" size={16} />
           Voltar para cards
-        </button>
+        </SecondaryButton>
       </div>
 
       <div className="flex flex-col gap-4">
@@ -151,14 +153,14 @@ export function ManageProductsPanel({
           </div>
 
           {hasStoreId && (
-            <button
-              className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#e30507] px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 sm:w-fit"
+            <PrimaryButton
+              className="w-full px-4 sm:w-fit"
               onClick={onRetry}
               type="button"
             >
               <RefreshCw aria-hidden="true" size={16} />
               Tentar novamente
-            </button>
+            </PrimaryButton>
           )}
         </div>
       )}
