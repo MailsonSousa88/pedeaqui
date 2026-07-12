@@ -15,7 +15,11 @@ export class CreateCheckoutSessionUseCase {
   async execute({ tenantId, planId }: ICreateCheckoutSessionRequest): Promise<string> {
     const existingSubscription = await this.subscriptionRepository.findByTenantId(tenantId);
     
-    if (existingSubscription && existingSubscription.status === 'active') {
+    if (
+      existingSubscription &&
+      existingSubscription.status === 'active' &&
+      existingSubscription.planId !== null
+    ) {
       throw new Error('Tenant already has an active subscription');
     }
 
