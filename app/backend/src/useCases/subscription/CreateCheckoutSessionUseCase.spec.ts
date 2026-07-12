@@ -43,7 +43,30 @@ describe('CreateCheckoutSessionUseCase', () => {
     expect(stripeProviderMock.createCheckoutSession).toHaveBeenCalledWith('tenant-123', 'plan-123');
   });
 
-  it('should throw an error if the tenant already has an active subscription', async () => {
+  it('should create a checkout session when the tenant has an active trial subscription', async () => {
+    subscriptionRepositoryMock.findByTenantId.mockResolvedValue(new Subscription({
+      id: 'sub-trial-123',
+      tenantId: 'tenant-123',
+      planId: null,
+      status: 'active',
+      startsAt: now,
+      endsAt: thirtyDaysLater,
+      createdAt: now,
+      updatedAt: now
+    }));
+    stripeProviderMock.createCheckoutSession.mockResolvedValue('http://checkout.url');
+
+    const result = await createCheckoutSessionUseCase.execute({
+      tenantId: 'tenant-123',
+      planId: 'plan-123',
+    });
+
+    expect(result).toBe('http://checkout.url');
+    expect(subscriptionRepositoryMock.findByTenantId).toHaveBeenCalledWith('tenant-123');
+    expect(stripeProviderMock.createCheckoutSession).toHaveBeenCalledWith('tenant-123', 'plan-123');
+  });
+
+  it('should throw an error if the tenant already has an active paid subscription', async () => {
     subscriptionRepositoryMock.findByTenantId.mockResolvedValue(new Subscription({
       id: 'sub-123',
       tenantId: 'tenant-123',
