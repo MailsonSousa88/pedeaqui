@@ -3,6 +3,7 @@ import { AlertTriangle, RefreshCw, AlignLeft, ShieldCheck, Info } from "lucide-r
 import type { FailedPageProps } from "../types/billing.types";
 
 export default function FailedPage({
+  errorMessage,
   onTryAgain,
   onBackToPlans
 }: FailedPageProps) {
@@ -112,10 +113,10 @@ export default function FailedPage({
 
             {/* Heading & Subtitle */}
             <h1 className="text-2xl sm:text-[26px] leading-tight font-bold text-[#111827] tracking-tight mb-2">
-              Pagamento <span className="text-[#ef4444]">não concluído</span>
+              Loja <span className="text-[#ef4444]">não criada</span>
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 max-w-[340px] leading-relaxed mb-6">
-              Seu pagamento não foi finalizado. Você pode tentar novamente ou escolher outro plano.
+              {errorMessage || 'Não foi possível concluir a criação da loja. Você pode tentar novamente.'}
             </p>
 
             {/* Info Warning Card */}
@@ -125,7 +126,7 @@ export default function FailedPage({
               </div>
               <div>
                 <h4 className="font-bold text-xs text-[#92400e] mb-0.5">
-                  Nenhuma cobrança foi confirmada
+                  Nenhuma cobrança foi realizada
                 </h4>
                 <p className="text-xs text-[#b45309] leading-relaxed">
                   pelo PedeAqui neste momento.
@@ -153,7 +154,7 @@ export default function FailedPage({
               >
                 <AlignLeft className="w-4.5 h-4.5 stroke-[2.5] group-hover:text-[#e30507] transition-colors" />
                 <span className="group-hover:underline group-hover:decoration-[#e30507] group-hover:decoration-2 group-hover:underline-offset-4 transition-all">
-                  Voltar aos planos
+                  Voltar ao pré-registro
                 </span>
               </motion.button>
             </div>
@@ -164,8 +165,8 @@ export default function FailedPage({
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <p className="text-[11px] text-gray-400 leading-normal">
-                <span className="font-semibold text-gray-600 block mb-0.5">Pagamento seguro com a Stripe</span>
-                O pagamento é realizado no ambiente seguro da <span className="font-semibold text-[#e30507]">Stripe</span> Checkout. Seus dados estão protegidos.
+                <span className="font-semibold text-gray-600 block mb-0.5">Seus dados foram preservados</span>
+                Você pode tentar novamente sem preencher todo o formulário enquanto esta aba estiver aberta.
               </p>
             </div>
           </motion.div>

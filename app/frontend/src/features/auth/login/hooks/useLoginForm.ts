@@ -5,6 +5,7 @@ import type { ZodType } from 'zod'
 import { loginSchema } from '../schemas/loginSchema'
 import { buildLoginPayload, loginService } from '../services/loginService'
 import type { LoginFormValues, LoginResponse } from '../types/login'
+import { clearAuthSession, saveAuthSession } from '../../../../shared/services/authSession'
 
 type UseLoginFormOptions = {
   onSuccess?: (response: LoginResponse) => void
@@ -31,8 +32,10 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
     setSubmissionError(null)
 
     try {
+      clearAuthSession()
       const payload = buildLoginPayload(values)
       const response = await loginService.login(payload)
+      saveAuthSession(response)
       onSuccess?.(response)
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Nao foi possivel entrar. Verifique seus dados e tente novamente.'

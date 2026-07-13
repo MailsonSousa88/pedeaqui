@@ -8,13 +8,6 @@ export type LoginPayload = {
   password: string
 }
 
-export type LoginResponse = {
-  accessToken: string
-  refreshToken: string
-  profile: {
-    id: string
-    name: string
-    phone: string
-    document?: string
-  }
-}
+import type { AuthSession } from '../../../../shared/services/authSession'
+
+export type LoginResponse = AuthSession

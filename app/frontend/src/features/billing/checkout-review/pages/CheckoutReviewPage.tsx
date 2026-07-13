@@ -1,16 +1,20 @@
-import { CreditCard, ShieldCheck } from "lucide-react";
+import { CreditCard, ShieldCheck } from 'lucide-react'
 
-import { CheckoutAction } from "../components/CheckoutAction";
-import { CheckoutReviewHeader } from "../components/CheckoutReviewHeader";
-import { PaymentMethodList } from "../components/PaymentMethodList";
-import { SecurityNotice } from "../components/SecurityNotice";
-import { SelectedPlanCard } from "../components/SelectedPlanCard";
-import { useCheckoutReview } from "../hooks/useCheckoutReview";
-import { ACCEPTED_PAYMENT_METHODS } from "../types/checkoutReview";
+import { CheckoutAction } from '../components/CheckoutAction'
+import { CheckoutReviewHeader } from '../components/CheckoutReviewHeader'
+import { SecurityNotice } from '../components/SecurityNotice'
+import { SelectedPlanCard } from '../components/SelectedPlanCard'
+import { useCheckoutReview } from '../hooks/useCheckoutReview'
+import type { CreatedStore } from '../types/checkoutReview'
 
-export function CheckoutReviewPage() {
+type CheckoutReviewPageProps = {
+  onError?: (message: string) => void
+  onSuccess?: (store: CreatedStore) => void
+}
+
+export function CheckoutReviewPage({ onError, onSuccess }: CheckoutReviewPageProps) {
   const { selectedPlan, errorMessage, isLoading, continueToPayment } =
-    useCheckoutReview();
+    useCheckoutReview({ onError, onSuccess })
 
   return (
     <main className="min-h-screen bg-[#f5f5f5]">
@@ -27,14 +31,13 @@ export function CheckoutReviewPage() {
             </div>
 
             <p className="mt-5 text-xs font-bold uppercase tracking-widest text-[#e30507]">
-              Ativação da loja
+              Ativacao da loja
             </p>
             <h1 className="mt-3 text-2xl font-bold leading-tight text-[#111111] sm:text-3xl">
-              Finalize sua <span className="text-[#e30507]">ativação</span>
+              Comece seu <span className="text-[#e30507]">periodo gratuito</span>
             </h1>
             <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-gray-500 sm:text-base">
-              Revise seu plano e prepare o pagamento seguro pelo ambiente da
-              Stripe.
+              Revise seu plano e ative sua loja com 30 dias gratuitos.
             </p>
           </div>
 
@@ -50,7 +53,6 @@ export function CheckoutReviewPage() {
               </div>
             )}
 
-            <PaymentMethodList methods={ACCEPTED_PAYMENT_METHODS} />
             <SecurityNotice />
 
             <CheckoutAction
@@ -62,5 +64,5 @@ export function CheckoutReviewPage() {
         </div>
       </section>
     </main>
-  );
+  )
 }

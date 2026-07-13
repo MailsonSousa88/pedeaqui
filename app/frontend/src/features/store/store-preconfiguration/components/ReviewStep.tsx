@@ -1,5 +1,6 @@
 import { CheckCircle2, MapPin, Pencil, Store } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import type {
   StorePreconfigurationFormValues,
   StorePreconfigurationStep,
@@ -40,24 +41,23 @@ type ReviewBlockProps = {
 
 function ReviewBlock({ children, icon, onEdit, title }: ReviewBlockProps) {
   return (
-    <article className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
+    <article className="rounded-2xl border border-[#e5e7eb] bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <span className="grid size-10 place-items-center rounded-full bg-red-50 text-red-600">
+          <span className="grid size-10 place-items-center rounded-full bg-[#fff0f0] text-[#e30507]">
             {icon}
           </span>
-          <h3 className="text-base font-bold text-gray-950">{title}</h3>
+          <h3 className="text-lg font-semibold leading-snug text-[#111111]">{title}</h3>
         </div>
 
-        <button
+        <SecondaryButton
           aria-label={`Editar ${title}`}
-          className="inline-flex items-center gap-2 rounded-full border border-red-100 px-3 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2"
           onClick={onEdit}
           type="button"
         >
           <Pencil aria-hidden="true" size={14} />
           Editar
-        </button>
+        </SecondaryButton>
       </div>
 
       <dl className="grid gap-3 text-sm">{children}</dl>
@@ -74,7 +74,7 @@ function ReviewItem({ label, value }: ReviewItemProps) {
   return (
     <div className="grid gap-1 border-t border-gray-100 pt-3 first:border-t-0 first:pt-0">
       <dt className="text-xs font-semibold uppercase tracking-normal text-gray-400">{label}</dt>
-      <dd className="text-sm font-medium text-gray-900">{value}</dd>
+      <dd className="text-sm font-medium text-[#111111]">{value}</dd>
     </div>
   )
 }
@@ -83,10 +83,10 @@ export function ReviewStep({ onEdit, values }: ReviewStepProps) {
   return (
     <section className="space-y-6" aria-labelledby="review-step-title">
       <div className="space-y-1">
-        <h2 id="review-step-title" className="text-xl font-bold text-gray-950">
+        <h2 id="review-step-title" className="text-xl font-semibold leading-tight text-[#111111] md:text-2xl">
           Revisão da loja
         </h2>
-        <p className="text-sm leading-6 text-gray-500">
+        <p className="text-sm leading-relaxed text-gray-500 md:text-base">
           Confira os dados preenchidos antes de finalizar o pré-registro.
         </p>
       </div>

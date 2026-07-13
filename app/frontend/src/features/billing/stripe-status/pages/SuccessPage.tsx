@@ -113,10 +113,10 @@ export default function SuccessPage({
 
             {/* Heading & Subtitle */}
             <h1 className="text-2xl sm:text-[26px] leading-tight font-bold text-[#111827] tracking-tight mb-2">
-              Pagamento <span className="text-[#10b981]">concluído</span>
+              Loja <span className="text-[#10b981]">criada com sucesso</span>
             </h1>
             <p className="text-xs sm:text-sm text-gray-500 max-w-[340px] leading-relaxed mb-6">
-              Seu plano foi ativado com sucesso. Agora você já pode configurar sua loja no{" "}
+              Seu período gratuito foi ativado. Agora você já pode acessar sua loja no{" "}
               <span className="text-[#e30507] font-semibold">PedeAqui</span>.
             </p>
 
@@ -153,11 +153,11 @@ export default function SuccessPage({
               </div>
               <div>
                 <h4 className="font-bold text-xs text-[#065f46] mb-0.5">
-                  Pagamento seguro
+                  Ativação concluída
                 </h4>
                 <p className="text-[11px] text-[#047857] leading-relaxed">
-                  A confirmação do pagamento foi processada pela{" "}
-                  <span className="font-semibold text-[#e30507]">Stripe</span>. Seus dados financeiros estão protegidos.
+                  Seu tenant, período gratuito e loja foram criados com sucesso no
+                  <span className="font-semibold text-[#e30507]"> PedeAqui</span>.
                 </p>
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function SuccessPage({
                 className="w-full h-12 bg-[#e30507] hover:bg-[#b80406] active:bg-[#b80406] text-white font-bold rounded-xl flex items-center justify-center gap-2 transition-colors shadow-sm cursor-pointer text-sm"
               >
                 <Store className="w-4.5 h-4.5 stroke-[2]" />
-                Configurar minha loja
+                Entrar na minha loja
               </motion.button>
             </div>
 
@@ -181,7 +181,7 @@ export default function SuccessPage({
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <p className="text-[11px] text-gray-400 leading-normal">
-                O pagamento foi realizado no ambiente seguro da Stripe. Você não precisará fazer este pagamento novamente até o próximo ciclo.
+                Nenhuma cobrança foi realizada. A integração com a Stripe será adicionada em uma próxima etapa.
               </p>
             </div>
           </motion.div>
