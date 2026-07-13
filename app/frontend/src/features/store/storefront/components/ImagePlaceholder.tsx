@@ -1,4 +1,5 @@
 import { ImageIcon, Store } from 'lucide-react'
+import { useState } from 'react'
 
 import type {
   ImagePlaceholderTone,
@@ -6,8 +7,10 @@ import type {
 } from '../types/storefront'
 
 type ImagePlaceholderProps = {
+  alt?: string
   className?: string
   label: string
+  src?: string | null
   tone?: ImagePlaceholderTone
   variant: ImagePlaceholderVariant
 }
@@ -24,22 +27,37 @@ const toneClassNames: Record<ImagePlaceholderTone, string> = {
 }
 
 export function ImagePlaceholder({
+  alt,
   className = '',
   label,
+  src,
   tone = 'neutral',
   variant,
 }: ImagePlaceholderProps) {
   const Icon = variant === 'avatar' ? Store : ImageIcon
+  const [hasImageError, setHasImageError] = useState(false)
+  const combinedClassName = [
+    'flex shrink-0 items-center justify-center overflow-hidden',
+    variantClassNames[variant],
+    toneClassNames[tone],
+    className,
+  ].join(' ')
+
+  if (src && !hasImageError) {
+    return (
+      <img
+        alt={alt || label}
+        className={`${combinedClassName} object-cover`}
+        onError={() => setHasImageError(true)}
+        src={src}
+      />
+    )
+  }
 
   return (
     <div
       aria-label={label}
-      className={[
-        'flex shrink-0 items-center justify-center overflow-hidden',
-        variantClassNames[variant],
-        toneClassNames[tone],
-        className,
-      ].join(' ')}
+      className={combinedClassName}
       role="img"
     >
       <Icon aria-hidden="true" size={variant === 'banner' ? 40 : 28} strokeWidth={1.8} />

@@ -1,4 +1,4 @@
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck } from 'lucide-react'
 
 export function SecurityNotice() {
   return (
@@ -8,15 +8,13 @@ export function SecurityNotice() {
           <ShieldCheck size={20} aria-hidden="true" />
         </div>
         <div>
-          <h2 className="text-sm font-semibold text-[#111111]">
-            Pagamento 100% seguro
-          </h2>
+          <h2 className="text-sm font-semibold text-[#111111]">Ativacao gratuita</h2>
           <p className="mt-1 text-sm leading-relaxed text-gray-600">
-            Processado com segurança pela Stripe. Seus dados financeiros não
-            são armazenados pelo PedeAqui.
+            Sua loja sera criada com 30 dias de acesso gratuito. A assinatura Stripe
+            sera integrada em uma proxima etapa.
           </p>
         </div>
       </div>
     </section>
-  );
+  )
 }

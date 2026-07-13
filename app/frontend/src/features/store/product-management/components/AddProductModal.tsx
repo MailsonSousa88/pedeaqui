@@ -1,31 +1,33 @@
 import { useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X } from 'lucide-react'
+import { AlertCircle, X } from 'lucide-react'
 
 import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import { ProductBasicInfoSection } from './ProductBasicInfoSection'
 import { ProductCategorySection } from './ProductCategorySection'
 import { ProductFormActions } from './ProductFormActions'
-import { ProductImagePlaceholders } from './ProductImagePlaceholders'
 import { ProductPromotionSection } from './ProductPromotionSection'
-import { ProductVariationSection } from './ProductVariationSection'
 import type {
   ManageProductListItem,
+  ProductCategoryOption,
   ProductManagementEditableFormValues,
   ProductManagementFormMode,
 } from '../types/productManagement'
 
 type AddProductModalProps = {
-  activeImageSlot: 1 | 2 | 3
+  categories: ProductCategoryOption[]
+  categoryError?: string | null
   initialProduct?: ManageProductListItem | null
   isOpen: boolean
+  isCategoryLoading?: boolean
   isPromotionEnabled: boolean
+  isSaving?: boolean
   mode?: ProductManagementFormMode
   onClose: () => void
-  onNextImage: () => void
-  onPreviousImage: () => void
+  onCreateCategory?: (name: string) => Promise<ProductCategoryOption | null>
   onSave?: (values: ProductManagementEditableFormValues) => void
   onTogglePromotion: () => void
+  saveError?: string | null
 }
 
 const formatCentsForInput = (priceCents?: number | null) => {
@@ -54,16 +56,19 @@ const formatDateForInput = (date?: string | null) => {
 }
 
 export function AddProductModal({
-  activeImageSlot,
+  categories,
+  categoryError = null,
   initialProduct = null,
   isOpen,
+  isCategoryLoading = false,
   isPromotionEnabled,
+  isSaving = false,
   mode = 'create',
   onClose,
-  onNextImage,
-  onPreviousImage,
+  onCreateCategory,
   onSave = onClose,
   onTogglePromotion,
+  saveError = null,
 }: AddProductModalProps) {
   const formRef = useRef<HTMLFormElement>(null)
   const isEditMode = mode === 'edit'
@@ -71,13 +76,20 @@ export function AddProductModal({
   const modalEyebrow = isEditMode ? 'Produto existente' : 'Novo produto'
   const modalDescription = isEditMode
     ? 'Atualize os dados principais do produto. Imagens e variações seguem fluxos próprios quando os contratos estiverem conectados.'
-    : 'Preencha a estrutura visual do produto. Nada será salvo de verdade nesta versão.'
-  const saveLabel = isEditMode ? 'Salvar alterações' : 'Salvar produto'
+    : 'Preencha os dados do produto. Ao salvar, ele será adicionado à lista da sua loja.'
+  const saveLabel = isSaving
+    ? isEditMode
+      ? 'Salvando alterações...'
+      : 'Salvando produto...'
+    : isEditMode
+      ? 'Salvar alterações'
+      : 'Salvar produto'
 
   const handleSave = () => {
     const formData = formRef.current ? new FormData(formRef.current) : new FormData()
 
     onSave({
+      available: String(formData.get('available')) !== 'false',
       categoryId: String(formData.get('categoryId') ?? '') || null,
       description: String(formData.get('description') ?? ''),
       name: String(formData.get('name') ?? ''),
@@ -145,14 +157,13 @@ export function AddProductModal({
                 mode={mode}
               />
               <ProductCategorySection
+                categories={categories}
+                errorMessage={categoryError}
                 initialCategoryId={initialProduct?.categoryId}
                 initialCategoryLabel={initialProduct?.categoryLabel}
+                isLoading={isCategoryLoading}
                 mode={mode}
-              />
-              <ProductImagePlaceholders
-                activeImageSlot={activeImageSlot}
-                onNext={onNextImage}
-                onPrevious={onPreviousImage}
+                onCreateCategory={onCreateCategory}
               />
               <ProductPromotionSection
                 initialPromoEndsAt={formatDateForInput(initialProduct?.promoEndsAt)}
@@ -160,8 +171,25 @@ export function AddProductModal({
                 isPromotionEnabled={isPromotionEnabled}
                 onTogglePromotion={onTogglePromotion}
               />
-              <ProductVariationSection />
-              <ProductFormActions onCancel={onClose} onSave={handleSave} saveLabel={saveLabel} />
+              {saveError ? (
+                <div
+                  className="flex gap-3 rounded-xl border border-[#dc2626]/20 bg-red-50 p-4"
+                  role="alert"
+                >
+                  <AlertCircle
+                    aria-hidden="true"
+                    className="mt-0.5 shrink-0 text-[#dc2626]"
+                    size={18}
+                  />
+                  <p className="text-sm leading-6 text-[#dc2626]">{saveError}</p>
+                </div>
+              ) : null}
+              <ProductFormActions
+                disabled={isSaving || isCategoryLoading}
+                onCancel={onClose}
+                onSave={handleSave}
+                saveLabel={saveLabel}
+              />
             </form>
           </motion.div>
         </div>

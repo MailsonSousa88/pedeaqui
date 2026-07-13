@@ -5,6 +5,7 @@ import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import type { ProductFormActionHandlers } from '../types/productManagement'
 
 export function ProductFormActions({
+  disabled = false,
   onCancel,
   onSave,
   saveLabel = 'Salvar produto',
@@ -16,7 +17,7 @@ export function ProductFormActions({
         Cancelar
       </SecondaryButton>
 
-      <PrimaryButton onClick={onSave} type="button">
+      <PrimaryButton disabled={disabled} onClick={onSave} type="button">
         <Save aria-hidden="true" size={16} />
         {saveLabel}
       </PrimaryButton>

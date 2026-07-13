@@ -1,7 +1,12 @@
 import { useCallback, useMemo, useState } from 'react'
 
+import { getAuthSession } from '../../../../shared/services/authSession'
+import { productFormSchema } from '../schemas/productFormSchema'
 import {
+  createCategory,
+  createProduct,
   deleteProduct,
+  listCategoriesByStore,
   listProductsByStore,
   mapProductManagementError,
   toggleProductAvailability,
@@ -10,8 +15,8 @@ import {
 import {
   PRODUCT_MANAGEMENT_ERROR_MESSAGES,
   type ManageProductListItem,
+  type ProductCategoryOption,
   type ProductAvailabilityFilter,
-  type ProductImageSlot,
   type ProductManagementActionState,
   type ProductManagementAsyncStatus,
   type ProductManagementEditableFormValues,
@@ -20,9 +25,6 @@ import {
   type ProductPromotionFilter,
   type UpdateProductPayload,
 } from '../types/productManagement'
-
-const firstImageSlot: ProductImageSlot = 1
-const lastImageSlot: ProductImageSlot = 3
 
 const initialFilters: ProductManagementFilters = {
   availability: 'all',
@@ -38,6 +40,7 @@ const initialActionState: ProductManagementActionState = {
 }
 
 type UseProductManagementOptions = {
+  onProductsChanged?: () => void
   storeId?: string | null
 }
 
@@ -142,12 +145,22 @@ const createUpdatePayloadFromFormValues = (
   }
 }
 
+const mapCategoryToOption = (category: {
+  id: string
+  name: string
+}): ProductCategoryOption => ({
+  id: category.id,
+  kind: category.name.trim().toLocaleLowerCase('pt-BR') === 'todos' ? 'system' : 'custom',
+  label: category.name,
+  removable: category.name.trim().toLocaleLowerCase('pt-BR') !== 'todos',
+})
+
 export function useProductManagement(options: UseProductManagementOptions = {}) {
+  const onProductsChanged = options.onProductsChanged
   const storeId = options.storeId ?? null
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false)
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] = useState(false)
   const [isManageProductsPanelOpen, setIsManageProductsPanelOpen] = useState(false)
-  const [activeImageSlot, setActiveImageSlot] = useState<ProductImageSlot>(firstImageSlot)
   const [isPromotionEnabled, setIsPromotionEnabled] = useState(false)
   const [products, setProducts] = useState<ManageProductListItem[]>([])
   const [filters, setFilters] = useState<ProductManagementFilters>(initialFilters)
@@ -157,13 +170,20 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
   const [editingProduct, setEditingProduct] = useState<ManageProductListItem | null>(null)
   const [selectedProductForDelete, setSelectedProductForDelete] =
     useState<ManageProductListItem | null>(null)
+  const [categories, setCategories] = useState<ProductCategoryOption[]>([])
+  const [categoryStatus, setCategoryStatus] = useState<ProductManagementAsyncStatus>('idle')
+  const [categoryError, setCategoryError] = useState<string | null>(null)
+  const [isSavingProduct, setIsSavingProduct] = useState(false)
+  const [saveProductError, setSaveProductError] = useState<string | null>(null)
 
   const openAddProductModal = useCallback(() => {
     setEditingProduct(null)
+    setSaveProductError(null)
     setIsAddProductModalOpen(true)
   }, [])
 
   const closeAddProductModal = useCallback(() => {
+    setSaveProductError(null)
     setIsAddProductModalOpen(false)
   }, [])
 
@@ -173,18 +193,6 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
 
   const closeManageProductsPanel = useCallback(() => {
     setIsManageProductsPanelOpen(false)
-  }, [])
-
-  const goToNextImageSlot = useCallback(() => {
-    setActiveImageSlot((currentSlot) =>
-      currentSlot === lastImageSlot ? firstImageSlot : ((currentSlot + 1) as ProductImageSlot),
-    )
-  }, [])
-
-  const goToPreviousImageSlot = useCallback(() => {
-    setActiveImageSlot((currentSlot) =>
-      currentSlot === firstImageSlot ? lastImageSlot : ((currentSlot - 1) as ProductImageSlot),
-    )
   }, [])
 
   const togglePromotion = useCallback(() => {
@@ -235,14 +243,75 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     setListError(null)
 
     try {
-      const loadedProducts = await listProductsByStore(storeId)
-      setProducts(loadedProducts)
+      const [loadedProducts, loadedCategories] = await Promise.all([
+        listProductsByStore(storeId),
+        listCategoriesByStore(storeId),
+      ])
+      const categoryLabels = new Map(
+        loadedCategories.map((category) => [category.id, category.name]),
+      )
+      setCategories(loadedCategories.map(mapCategoryToOption))
+      setCategoryStatus('success')
+      setProducts(
+        loadedProducts.map((product) => ({
+          ...product,
+          categoryLabel: categoryLabels.get(product.categoryId) ?? product.categoryLabel,
+        })),
+      )
       setListStatus('success')
     } catch (error) {
       setListStatus('error')
       setListError(mapProductManagementError(error))
     }
   }, [storeId])
+
+  const loadCategories = useCallback(async () => {
+    if (!storeId) {
+      setCategories([])
+      setCategoryStatus('error')
+      setCategoryError('Conecte uma loja antes de carregar categorias.')
+      return
+    }
+
+    setCategoryStatus('loading')
+    setCategoryError(null)
+
+    try {
+      const loadedCategories = await listCategoriesByStore(storeId)
+      setCategories(loadedCategories.map(mapCategoryToOption))
+      setCategoryStatus('success')
+    } catch (error) {
+      setCategoryStatus('error')
+      setCategoryError(mapProductManagementError(error).message)
+    }
+  }, [storeId])
+
+  const createProductCategory = useCallback(
+    async (name: string): Promise<ProductCategoryOption | null> => {
+      const session = getAuthSession()
+      if (!storeId || !session) {
+        setCategoryError('Sua loja ou sessão não está disponível. Entre novamente e tente de novo.')
+        return null
+      }
+
+      setCategoryError(null)
+      try {
+        const createdCategory = await createCategory(
+          { name, storeId },
+          { authToken: session.accessToken },
+        )
+        const option = mapCategoryToOption(createdCategory)
+        setCategories((currentCategories) => [...currentCategories, option])
+        setCategoryStatus('success')
+        onProductsChanged?.()
+        return option
+      } catch (error) {
+        setCategoryError(mapProductManagementError(error).message)
+        return null
+      }
+    },
+    [onProductsChanged, storeId],
+  )
 
   const filteredProducts = useMemo(
     () =>
@@ -312,6 +381,70 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     })
   }, [])
 
+  const saveNewProduct = useCallback(
+    async (values: ProductManagementEditableFormValues) => {
+      const validation = productFormSchema.safeParse(values)
+      if (!validation.success) {
+        setSaveProductError(validation.error.issues[0]?.message ?? PRODUCT_MANAGEMENT_ERROR_MESSAGES.validation)
+        return
+      }
+
+      const session = getAuthSession()
+      if (!storeId || !session) {
+        setSaveProductError('Sua loja ou sessão não está disponível. Entre novamente e tente de novo.')
+        return
+      }
+
+      const categoryId = validation.data.categoryId
+      if (!categoryId) {
+        setSaveProductError('Selecione uma categoria válida.')
+        return
+      }
+
+      setIsSavingProduct(true)
+      setSaveProductError(null)
+
+      try {
+        const priceCents = currencyInputToCents(validation.data.price)
+        const promoPriceCents = currencyInputToCents(validation.data.promotion.promoPrice)
+        const createdProduct = await createProduct(
+          {
+            available: values.available,
+            categoryId,
+            description: validation.data.description || undefined,
+            name: validation.data.name,
+            priceCents,
+            promoEndsAt: validation.data.promotion.promotionEnabled
+              ? normalizePromoEndsAt(validation.data.promotion.promoEndsAt) ?? undefined
+              : undefined,
+            promoPriceCents:
+              validation.data.promotion.promotionEnabled && promoPriceCents > 0
+                ? promoPriceCents
+                : undefined,
+            storeId,
+          },
+          { authToken: session.accessToken },
+        )
+        const categoryLabel = categories.find(
+          (category) => category.id === createdProduct.categoryId,
+        )?.label
+        const visibleProduct = { ...createdProduct, categoryLabel }
+
+        setProducts((currentProducts) => [visibleProduct, ...currentProducts])
+        onProductsChanged?.()
+        setListStatus('success')
+        setProductActionSuccess(createdProduct.id)
+        setIsAddProductModalOpen(false)
+        setIsManageProductsPanelOpen(true)
+      } catch (error) {
+        setSaveProductError(mapProductManagementError(error).message)
+      } finally {
+        setIsSavingProduct(false)
+      }
+    },
+    [categories, onProductsChanged, setProductActionSuccess, storeId],
+  )
+
   const saveEditingProduct = useCallback(async (values?: ProductManagementEditableFormValues) => {
     if (!editingProduct) {
       return
@@ -320,44 +453,77 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     setProductActionLoading(editingProduct.id)
 
     try {
+      const session = getAuthSession()
+      if (!session) {
+        setProductActionError({
+          code: 'unknown',
+          message: 'Sua sessão expirou. Entre novamente para editar o produto.',
+        })
+        return
+      }
       const updatedProduct = await updateProduct(
         editingProduct.id,
         values
           ? createUpdatePayloadFromFormValues(values, editingProduct)
           : createUpdatePayloadFromProduct(editingProduct),
+        { authToken: session.accessToken },
       )
+      const updatedProductWithCategory = {
+        ...updatedProduct,
+        categoryLabel:
+          categories.find((category) => category.id === updatedProduct.categoryId)?.label ??
+          editingProduct.categoryLabel,
+      }
 
       setProducts((currentProducts) =>
         currentProducts.map((product) =>
-          product.id === updatedProduct.id ? updatedProduct : product,
+          product.id === updatedProduct.id ? updatedProductWithCategory : product,
         ),
       )
       setProductActionSuccess(updatedProduct.id)
+      onProductsChanged?.()
       setEditingProduct(null)
       setIsAddProductModalOpen(false)
     } catch (error) {
       setProductActionError(mapProductManagementError(error))
     }
-  }, [editingProduct, setProductActionError, setProductActionLoading, setProductActionSuccess])
+  }, [categories, editingProduct, onProductsChanged, setProductActionError, setProductActionLoading, setProductActionSuccess])
 
   const handleToggleProductAvailability = useCallback(
     async (product: ManageProductListItem) => {
       setProductActionLoading(product.id)
 
       try {
-        const updatedProduct = await toggleProductAvailability(product.id)
+        const session = getAuthSession()
+        if (!session) {
+          setProductActionError({
+            code: 'unknown',
+            message: 'Sua sessão expirou. Entre novamente para alterar o produto.',
+          })
+          return
+        }
+        const updatedProduct = await toggleProductAvailability(product.id, {
+          authToken: session.accessToken,
+        })
+        const updatedProductWithCategory = {
+          ...updatedProduct,
+          categoryLabel: product.categoryLabel,
+        }
 
         setProducts((currentProducts) =>
           currentProducts.map((currentProduct) =>
-            currentProduct.id === updatedProduct.id ? updatedProduct : currentProduct,
+            currentProduct.id === updatedProduct.id
+              ? updatedProductWithCategory
+              : currentProduct,
           ),
         )
         setProductActionSuccess(updatedProduct.id)
+        onProductsChanged?.()
       } catch (error) {
         setProductActionError(mapProductManagementError(error))
       }
     },
-    [setProductActionError, setProductActionLoading, setProductActionSuccess],
+    [onProductsChanged, setProductActionError, setProductActionLoading, setProductActionSuccess],
   )
 
   const confirmDeleteProduct = useCallback(async () => {
@@ -368,7 +534,15 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     setProductActionLoading(selectedProductForDelete.id)
 
     try {
-      await deleteProduct(selectedProductForDelete.id)
+      const session = getAuthSession()
+      if (!session) {
+        setProductActionError({
+          code: 'unknown',
+          message: 'Sua sessão expirou. Entre novamente para remover o produto.',
+        })
+        return
+      }
+      await deleteProduct(selectedProductForDelete.id, { authToken: session.accessToken })
 
       setProducts((currentProducts) =>
         currentProducts.filter((product) => product.id !== selectedProductForDelete.id),
@@ -376,11 +550,13 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
       setProductActionSuccess(selectedProductForDelete.id)
       setSelectedProductForDelete(null)
       setIsDeleteConfirmationOpen(false)
+      onProductsChanged?.()
     } catch (error) {
       setProductActionError(mapProductManagementError(error))
     }
   }, [
     selectedProductForDelete,
+    onProductsChanged,
     setProductActionError,
     setProductActionLoading,
     setProductActionSuccess,
@@ -393,7 +569,9 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
 
   return {
     action,
-    activeImageSlot,
+    categories,
+    categoryError,
+    categoryStatus,
     closeAddProductModal,
     closeDeleteConfirmation,
     closeEditProductModal,
@@ -403,24 +581,27 @@ export function useProductManagement(options: UseProductManagementOptions = {}) 
     emptyProductsMessage,
     filteredProducts,
     filters,
-    goToNextImageSlot,
-    goToPreviousImageSlot,
     hasStoreId,
     isAddProductModalOpen,
     isDeleteConfirmationOpen,
     isManageProductsPanelOpen,
     isPromotionEnabled,
+    isSavingProduct,
     listError,
     listStatus,
     loadProducts,
+    loadCategories,
     openDeleteConfirmation,
     openAddProductModal,
     openEditProductModal,
     openManageProductsPanel,
+    createProductCategory,
     prepareAvailabilityToggle,
     products,
     resetProductFilters,
     saveEditingProduct,
+    saveNewProduct,
+    saveProductError,
     selectedProductForDelete,
     setAvailabilityFilter,
     setCategoryFilter,

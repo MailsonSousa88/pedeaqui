@@ -74,8 +74,7 @@ export function CategoryForm({
                     Editar categoria
                   </h3>
                   <p id={categoryNameDescriptionId} className="mt-1 text-sm leading-6 text-[#6b7280]">
-                    Ajuste o nome da categoria selecionada. A persistência real será conectada
-                    quando o backend estiver pronto.
+                    Ajuste o nome da categoria selecionada. A alteração será salva na sua loja.
                   </p>
                 </div>
               </div>
@@ -101,7 +100,7 @@ export function CategoryForm({
                   {editingCategory.name}
                 </strong>
                 <p className="mt-1 text-sm text-gray-500">
-                  {editingCategory.productCount} produto(s) vinculados visualmente
+                  {editingCategory.productCount} produto(s) vinculados
                 </p>
               </div>
 

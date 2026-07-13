@@ -21,7 +21,9 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
         <div className="relative z-10 flex w-full justify-center">
           <LoginCard
             onRegisterClick={() => onNavigate('/register')}
-            onSuccess={() => onNavigate('/store-preconfiguration')}
+            onSuccess={(store) =>
+              onNavigate(`/storefront/${encodeURIComponent(store.slug)}`)
+            }
           />
         </div>
       </main>

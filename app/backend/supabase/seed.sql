@@ -148,8 +148,76 @@ INSERT INTO public.tenants VALUES ('9c230d41-afc9-4a35-af21-d6a2fb267d26', 'acti
 -- Data for Name: stores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-INSERT INTO public.stores VALUES ('386787d1-1f67-489f-bd04-24361c5039cf', '90a194d0-808c-4906-b48a-8ea10f007972', 'loja-teste-1783301025337', 'Conflito de Slug', '08:00:00', '18:00:00', 'Rua Conflito', NULL, NULL, '11999990005', true, NULL, '2026-07-06 01:23:48.124+00', '2026-07-06 01:23:48.124+00');
-INSERT INTO public.stores VALUES ('c18cfb14-897c-4d3b-8dd5-90218b6ad21d', 'c6e96b77-b615-4c40-aadf-8ca9c290554d', 'loja-teste-insomnia-001', 'Loja Teste Insomnia Atualizada', '09:00:00', '19:00:00', 'Rua Teste Atualizada, 200', 'Loja atualizada via Insomnia', NULL, '11999990001', true, NULL, '2026-07-06 01:16:05.074+00', '2026-07-06 02:05:20.143724+00');
+INSERT INTO public.stores (
+    id,
+    tenant_id,
+    slug,
+    store_name,
+    horario_abertura,
+    horario_fechamento,
+    endereco,
+    city,
+    state,
+    descricao,
+    logo_url,
+    whatsapp_number,
+    active,
+    deleted_at,
+    created_at,
+    updated_at
+) VALUES (
+    '386787d1-1f67-489f-bd04-24361c5039cf',
+    '90a194d0-808c-4906-b48a-8ea10f007972',
+    'loja-teste-1783301025337',
+    'Conflito de Slug',
+    '08:00:00',
+    '18:00:00',
+    'Rua Conflito',
+    'Sao Paulo',
+    'SP',
+    NULL,
+    NULL,
+    '11999990005',
+    true,
+    NULL,
+    '2026-07-06 01:23:48.124+00',
+    '2026-07-06 01:23:48.124+00'
+);
+INSERT INTO public.stores (
+    id,
+    tenant_id,
+    slug,
+    store_name,
+    horario_abertura,
+    horario_fechamento,
+    endereco,
+    city,
+    state,
+    descricao,
+    logo_url,
+    whatsapp_number,
+    active,
+    deleted_at,
+    created_at,
+    updated_at
+) VALUES (
+    'c18cfb14-897c-4d3b-8dd5-90218b6ad21d',
+    'c6e96b77-b615-4c40-aadf-8ca9c290554d',
+    'loja-teste-insomnia-001',
+    'Loja Teste Insomnia Atualizada',
+    '09:00:00',
+    '19:00:00',
+    'Rua Teste Atualizada, 200',
+    'Teresina',
+    'PI',
+    'Loja atualizada via Insomnia',
+    NULL,
+    '11999990001',
+    true,
+    NULL,
+    '2026-07-06 01:16:05.074+00',
+    '2026-07-06 02:05:20.143724+00'
+);
 
 
 --
@@ -214,5 +282,4 @@ INSERT INTO public.variation_options VALUES ('fffe3188-ca16-46f1-9c3d-49446e0285
 --
 -- PostgreSQL database dump complete
 --
-
 

@@ -1,10 +1,10 @@
-import { AlertCircle, LockKeyhole, Loader2 } from "lucide-react";
+import { AlertCircle, LockKeyhole, Loader2 } from 'lucide-react'
 
 type CheckoutActionProps = {
-  isLoading: boolean;
-  errorMessage: string | null;
-  onContinue: () => void;
-};
+  isLoading: boolean
+  errorMessage: string | null
+  onContinue: () => void
+}
 
 export function CheckoutAction({
   isLoading,
@@ -34,14 +34,13 @@ export function CheckoutAction({
         ) : (
           <LockKeyhole size={18} aria-hidden="true" />
         )}
-        {isLoading ? "Preparando pagamento..." : "Continuar para pagamento"}
+        {isLoading ? 'Criando sua loja...' : 'Ativar loja gratuitamente'}
       </button>
 
       <p className="flex items-start justify-center gap-2 text-center text-xs leading-relaxed text-gray-500">
         <LockKeyhole size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
-        Você será redirecionado para o ambiente seguro da Stripe para concluir o
-        pagamento.
+        Nenhuma cobranca sera realizada durante o periodo de teste.
       </p>
     </div>
-  );
+  )
 }

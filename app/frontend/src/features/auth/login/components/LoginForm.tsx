@@ -1,10 +1,11 @@
-import { motion, useReducedMotion } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Eye, EyeOff, Loader2, LockKeyhole, Mail } from 'lucide-react'
 import { useLoginForm } from '../hooks/useLoginForm'
 import { LoginField } from './LoginField'
+import type { LoginResolvedStore } from '../types/login'
 
 type LoginFormProps = {
-  onSuccess?: () => void
+  onSuccess?: (store: LoginResolvedStore) => void
 }
 
 export function LoginForm({ onSuccess }: LoginFormProps) {
@@ -15,6 +16,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
     onSubmit,
     register,
     submissionError,
+    submissionStage,
     togglePasswordVisibility,
   } = useLoginForm({ onSuccess })
   const shouldReduceMotion = useReducedMotion()
@@ -73,6 +75,23 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         </p>
       ) : null}
 
+      <AnimatePresence>
+        {submissionStage === 'resolving-store' ? (
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            aria-live="polite"
+            className="flex items-center gap-3 rounded-xl border border-[#e30507]/15 bg-[#fff0f0] px-4 py-3 text-sm font-medium text-[#111111]"
+            exit={{ opacity: 0, y: -4 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 4 }}
+            role="status"
+            transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease: 'easeOut' }}
+          >
+            <Loader2 aria-hidden="true" className="shrink-0 animate-spin text-[#e30507]" size={18} />
+            Estamos carregando os dados e preparando sua loja...
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+
       <motion.button
         type="submit"
         disabled={isSubmitting}
@@ -84,7 +103,9 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         {isSubmitting ? (
           <>
             <Loader2 aria-hidden="true" className="animate-spin" size={18} />
-            <span>Entrando...</span>
+            <span>
+              {submissionStage === 'resolving-store' ? 'Montando sua loja...' : 'Validando acesso...'}
+            </span>
           </>
         ) : (
           'Entrar'

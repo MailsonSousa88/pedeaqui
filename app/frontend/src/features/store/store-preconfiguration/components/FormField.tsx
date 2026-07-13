@@ -24,14 +24,14 @@ export function FormField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <label className="text-sm font-semibold text-gray-950" htmlFor={htmlFor}>
+      <label className="text-sm font-semibold text-[#111111]" htmlFor={htmlFor}>
         {label}
-        {required ? <span className="ml-1 text-red-600">*</span> : null}
+        {required ? <span className="ml-1 text-[#e30507]">*</span> : null}
       </label>
 
       <div className="relative">
         {icon ? (
-          <span className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 text-red-600">
+          <span className="pointer-events-none absolute left-4 top-1/2 flex -translate-y-1/2 text-[#e30507]">
             {icon}
           </span>
         ) : null}
@@ -39,13 +39,13 @@ export function FormField({
       </div>
 
       {hint ? (
-        <p className="text-xs leading-5 text-gray-500" id={descriptionId}>
+        <p className="text-xs leading-5 text-gray-400" id={descriptionId}>
           {hint}
         </p>
       ) : null}
 
       {error ? (
-        <p className="text-xs font-medium leading-5 text-red-600" id={errorId} role="alert">
+        <p className="text-xs font-medium leading-5 text-[#dc2626]" id={errorId} role="alert">
           {error}
         </p>
       ) : null}
@@ -54,7 +54,7 @@ export function FormField({
 }
 
 export const formFieldInputClassName =
-  'w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-950 placeholder:text-gray-400 shadow-sm transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-red-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 aria-[invalid=true]:border-red-400 aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-red-100'
+  'w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507] disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 aria-[invalid=true]:border-red-400 aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-red-200'
 
 export const formFieldInputWithIconClassName =
-  'w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-gray-950 placeholder:text-gray-400 shadow-sm transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-red-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 aria-[invalid=true]:border-red-400 aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-red-100'
+  'w-full rounded-xl border border-gray-200 bg-white py-3 pl-11 pr-4 text-sm text-[#111111] placeholder:text-gray-400 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507] disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 aria-[invalid=true]:border-red-400 aria-[invalid=true]:ring-2 aria-[invalid=true]:ring-red-200'

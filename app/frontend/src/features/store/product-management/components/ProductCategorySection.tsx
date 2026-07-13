@@ -2,79 +2,79 @@ import { useMemo, useState } from 'react'
 import { CirclePlus, Tags } from 'lucide-react'
 
 import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
-import type { ProductManagementFormMode } from '../types/productManagement'
-
-type VisualCategory = {
-  id: string
-  label: string
-}
+import type {
+  ProductCategoryOption,
+  ProductManagementFormMode,
+} from '../types/productManagement'
 
 type ProductCategorySectionProps = {
+  categories: ProductCategoryOption[]
+  errorMessage?: string | null
   initialCategoryId?: string | null
   initialCategoryLabel?: string | null
+  isLoading?: boolean
   mode?: ProductManagementFormMode
+  onCreateCategory?: (name: string) => Promise<ProductCategoryOption | null>
 }
 
 function normalizeCategoryLabel(value: string) {
   return value.trim().replace(/\s+/g, ' ').toUpperCase()
 }
 
-function createCategoryId(label: string) {
-  return label
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)/g, '')
-}
-
 export function ProductCategorySection({
+  categories,
+  errorMessage = null,
   initialCategoryId = null,
   initialCategoryLabel = null,
+  isLoading = false,
   mode = 'create',
+  onCreateCategory,
 }: ProductCategorySectionProps) {
   const [categoryInput, setCategoryInput] = useState('')
   const [selectedCategoryId, setSelectedCategoryId] = useState(initialCategoryId ?? '')
-  const [visualCategories, setVisualCategories] = useState<VisualCategory[]>(
-    initialCategoryId
-      ? [
-          {
-            id: initialCategoryId,
-            label: initialCategoryLabel ?? 'Categoria atual',
-          },
-        ]
-      : [],
-  )
+  const [isCreating, setIsCreating] = useState(false)
   const isEditMode = mode === 'edit'
+
+  const availableCategories = useMemo(() => {
+    if (initialCategoryId && !categories.some((category) => category.id === initialCategoryId)) {
+      return [
+        ...categories,
+        {
+          id: initialCategoryId,
+          kind: 'custom' as const,
+          label: initialCategoryLabel ?? 'Categoria atual',
+          removable: false,
+        },
+      ]
+    }
+
+    return categories
+  }, [categories, initialCategoryId, initialCategoryLabel])
+
+  const defaultCategory =
+    availableCategories.find((category) => category.kind === 'system') ?? availableCategories[0]
+  const effectiveSelectedCategoryId = selectedCategoryId || defaultCategory?.id || ''
 
   const normalizedCategoryInput = useMemo(
     () => normalizeCategoryLabel(categoryInput),
     [categoryInput],
   )
 
-  const handleCreateCategory = () => {
-    if (!normalizedCategoryInput) {
+  const handleCreateCategory = async () => {
+    if (!normalizedCategoryInput || !onCreateCategory || isCreating) {
       return
     }
 
-    const nextCategoryId = createCategoryId(normalizedCategoryInput)
-    const alreadyExists = visualCategories.some((category) => category.id === nextCategoryId)
-
-    if (alreadyExists) {
-      setSelectedCategoryId(nextCategoryId)
-      setCategoryInput('')
-      return
+    setIsCreating(true)
+    try {
+      const createdCategory = await onCreateCategory(normalizedCategoryInput)
+      if (createdCategory) {
+        setSelectedCategoryId(createdCategory.id)
+        setCategoryInput('')
+      }
+    } finally {
+      setIsCreating(false)
     }
-
-    setVisualCategories((currentCategories) => [
-      ...currentCategories,
-      {
-        id: nextCategoryId,
-        label: normalizedCategoryInput,
-      },
-    ])
-    setSelectedCategoryId(nextCategoryId)
-    setCategoryInput('')
   }
 
   return (
@@ -88,20 +88,20 @@ export function ProductCategorySection({
             Categoria
           </h4>
           <p className="text-sm leading-6 text-[#6b7280]">
-            Todo produto aparece em Todos. A categoria especifica deve seguir o cadastro real da
-            loja.
+            Todo produto precisa pertencer a uma categoria real da loja.
           </p>
         </div>
       </div>
 
       <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-[#f5f5f5] p-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#e30507] px-4 py-2 text-xs font-bold uppercase text-white">
-            Todos
-          </span>
-          {visualCategories.map((category) => (
+          {availableCategories.map((category) => (
             <span
-              className="rounded-full border border-[#e30507]/30 bg-white px-4 py-2 text-xs font-bold uppercase text-[#e30507]"
+              className={
+                category.kind === 'system'
+                  ? 'rounded-full bg-[#e30507] px-4 py-2 text-xs font-bold uppercase text-white'
+                  : 'rounded-full border border-[#e30507]/30 bg-white px-4 py-2 text-xs font-bold uppercase text-[#e30507]'
+              }
               key={category.id}
             >
               {category.label}
@@ -110,17 +110,16 @@ export function ProductCategorySection({
         </div>
 
         <label className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-[#111111]">
-            Categoria especifica opcional
-          </span>
+          <span className="text-sm font-semibold text-[#111111]">Categoria do produto</span>
           <select
             className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-[#111111] transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[#e30507]"
+            disabled={isLoading}
             name="categoryId"
             onChange={(event) => setSelectedCategoryId(event.target.value)}
-            value={selectedCategoryId}
+            value={effectiveSelectedCategoryId}
           >
-            <option value="">Nenhuma categoria especifica</option>
-            {visualCategories.map((category) => (
+            <option value="">Selecione uma categoria</option>
+            {availableCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.label}
               </option>
@@ -129,7 +128,7 @@ export function ProductCategorySection({
         </label>
 
         <div className="flex flex-col gap-1.5">
-          <span className="text-sm font-semibold text-[#111111]">Criar categoria visual</span>
+          <span className="text-sm font-semibold text-[#111111]">Criar nova categoria</span>
           <div className="flex flex-col gap-2 sm:flex-row">
             <span className="relative flex-1">
               <CirclePlus
@@ -145,16 +144,28 @@ export function ProductCategorySection({
                 value={categoryInput}
               />
             </span>
-            <PrimaryButton onClick={handleCreateCategory} type="button">
+            <PrimaryButton
+              disabled={!onCreateCategory || isCreating || isLoading}
+              onClick={() => void handleCreateCategory()}
+              type="button"
+            >
               <CirclePlus aria-hidden="true" size={16} />
-              Adicionar
+              {isCreating ? 'Criando...' : 'Adicionar'}
             </PrimaryButton>
           </div>
-          <span className="text-xs leading-5 text-[#6b7280]">
-            {isEditMode
-              ? 'A edição usa somente categorias válidas da loja quando a integração estiver conectada.'
-              : 'Esta categoria ainda não será salva de verdade. Por enquanto, apenas Todos permanece como categoria fixa.'}
-          </span>
+          {errorMessage ? (
+            <span className="text-xs font-medium text-[#dc2626]" role="alert">
+              {errorMessage}
+            </span>
+          ) : (
+            <span className="text-xs leading-5 text-[#6b7280]">
+              {isLoading
+                ? 'Carregando categorias da loja...'
+                : isEditMode
+                  ? 'Selecione uma categoria válida da sua loja.'
+                  : 'A nova categoria será salva e selecionada automaticamente.'}
+            </span>
+          )}
         </div>
       </div>
     </section>

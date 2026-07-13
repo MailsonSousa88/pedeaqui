@@ -1,10 +1,11 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import { LogIn } from 'lucide-react'
 import { LoginForm } from './LoginForm'
+import type { LoginResolvedStore } from '../types/login'
 
 type LoginCardProps = {
   onRegisterClick?: () => void
-  onSuccess?: () => void
+  onSuccess?: (store: LoginResolvedStore) => void
 }
 
 export function LoginCard({ onRegisterClick, onSuccess }: LoginCardProps) {

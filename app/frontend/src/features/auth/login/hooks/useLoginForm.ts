@@ -4,15 +4,21 @@ import { useForm } from 'react-hook-form'
 import type { ZodType } from 'zod'
 import { loginSchema } from '../schemas/loginSchema'
 import { buildLoginPayload, loginService } from '../services/loginService'
-import type { LoginFormValues, LoginResponse } from '../types/login'
+import type {
+  LoginFormValues,
+  LoginResolvedStore,
+  LoginSubmissionStage,
+} from '../types/login'
+import { clearAuthSession, saveAuthSession } from '../../../../shared/services/authSession'
 
 type UseLoginFormOptions = {
-  onSuccess?: (response: LoginResponse) => void
+  onSuccess?: (store: LoginResolvedStore) => void
 }
 
 export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false)
   const [submissionError, setSubmissionError] = useState<string | null>(null)
+  const [submissionStage, setSubmissionStage] = useState<LoginSubmissionStage>('idle')
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -31,12 +37,19 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
     setSubmissionError(null)
 
     try {
+      clearAuthSession()
+      setSubmissionStage('authenticating')
       const payload = buildLoginPayload(values)
       const response = await loginService.login(payload)
-      onSuccess?.(response)
+      setSubmissionStage('resolving-store')
+      const store = await loginService.findStoreForTenant(response.profile.id)
+      saveAuthSession(response)
+      onSuccess?.(store)
     } catch (error) {
+      clearAuthSession()
       const message = error instanceof Error ? error.message : 'Nao foi possivel entrar. Verifique seus dados e tente novamente.'
       setSubmissionError(message)
+      setSubmissionStage('idle')
     }
   })
 
@@ -51,6 +64,7 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
     onSubmit,
     register,
     submissionError,
+    submissionStage,
     togglePasswordVisibility,
   }
 }

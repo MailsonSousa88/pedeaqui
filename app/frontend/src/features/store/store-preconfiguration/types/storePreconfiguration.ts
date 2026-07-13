@@ -49,6 +49,8 @@ export type StorePreconfigurationPayload = {
     horarioAbertura: string
     horarioFechamento: string
     endereco: string
+    city: string
+    state: string
     descricao: string | null
     logoUrl: string | null
     whatsappNumber: string
