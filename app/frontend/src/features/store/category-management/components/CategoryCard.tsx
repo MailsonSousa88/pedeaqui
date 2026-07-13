@@ -78,7 +78,7 @@ export function CategoryCard({ category, onEditCategory, onRemoveCategory }: Cat
               <Edit3 aria-hidden="true" size={17} />
             </SecondaryButton>
             <SecondaryButton
-              aria-label={`Ação visual de remover categoria ${category.name}`}
+              aria-label={`Remover categoria ${category.name}`}
               className="text-gray-600"
               onClick={() => onRemoveCategory(category.id)}
               size="icon"

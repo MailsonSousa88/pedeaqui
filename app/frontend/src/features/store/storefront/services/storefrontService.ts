@@ -1,5 +1,10 @@
 import { ApiError, apiClient } from '../../../../shared/services/api'
-import type { StorefrontStore, StorefrontUpdatePayload } from '../types/storefront'
+import type {
+  StorefrontCategory,
+  StorefrontProduct,
+  StorefrontStore,
+  StorefrontUpdatePayload,
+} from '../types/storefront'
 
 const getApiMessage = (error: ApiError) => {
   if (typeof error.body === 'object' && error.body !== null && 'error' in error.body) {
@@ -11,6 +16,12 @@ const getApiMessage = (error: ApiError) => {
 
 export const getStorefrontBySlug = (slug: string) =>
   apiClient.get<StorefrontStore>(`/api/stores/${encodeURIComponent(slug)}`)
+
+export const getStorefrontProducts = (storeId: string) =>
+  apiClient.get<StorefrontProduct[]>(`/api/products/store/${encodeURIComponent(storeId)}`)
+
+export const getStorefrontCategories = (storeId: string) =>
+  apiClient.get<StorefrontCategory[]>(`/api/categories/store/${encodeURIComponent(storeId)}`)
 
 export const updateStorefront = async (
   storeId: string,

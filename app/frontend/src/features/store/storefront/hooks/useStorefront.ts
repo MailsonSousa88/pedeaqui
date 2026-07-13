@@ -47,7 +47,7 @@ export function useStorefront(slug?: string) {
   }, [slug])
 
   const status: StorefrontLoadStatus = !slug
-    ? 'placeholder'
+    ? 'missing'
     : failedSlug === slug
       ? 'error'
       : resolvedSlug === slug && store

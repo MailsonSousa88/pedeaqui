@@ -1,4 +1,4 @@
-import { Clock, Mail, MapPin, MessageCircle } from 'lucide-react'
+import { Clock, MapPin, MessageCircle } from 'lucide-react'
 
 import type { StorefrontInfoItem as StorefrontInfoItemType } from '../types/storefront'
 
@@ -10,7 +10,6 @@ type StoreInfoItemProps = {
 const iconByKey = {
   address: MapPin,
   businessHours: Clock,
-  email: Mail,
   whatsapp: MessageCircle,
 }
 
@@ -31,16 +30,16 @@ export function StoreInfoItem({ isLoading = false, item }: StoreInfoItemProps) {
           <p className="max-w-2xl break-words text-sm leading-relaxed text-[#111111] md:text-base">
             {item.value}
           </p>
-        ) : (
+        ) : isLoading ? (
           <>
             <div
               aria-hidden="true"
-              className={`h-4 w-full max-w-56 rounded-full bg-gray-100 ${isLoading ? 'animate-pulse' : ''}`}
+              className="h-4 w-full max-w-56 animate-pulse rounded-full bg-gray-100"
             />
-            <span className="sr-only">
-              {isLoading ? `${item.label} carregando.` : `${item.label} ainda não informado.`}
-            </span>
+            <span className="sr-only">{item.label} carregando.</span>
           </>
+        ) : (
+          <p className="text-sm leading-relaxed text-[#6b7280]">Não informado</p>
         )}
       </div>
     </div>

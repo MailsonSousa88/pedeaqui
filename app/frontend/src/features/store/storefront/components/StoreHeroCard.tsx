@@ -75,17 +75,21 @@ export function StoreHeroCard({
               <p className="max-w-2xl whitespace-pre-wrap break-words text-sm leading-relaxed text-gray-600 md:text-base">
                 {store.descricao}
               </p>
-            ) : (
-              <div className="space-y-2" aria-label="Descrição da loja ainda não informada">
+            ) : isLoading ? (
+              <div className="space-y-2" aria-label="Descrição da loja carregando">
                 <div
                   aria-hidden="true"
-                  className={`h-4 w-full max-w-sm rounded-full bg-gray-100 ${isLoading ? 'animate-pulse' : ''}`}
+                  className="h-4 w-full max-w-sm animate-pulse rounded-full bg-gray-100"
                 />
                 <div
                   aria-hidden="true"
-                  className={`h-4 w-3/4 max-w-xs rounded-full bg-gray-100 ${isLoading ? 'animate-pulse' : ''}`}
+                  className="h-4 w-3/4 max-w-xs animate-pulse rounded-full bg-gray-100"
                 />
               </div>
+            ) : (
+              <p className="text-sm leading-relaxed text-[#6b7280] md:text-base">
+                Descrição não informada.
+              </p>
             )}
           </div>
 

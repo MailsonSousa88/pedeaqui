@@ -5,7 +5,7 @@ export type StorefrontTab = {
   label: string
 }
 
-export type StorefrontInfoKey = 'businessHours' | 'address' | 'whatsapp' | 'email'
+export type StorefrontInfoKey = 'businessHours' | 'address' | 'whatsapp'
 
 export type StorefrontInfoItem = {
   key: StorefrontInfoKey
@@ -49,4 +49,24 @@ export type StorefrontEditValues = {
 
 export type StorefrontUpdatePayload = StorefrontEditValues
 
-export type StorefrontLoadStatus = 'placeholder' | 'loading' | 'success' | 'error'
+export type StorefrontLoadStatus = 'missing' | 'loading' | 'success' | 'error'
+
+export type StorefrontCatalogStatus = StorefrontLoadStatus
+
+export type StorefrontCategory = {
+  id: string
+  name: string
+}
+
+export type StorefrontProduct = {
+  id: string
+  storeId: string
+  categoryId: string
+  categoryLabel?: string | null
+  name: string
+  description?: string | null
+  priceCents: number
+  promoPriceCents?: number | null
+  promoEndsAt?: string | null
+  available: boolean
+}

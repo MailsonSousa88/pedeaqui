@@ -51,7 +51,6 @@ const getStorefrontInfoItems = (store: StorefrontStore | null): StorefrontInfoIt
     label: 'WhatsApp',
     value: store?.whatsappNumber ? formatWhatsapp(store.whatsappNumber) : null,
   },
-  { key: 'email', label: 'E-mail', value: null },
 ]
 
 export function StoreInfoList({ isLoading = false, store }: StoreInfoListProps) {
