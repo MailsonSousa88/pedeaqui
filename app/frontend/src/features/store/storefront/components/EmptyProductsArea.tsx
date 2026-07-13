@@ -3,6 +3,8 @@ import { AlertCircle, Loader2, PackageOpen, Tag } from 'lucide-react'
 import type { StorefrontCatalogStatus, StorefrontProduct } from '../types/storefront'
 
 type ProductsAreaProps = {
+  emptyDescription?: string
+  emptyTitle?: string
   products?: StorefrontProduct[]
   status?: StorefrontCatalogStatus
 }
@@ -14,6 +16,8 @@ const formatPrice = (priceCents: number) =>
   }).format(priceCents / 100)
 
 export function EmptyProductsArea({
+  emptyDescription = 'Os novos produtos aparecerão aqui.',
+  emptyTitle = 'Nenhum produto cadastrado',
   products = [],
   status = 'missing',
 }: ProductsAreaProps) {
@@ -51,8 +55,8 @@ export function EmptyProductsArea({
       <section className="flex min-h-48 flex-col items-center justify-center gap-3 rounded-3xl border border-dashed border-gray-200 bg-white/70 p-6 text-center">
         <PackageOpen aria-hidden="true" className="text-[#e30507]" size={28} />
         <div>
-          <p className="font-bold text-[#111111]">Nenhum produto cadastrado</p>
-          <p className="mt-1 text-sm text-[#6b7280]">Os novos produtos aparecerão aqui.</p>
+          <p className="font-bold text-[#111111]">{emptyTitle}</p>
+          <p className="mt-1 text-sm text-[#6b7280]">{emptyDescription}</p>
         </div>
       </section>
     )

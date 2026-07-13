@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { AlertCircle, Store } from 'lucide-react'
 
 import { CategoryManagementPage } from '../../category-management/pages/CategoryManagementPage'
 import { ProductManagementPage } from '../../product-management/pages/ProductManagementPage'
 import { CategoryChips } from '../components/CategoryChips'
 import { EmptyProductsArea } from '../components/EmptyProductsArea'
+import { ProductSearchBar } from '../components/ProductSearchBar'
 import { StorefrontHeader } from '../components/StorefrontHeader'
 import { StoreHeroCard } from '../components/StoreHeroCard'
 import { StoreTabs } from '../components/StoreTabs'
@@ -19,10 +20,43 @@ type StorefrontPageProps = {
 export function StorefrontPage({ slug }: StorefrontPageProps) {
   const [activeTab, setActiveTab] = useState<StorefrontTabKey>('products')
   const [catalogRevision, setCatalogRevision] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const storefront = useStorefront(slug)
   const catalog = useStorefrontProducts(storefront.store?.id, catalogRevision)
   const isProductManagementTab = activeTab === 'add'
   const isCategoryManagementTab = activeTab === 'categories'
+  const effectiveCategoryId = catalog.categories.some(
+    (category) => category.id === selectedCategoryId,
+  )
+    ? selectedCategoryId
+    : null
+  const normalizedSearchTerm = searchTerm
+    .trim()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLocaleLowerCase('pt-BR')
+  const availableProducts = useMemo(
+    () => catalog.products.filter((product) => product.available),
+    [catalog.products],
+  )
+  const filteredProducts = useMemo(
+    () =>
+      availableProducts.filter((product) => {
+        const matchesCategory =
+          effectiveCategoryId === null || product.categoryId === effectiveCategoryId
+        const searchableContent = [product.name, product.description, product.categoryLabel]
+          .filter(Boolean)
+          .join(' ')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLocaleLowerCase('pt-BR')
+
+        return matchesCategory && searchableContent.includes(normalizedSearchTerm)
+      }),
+    [availableProducts, effectiveCategoryId, normalizedSearchTerm],
+  )
+  const hasActiveFilters = normalizedSearchTerm.length > 0 || effectiveCategoryId !== null
 
   if (storefront.status === 'missing' || storefront.status === 'error') {
     const isMissing = storefront.status === 'missing'
@@ -85,9 +119,30 @@ export function StorefrontPage({ slug }: StorefrontPageProps) {
           />
         ) : (
           <>
-            <CategoryChips categories={catalog.categories} />
+            <CategoryChips
+              activeCategoryId={effectiveCategoryId}
+              categories={catalog.categories}
+              onCategoryChange={setSelectedCategoryId}
+            />
+            <ProductSearchBar
+              hasActiveFilters={hasActiveFilters}
+              onClearFilters={() => {
+                setSearchTerm('')
+                setSelectedCategoryId(null)
+              }}
+              onSearchTermChange={setSearchTerm}
+              searchTerm={searchTerm}
+            />
             <EmptyProductsArea
-              products={catalog.products.filter((product) => product.available)}
+              emptyDescription={
+                availableProducts.length > 0
+                  ? 'Tente pesquisar outro termo ou selecionar outra categoria.'
+                  : undefined
+              }
+              emptyTitle={
+                availableProducts.length > 0 ? 'Nenhum produto encontrado' : undefined
+              }
+              products={filteredProducts}
               status={catalog.status}
             />
           </>
