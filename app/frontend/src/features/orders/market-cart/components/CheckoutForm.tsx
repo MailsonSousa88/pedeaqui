@@ -8,6 +8,7 @@ import {
   Coins,
   FileText,
   ShieldCheck,
+  ArrowLeft,
 } from "lucide-react";
 import type { StoreCart, ActiveStoreStats } from "../types/cart";
 import { CheckoutProgress } from "./CheckoutProgress";
@@ -61,7 +62,7 @@ export function CheckoutForm({
   onSubmit,
 }: CheckoutFormProps) {
   return (
-    <div className="flex-1 min-h-0 w-full relative flex items-center justify-center px-4 pt-4 pb-[calc(6rem+env(safe-area-inset-bottom))] sm:p-6 bg-[#fbfbfd] overflow-hidden">
+    <div className="flex-1 w-full relative flex items-center justify-center px-4 pt-8 pb-28 md:pb-12 sm:px-6 bg-[#fbfbfd]">
       {/* Decorative Dot Grid Top Right */}
       <div className="absolute top-6 right-10 opacity-30 pointer-events-none hidden md:block">
         <div className="grid grid-cols-5 gap-3">
@@ -96,14 +97,21 @@ export function CheckoutForm({
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className="w-full max-w-xl max-h-full overflow-y-auto overscroll-contain bg-white rounded-3xl border border-[#e5e7eb]/80 shadow-xl p-6 sm:p-8 z-10 text-center flex flex-col"
+        className="w-full max-w-xl bg-white rounded-3xl border border-[#e5e7eb]/80 shadow-xl p-6 sm:p-8 z-10 text-center flex flex-col"
       >
         {isPlacingOrder ? (
           <CheckoutProgress step={checkoutStep} />
         ) : (
           <>
             {/* Header info */}
-            <div className="flex items-center gap-3 justify-center mb-6 border-b border-gray-100 pb-5">
+            <div className="flex items-center gap-3 justify-start mb-6 border-b border-gray-100 pb-5">
+              <button
+                type="button"
+                onClick={onBack}
+                className="p-2 -ml-2 rounded-xl text-gray-500 hover:text-gray-800 hover:bg-white border border-transparent hover:border-gray-100 transition-all cursor-pointer shrink-0"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </button>
               <span className="text-3xl">{store.logo}</span>
               <div className="text-left">
                 <span className="text-[10px] uppercase font-extrabold text-[#e30507] tracking-wider">Finalização do Pedido</span>

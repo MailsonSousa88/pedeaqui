@@ -1,5 +1,4 @@
 import { StoreListContent } from '../components/StoreListContent'
-import { StoreListHeader } from '../components/StoreListHeader'
 import { StoreSearchField } from '../components/StoreSearchField'
 import { useStoreList } from '../hooks/useStoreList'
 import type {
@@ -53,8 +52,6 @@ export function StoreListPage({
 
   return (
     <div className="min-h-screen bg-white text-[#111111]">
-      <StoreListHeader />
-
       <main className="mx-auto w-full max-w-4xl px-4 pb-12 pt-7 sm:px-6 sm:pt-9 lg:px-8">
         <section aria-labelledby="store-list-title">
           <div>

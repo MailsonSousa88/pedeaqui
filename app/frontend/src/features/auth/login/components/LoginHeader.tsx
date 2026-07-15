@@ -1,36 +1,58 @@
-import { UserRoundPlus } from 'lucide-react'
-import type { AppRoute } from '../../../../app/routes/types'
+import { useEffect, useState } from 'react';
+import type { AppRoute } from '../../../../app/routes/types';
 
 type LoginHeaderProps = {
-  onNavigate: (route: AppRoute, planId?: number) => void
-}
+  onNavigate: (route: AppRoute, planId?: number) => void;
+};
 
 export function LoginHeader({ onNavigate }: LoginHeaderProps) {
-  return (
-    <header className="sticky inset-x-0 top-0 z-50 flex w-full min-w-0 items-center justify-between gap-2 border-b border-[#e5e7eb] bg-white px-3 py-3 shadow-sm sm:gap-4 sm:px-6 sm:py-4 md:px-10 lg:px-12">
-      <img
-        src="/logoPedeAqui.jpeg"
-        alt="PedeAqui"
-        className="h-9 w-auto max-w-[112px] object-contain sm:h-10 sm:max-w-[180px] md:h-12"
-      />
+  const [isScrolled, setIsScrolled] = useState(false);
 
-      <div className="flex min-w-0 items-center justify-end gap-1.5 sm:gap-4 md:gap-6">
-        <span className="whitespace-nowrap text-[12px] font-medium text-[#111111] sm:text-sm md:text-base">
-          Não tem uma conta?
-        </span>
-        <button
-          type="button"
-          onClick={() => onNavigate('/register', 1)}
-          className="inline-flex items-center gap-1 rounded-lg border border-[#e30507] bg-white px-2 py-1.5 text-xs font-semibold text-[#e30507] outline-none transition-colors hover:bg-[#e30507] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] sm:gap-2 sm:rounded-xl sm:px-4 sm:py-2 sm:text-sm md:px-6 md:py-3 md:text-base"
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleLogoClick = () => {
+    onNavigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  return (
+    <header
+      className={`w-full transition-all duration-300 shadow-sm ${
+        isScrolled
+          ? 'bg-white/95 backdrop-blur-md py-3'
+          : 'bg-white py-4'
+      }`}
+    >
+      <div className="w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between">
+        <div
+          onClick={handleLogoClick}
+          className="flex items-center gap-2 cursor-pointer group"
         >
-          Cadastrar
-          <UserRoundPlus
-            className="hidden h-4 w-4 sm:inline md:h-[18px] md:w-[18px]"
-            strokeWidth={2.4}
-            aria-hidden="true"
+          <img
+            src="/logo-pedeaqui-traced.png"
+            alt="PedeAqui Logo"
+            className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
           />
-        </button>
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button
+            onClick={() => {
+              sessionStorage.setItem('scrollToPlanos', 'true');
+              onNavigate('/');
+            }}
+            className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs sm:text-sm px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
+          >
+            Começar Agora
+          </button>
+        </div>
       </div>
     </header>
-  )
+  );
 }

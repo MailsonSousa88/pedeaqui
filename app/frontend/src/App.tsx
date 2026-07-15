@@ -86,6 +86,7 @@ const getProductDetailParams = (route: AppRoute) => {
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState<AppRoute>(getRouteFromLocation);
+  const [cartKey, setCartKey] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [createdStore, setCreatedStore] = useState<CreatedStore | null>(getCreatedStore);
   const [activationError, setActivationError] = useState<string | null>(null);
@@ -99,6 +100,15 @@ export default function App() {
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  useEffect(() => {
+    if (currentPath === '/' && sessionStorage.getItem('scrollToPlanos') === 'true') {
+      sessionStorage.removeItem('scrollToPlanos');
+      setTimeout(() => {
+        document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [currentPath]);
 
   const triggerToast = (message: string) => {
     setToastMessage(message);
@@ -124,7 +134,11 @@ export default function App() {
   };
 
   const handleCartClick = () => {
-    navigateTo('/market-cart');
+    if (currentPath === '/market-cart') {
+      setCartKey((prev) => prev + 1);
+    } else {
+      navigateTo('/market-cart');
+    }
   };
 
   const renderPage = () => {
@@ -214,6 +228,7 @@ export default function App() {
     if (currentPath === '/market-cart') {
       return (
         <MarketCartPage
+          key={`cart-${cartKey}`}
           addToast={(_type, title, message) => triggerToast(`${title}: ${message}`)}
         />
       );
@@ -249,7 +264,7 @@ export default function App() {
   const isHome = currentPath === '/';
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
-  const showHeader = isHome || isMarketCart || isBillingPage;
+  const showHeader = isHome || isMarketCart || isBillingPage || currentPath === '/stores' || currentPath === '/storefront';
 
   return (
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>
@@ -279,7 +294,7 @@ export default function App() {
 
       {isHome && <Footer />}
 
-      {(isHome || isMarketCart) && (
+      {(isHome || isMarketCart || currentPath === '/stores' || currentPath === '/storefront') && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}

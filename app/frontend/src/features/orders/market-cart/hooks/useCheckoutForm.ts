@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { checkoutSchema } from "../schemas/checkoutSchema";
 import type { StoreCart, ActiveStoreStats, CompletedOrder } from "../types/cart";
 
@@ -17,18 +17,28 @@ export function useCheckoutForm({
   onClearStore,
   addToast,
 }: UseCheckoutFormOptions) {
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState(() => localStorage.getItem("checkout_fullName") || "");
   const [paymentMethod, setPaymentMethod] = useState("");
-  const [addressStreet, setAddressStreet] = useState("");
-  const [addressNumber, setAddressNumber] = useState("");
-  const [addressNeighborhood, setAddressNeighborhood] = useState("");
-  const [addressReference, setAddressReference] = useState("");
-  const [addressCity, setAddressCity] = useState("");
-  const [addressState, setAddressState] = useState("");
+  const [addressStreet, setAddressStreet] = useState(() => localStorage.getItem("checkout_addressStreet") || "");
+  const [addressNumber, setAddressNumber] = useState(() => localStorage.getItem("checkout_addressNumber") || "");
+  const [addressNeighborhood, setAddressNeighborhood] = useState(() => localStorage.getItem("checkout_addressNeighborhood") || "");
+  const [addressReference, setAddressReference] = useState(() => localStorage.getItem("checkout_addressReference") || "");
+  const [addressCity, setAddressCity] = useState(() => localStorage.getItem("checkout_addressCity") || "");
+  const [addressState, setAddressState] = useState(() => localStorage.getItem("checkout_addressState") || "");
   const [orderObservation, setOrderObservation] = useState("");
   const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
   const [isPlacingOrder, setIsPlacingOrder] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState(0);
+
+  useEffect(() => {
+    localStorage.setItem("checkout_fullName", fullName);
+    localStorage.setItem("checkout_addressStreet", addressStreet);
+    localStorage.setItem("checkout_addressNumber", addressNumber);
+    localStorage.setItem("checkout_addressNeighborhood", addressNeighborhood);
+    localStorage.setItem("checkout_addressReference", addressReference);
+    localStorage.setItem("checkout_addressCity", addressCity);
+    localStorage.setItem("checkout_addressState", addressState);
+  }, [fullName, addressStreet, addressNumber, addressNeighborhood, addressReference, addressCity, addressState]);
 
   function clearError(field: string) {
     setValidationErrors((prev) => {
@@ -39,14 +49,7 @@ export function useCheckoutForm({
   }
 
   function resetForm() {
-    setFullName("");
     setPaymentMethod("");
-    setAddressStreet("");
-    setAddressNumber("");
-    setAddressNeighborhood("");
-    setAddressReference("");
-    setAddressCity("");
-    setAddressState("");
     setOrderObservation("");
     setValidationErrors({});
   }
@@ -120,12 +123,6 @@ export function useCheckoutForm({
           });
 
           resetForm();
-
-          addToast(
-            "success",
-            "Pedido Confirmado!",
-            `Seu pedido no ${storeName} foi enviado e já está sendo preparado!`
-          );
         }, 1000);
       }, 1200);
     }, 1000);

@@ -13,7 +13,7 @@ interface HeroCarouselProps {
   onNavigate: (route: AppRoute, planId?: number) => void;
 }
 
-export default function HeroCarousel({ onNavigate }: HeroCarouselProps) {
+export default function HeroCarousel({ onNavigate: _onNavigate }: HeroCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState(0); // -1 for left, 1 for right
 
@@ -296,21 +296,13 @@ export default function HeroCarousel({ onNavigate }: HeroCarouselProps) {
 
                 <div className="flex flex-col sm:flex-row gap-3.5 pt-4">
                   <button
-                    onClick={() => onNavigate('/register', 1)}
+                    onClick={() => {
+                      document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
                     className="bg-primary hover:bg-primary-dark text-white font-sans font-bold text-base px-8 py-3.5 rounded-xl transition-all shadow-lg hover:shadow-xl shadow-primary/25 hover:-translate-y-0.5 text-center"
                   >
                     Começar Grátis
                   </button>
-                  <a
-                    href="#planos"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
-                    }}
-                    className="bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-sans font-semibold text-base px-8 py-3.5 rounded-xl transition-all shadow-sm hover:shadow-md text-center"
-                  >
-                    Ver Planos
-                  </a>
                 </div>
               </div>
 

@@ -32,10 +32,10 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 shadow-sm ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-sm border-slate-200/80 py-3'
-          : 'bg-white border-outline-variant py-4'
+          ? 'bg-white/95 backdrop-blur-md py-3'
+          : 'bg-white py-4'
       }`}
     >
       <div className="w-full px-4 sm:px-6 lg:px-10 flex items-center justify-between">
@@ -111,10 +111,17 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
               </button>
 
               <button
-                onClick={() => onNavigate('/register', 1)}
+                onClick={() => {
+                  if (currentPath === '/') {
+                    document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    sessionStorage.setItem('scrollToPlanos', 'true');
+                    onNavigate('/');
+                  }
+                }}
                 className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
               >
-                Comecar Agora
+                Começar Agora
               </button>
             </div>
 

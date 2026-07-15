@@ -22,7 +22,6 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
 
   const cart = useCart({ addToast });
-  const isCheckoutView = isFillingCheckoutForm && !!cart.activeStore;
 
   const checkout = useCheckoutForm({
     activeStore: cart.activeStore,
@@ -40,10 +39,8 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
 
   return (
     <div
-      className={`w-full bg-[#f8f9fa] flex flex-col font-sans relative ${
-        isCheckoutView
-          ? "h-[calc(100dvh-56px)] overflow-hidden"
-          : "min-h-screen pb-24 md:pb-0"
+      className={`w-full bg-[#f8f9fa] flex flex-col font-sans relative min-h-screen ${
+        (isFillingCheckoutForm && cart.activeStore) || completedOrder ? "" : "pb-24 md:pb-0"
       }`}
     >
       {/* Conditional page render */}
