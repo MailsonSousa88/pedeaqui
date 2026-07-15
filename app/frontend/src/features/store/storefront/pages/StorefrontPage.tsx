@@ -63,7 +63,6 @@ export function StorefrontPage({ onSelectProduct, slug }: StorefrontPageProps) {
 
     return (
       <main className="min-h-screen bg-[#f5f5f5]">
-        <StorefrontHeader />
         <section className="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
           <div className="flex min-h-64 flex-col items-center justify-center gap-4 rounded-3xl border border-gray-200 bg-white p-8 text-center shadow-sm">
             <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff0f0] text-[#e30507]">
