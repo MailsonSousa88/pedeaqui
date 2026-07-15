@@ -42,9 +42,6 @@ export function LoginHeader({ onNavigate }: LoginHeaderProps) {
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4">
-          <span className="text-xs sm:text-sm font-sans font-medium text-slate-600">
-            Não tem uma conta?
-          </span>
           <button
             onClick={() => {
               sessionStorage.setItem('scrollToPlanos', 'true');

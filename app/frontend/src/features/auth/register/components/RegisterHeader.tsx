@@ -16,9 +16,6 @@ export function RegisterHeader({ onNavigate }: RegisterHeaderProps) {
         />
 
         <div className="flex min-w-0 items-center font-medium justify-end gap-1.5 sm:gap-4 md:gap-6">
-          <span className="whitespace-nowrap text-[12px] text-[#111111] sm:text-sm md:text-base">
-            Já tem uma conta?
-          </span>
           <button
             type="button"
             onClick={() => onNavigate('/login')}
