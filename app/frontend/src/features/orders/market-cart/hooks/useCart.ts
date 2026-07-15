@@ -6,7 +6,7 @@ interface UseCartCallbacks {
   addToast: (type: "success" | "error" | "info", title: string, message: string) => void;
 }
 
-export function useCart({ addToast }: UseCartCallbacks) {
+export function useCart({ addToast: _addToast }: UseCartCallbacks) {
   const [stores, setStores] = useState<StoreCart[]>(loadCartStores);
   const [selectedStoreId, setSelectedStoreId] = useState<string | null>(null);
   const [deleteConfirmState, setDeleteConfirmState] = useState<DeleteConfirmState | null>(null);
@@ -54,12 +54,9 @@ export function useCart({ addToast }: UseCartCallbacks) {
     setStores(clearCartStorage());
     setSelectedStoreId(null);
     setDeleteConfirmState(null);
-    addToast("info", "Carrinho Restaurado", "Os itens iniciais e lojas foram recarregados com sucesso!");
   };
 
   const confirmRemoveItem = (storeId: string, itemId: string) => {
-    const storeObj = stores.find((s) => s.id === storeId);
-    const itemObj = storeObj?.items.find((i) => i.id === itemId);
 
     setStores((prevStores) => {
       return prevStores.map((store) => {
@@ -71,9 +68,7 @@ export function useCart({ addToast }: UseCartCallbacks) {
       });
     });
 
-    if (itemObj) {
-      addToast("error", "Item Removido", `${itemObj.name} foi removido do carrinho.`);
-    }
+    // Item removed from state
   };
 
   const handleUpdateQuantity = (storeId: string, itemId: string, change: number) => {
@@ -106,21 +101,7 @@ export function useCart({ addToast }: UseCartCallbacks) {
       });
     });
 
-    const changedItem = activeStore?.items.find((i) => i.id === itemId);
-    if (changedItem) {
-      if (change > 0) {
-        addToast("success", "Quantidade Atualizada", `Adicionado mais um(a) ${changedItem.name}.`);
-      } else {
-        const willBeRemoved = changedItem.quantity - 1 <= 0;
-        addToast(
-          willBeRemoved ? "error" : "info",
-          willBeRemoved ? "Item Removido" : "Quantidade Atualizada",
-          willBeRemoved
-            ? `${changedItem.name} foi removido do carrinho.`
-            : `Removido um(a) ${changedItem.name}.`
-        );
-      }
-    }
+    // Quantity updated in state
   };
 
   const handleRemoveItem = (storeId: string, itemId: string) => {

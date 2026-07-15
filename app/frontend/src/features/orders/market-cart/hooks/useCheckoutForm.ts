@@ -130,12 +130,6 @@ export function useCheckoutForm({
           });
 
           resetForm();
-
-          addToast(
-            "success",
-            "Pedido Confirmado!",
-            `Seu pedido no ${storeName} foi enviado e já está sendo preparado!`
-          );
         }, 1000);
       }, 1200);
     }, 1000);
