@@ -14,10 +14,11 @@ import { useStorefrontProducts } from '../hooks/useStorefrontProducts'
 import type { StorefrontTabKey } from '../types/storefront'
 
 type StorefrontPageProps = {
+  onSelectProduct: (productId: string) => void
   slug?: string
 }
 
-export function StorefrontPage({ slug }: StorefrontPageProps) {
+export function StorefrontPage({ onSelectProduct, slug }: StorefrontPageProps) {
   const [activeTab, setActiveTab] = useState<StorefrontTabKey>('products')
   const [catalogRevision, setCatalogRevision] = useState(0)
   const [searchTerm, setSearchTerm] = useState('')
@@ -142,6 +143,7 @@ export function StorefrontPage({ slug }: StorefrontPageProps) {
               emptyTitle={
                 availableProducts.length > 0 ? 'Nenhum produto encontrado' : undefined
               }
+              onSelectProduct={onSelectProduct}
               products={filteredProducts}
               status={catalog.status}
             />

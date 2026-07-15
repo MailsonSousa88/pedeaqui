@@ -5,6 +5,7 @@ import type { StorefrontCatalogStatus, StorefrontProduct } from '../types/storef
 type ProductsAreaProps = {
   emptyDescription?: string
   emptyTitle?: string
+  onSelectProduct: (productId: string) => void
   products?: StorefrontProduct[]
   status?: StorefrontCatalogStatus
 }
@@ -18,6 +19,7 @@ const formatPrice = (priceCents: number) =>
 export function EmptyProductsArea({
   emptyDescription = 'Os novos produtos aparecerão aqui.',
   emptyTitle = 'Nenhum produto cadastrado',
+  onSelectProduct,
   products = [],
   status = 'missing',
 }: ProductsAreaProps) {
@@ -66,8 +68,17 @@ export function EmptyProductsArea({
     <section aria-label="Produtos da loja" className="flex flex-col gap-3">
       {products.map((product) => (
         <article
-          className="flex flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+          aria-label={`Ver detalhes de ${product.name}`}
+          className="flex w-full cursor-pointer flex-col gap-4 rounded-2xl border border-gray-100 bg-white p-5 text-left shadow-sm transition-all hover:-translate-y-0.5 hover:border-[#e30507] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 sm:flex-row sm:items-center sm:justify-between"
           key={product.id}
+          onClick={() => onSelectProduct(product.id)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              onSelectProduct(product.id)
+            }
+          }}
+          role="link"
+          tabIndex={0}
         >
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
