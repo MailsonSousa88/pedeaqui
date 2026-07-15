@@ -58,6 +58,7 @@ jobs:
           ensure_label "github" "24292F" "Alteracoes em configuracoes do GitHub"
           ensure_label "dependencies" "0366D6" "Alteracoes em dependencias"
           ensure_label "test" "FBCA04" "Alteracoes em testes"
+          ensure_label "integration" "6F42C1" "Integracao da development para main"
 
       - name: Aplicar labels conforme os arquivos alterados
         uses: actions/labeler@v6.1.0
