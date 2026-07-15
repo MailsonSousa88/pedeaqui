@@ -1,246 +1,348 @@
 # Requisitos Funcionais
 
-**[RF001] – Visualização das lojas**
+## Finalidade e interpretação
 
-O sistema deve permitir que o usuário visualize uma lista de lojas disponíveis dentro da plataforma.
+Este documento é a fonte normativa dos requisitos funcionais do PedeAqui. Ele descreve o comportamento obrigatório do produto, independentemente do estágio atual da implementação. Lacunas entre estes requisitos e o código devem ser registradas e corrigidas; não devem ser usadas para enfraquecer ou remover regras necessárias ao funcionamento seguro da plataforma SaaS.
 
-> **Critério:** A listagem deve exibir apenas lojas ativas e disponíveis para acesso público. Cada loja deve apresentar informações mínimas para identificação, como nome, imagem ou identidade visual e descrição resumida.
----
+Os identificadores `RFxxx` são permanentes. Os sufixos `A` e `B` representam requisitos relacionados, porém verificáveis separadamente. Os requisitos estão agrupados por domínio e, por isso, os identificadores não aparecem necessariamente em ordem numérica. Os critérios de aceitação definem o resultado observável mínimo e não limitam validações adicionais de segurança, privacidade ou integridade.
 
-**[RF002] – Visualização de produtos da loja**
+## Limites do produto
 
-O sistema deve permitir que o usuário visualize uma página de loja específica e visualize seus produtos cadastrados.
+O PedeAqui é uma plataforma SaaS de vitrines digitais. O Stripe processa exclusivamente a assinatura do lojista pelo uso da plataforma. O pagamento dos produtos, a negociação, a entrega e o atendimento ao consumidor acontecem diretamente entre consumidor e lojista. O WhatsApp é aberto por `wa.me`; o PedeAqui não envia mensagens em nome do consumidor e não pode confirmar que uma mensagem foi efetivamente enviada.
 
-> **Critério:** A página da loja deve exibir os produtos vinculados à loja acessada, respeitando categorias, disponibilidade e informações públicas cadastradas pelo lojista.
----
+## Atores
 
-**[RF003] – Informações de um produto**
+- **Consumidor:** visitante não autenticado que consulta vitrines, organiza itens e inicia um pedido pelo WhatsApp.
+- **Lojista:** usuário autenticado responsável por um único tenant e por sua loja.
+- **Administrador:** usuário interno autorizado a operar e auditar a plataforma conforme seu papel.
+- **Stripe:** provedor externo usado na contratação e manutenção das assinaturas SaaS.
+- **Cloudflare R2:** serviço externo usado no armazenamento de imagens.
+- **WhatsApp:** canal externo no qual consumidor e lojista concluem a negociação.
 
-O sistema deve permitir que o usuário possa visualizar detalhes de um produto específico dentro da loja.
+## Catálogo público e jornada do consumidor
 
-> **Critério:** A tela ou área de detalhes do produto deve apresentar nome, descrição, preço, imagem e disponibilidade do produto no momento da visualização.
----
+### [RF001] – Visualização das lojas
 
-**[RF004] – Adição de produtos ao carrinho de compras**
+O sistema deve permitir que o consumidor consulte as lojas disponíveis na plataforma.
 
-O sistema deve permitir que o consumidor adicione produtos de uma loja a um carrinho de compras temporário, armazenado no `localStorage`.
+> **Critérios de aceitação:** A listagem deve conter somente lojas não excluídas, publicadas, vinculadas a tenant operacionalmente ativo e com direito de uso vigente. Cada item deve apresentar, no mínimo, nome, identidade visual disponível, descrição resumida, cidade e UF. A consulta deve permitir busca por nome e filtros de localização, retornar no máximo 20 lojas por página e produzir estado vazio informativo quando não houver resultados.
 
-> **Critério:** Carrinho aceita até 50 itens distintos. Produto já presente tem quantidade incrementada. Snapshot do preço, nome e imagem é gravado no momento da adição.
----
+### [RF002] – Visualização da vitrine e dos produtos
 
-**[RF005] – Remoção e atualização de quantidade de produtos do carrinho**
+O sistema deve permitir que o consumidor acesse a vitrine de uma loja e visualize seus produtos públicos.
 
-O sistema deve permitir que o usuário ajuste a quantidade de cada item no carrinho por meio de botões `+` e `−`, além de remover itens individualmente.
+> **Critérios de aceitação:** A vitrine deve exibir somente produtos disponíveis, não excluídos e pertencentes à loja acessada. Deve apresentar a identidade da loja, descrição, endereço, cidade, UF, horário, situação de funcionamento, WhatsApp e identificação legal do fornecedor por CPF ou CNPJ conforme a natureza do tenant e as regras de privacidade aplicáveis. Produtos devem respeitar categoria, promoção vigente e paginação.
 
-> **Critério:** Botão `+` incrementa a quantidade em 1 a cada clique. Botão `−` decrementa em 1; ao chegar a 0, o sistema deve pedir confirmação adicional para apagar o produto do carrinho. O total do carrinho deve ser recalculado em tempo real. Carrinho vazio deve exibir mensagem informativa.
----
+### [RF003] – Visualização dos detalhes do produto
 
-**[RF006] – Finalização da compra**
+O sistema deve permitir que o consumidor visualize os detalhes de um produto da loja.
 
-O sistema deve permitir que o usuário finalize sua compra a partir do carrinho, gerando automaticamente uma mensagem com os produtos selecionados, quantidades e valor total, redirecionando o usuário para o WhatsApp para envio do pedido ao lojista.
+> **Critérios de aceitação:** A apresentação deve incluir nome, descrição, preço aplicável, imagens, disponibilidade, categoria, detalhes e variações existentes. Produto indisponível, excluído, pertencente a loja não pública ou inexistente não deve ser apresentado como comprável.
 
-> **Critério:** O botão de finalização só deve ser habilitado com ao menos 1 item de quantidade válida (`≥ 1`). O fluxo deve permitir que o consumidor acesse o carrinho, escolha a loja do pedido, escolha finalizar todos os itens daquela loja ou apenas um pedido específico, informe dados adicionais como endereço, telefone e observações, visualize uma tela de confirmação e finalize o pedido via WhatsApp. A URL deve seguir o formato `wa.me/{numero}?text={mensagem_codificada}`.
----
+### [RF004] – Adição de produtos ao carrinho
 
-**[RF007] – Busca e filtragem de produtos dentro da loja**
+O sistema deve permitir que o consumidor adicione produtos a um carrinho temporário armazenado localmente no navegador.
 
-O sistema deve disponibilizar um campo de pesquisa dentro da loja e permitir que o usuário filtre os resultados encontrados.
+> **Critérios de aceitação:** O carrinho deve aceitar no máximo 50 produtos distintos. A repetição do mesmo produto e da mesma configuração deve incrementar sua quantidade. O sistema deve guardar um snapshot de nome, preço, imagem e variações para exibição, sem tratar esses dados locais como fonte confiável no checkout. Os itens devem permanecer agrupados por loja.
 
-> **Critério:** O campo de busca deve aceitar termos parciais do nome do produto na vitrine pública da loja. O usuário deve poder aplicar filtros por faixa de valor, ordem alfabética (`A–Z` / `Z–A`), menor preço e maior preço. Os filtros devem ser aplicados sobre o resultado da busca sem recarregar a página. A combinação de filtros deve ser permitida. Os resultados devem ser paginados com máximo de 20 itens por página.
----
+### [RF005] – Atualização e remoção de itens do carrinho
 
-**[RF008] – Exibição de produtos em promoção**
+O sistema deve permitir alterar quantidades e remover itens do carrinho.
 
-O sistema deve permitir que o lojista configure uma promoção para um produto.
+> **Critérios de aceitação:** A quantidade mínima deve ser 1. A tentativa de reduzir abaixo desse valor deve solicitar confirmação para remoção. Totais e subtotais devem ser recalculados imediatamente. Quando o último item de uma loja for removido, o respectivo grupo deve desaparecer; quando não houver itens, deve ser exibido o estado de carrinho vazio.
 
-> **Critério:** A promoção deve possuir preço promocional maior que zero e menor que o preço base. A data de encerramento é opcional, mas só pode existir quando houver preço promocional. Quando houver promoção, o sistema deve exibir o valor antigo cortado e o novo valor com destaque visual próprio. Promoção não depende de um estado separado de destaque.
----
+### [RF006] – Preparação da finalização por loja
 
-**[RF009] – Compartilhamento de loja**
+O sistema deve permitir que o consumidor finalize separadamente os itens de uma loja.
 
-O sistema deve permitir que o usuário compartilhe o link de uma loja em aplicativos externos.
+> **Critérios de aceitação:** O consumidor deve selecionar uma loja, revisar itens e quantidades e informar os dados necessários ao contato, como nome, telefone, endereço e observações quando aplicáveis. O botão de continuar deve permanecer bloqueado sem itens válidos ou sem os campos obrigatórios. Produtos de lojas diferentes não podem compor o mesmo pedido.
 
-> **Critério:** Ao clicar no ícone de compartilhamento da loja, o link deve ser copiado. O ícone deve mudar temporariamente para `✅` por 2 segundos, a mensagem `Link copiado com sucesso ✅` deve aparecer na tela e, após esse período, o ícone deve voltar ao estado natural de compartilhamento.
----
+### [RF007] – Busca, ordenação e filtragem de produtos
 
-**[RF0010] – Listagem, atualização e deleção de lojas**
+O sistema deve permitir pesquisar e filtrar produtos dentro da vitrine acessada.
 
-O sistema deve possuir rotas de listagem, atualização e deleção de lojas para servir o catálogo principal da plataforma (rota /stores).
+> **Critérios de aceitação:** A busca deve aceitar termos parciais do nome. Devem existir filtros por categoria e faixa de preço e ordenação alfabética, por menor preço e por maior preço. Os critérios devem poder ser combinados sem recarregar a página. A consulta deve retornar no máximo 20 produtos por página e informar quando não houver resultados.
 
-> **Critério:** GET /stores retorna lista paginada (20/página). PATCH /admin/store retorna HTTP 200. DELETE solicita confirmação; retorna HTTP 204.
----
+### [RF008] – Exibição de produtos em promoção
 
-**[RF011] – Login de lojista**
+O sistema deve permitir que o lojista configure e o consumidor visualize promoções de produtos.
 
-O sistema deve permitir que o lojista autentique sua conta utilizando e-mail e senha.
+> **Critérios de aceitação:** O preço promocional deve ser maior que zero e menor que o preço-base. A data final é opcional, mas só pode existir quando houver preço promocional. Promoção expirada não deve ser aplicada. Quando vigente, a interface deve exibir o preço-base riscado e o promocional em destaque. Promoção não depende de um marcador separado de destaque.
 
-> **Critério:** Credenciais válidas devem retornar HTTP 200 com um `access token` de curta duração e um `refresh token` de longa duração. Credenciais inválidas devem retornar HTTP 401. O `access token` deve ser usado para acessar rotas protegidas da API, enquanto o `refresh token` deve permitir a renovação da sessão por meio de uma rota de atualização, como `/auth/refresh`. Caso o `refresh token` expire ou seja inválido, o lojista deve realizar login novamente.
----
+### [RF009] – Compartilhamento da loja
 
-**[RF012] – Cadastro de lojista**
+O sistema deve permitir que o consumidor compartilhe o endereço público da loja.
 
-O sistema deve permitir que um novo lojista se cadastre informando nome completo, e-mail único, senha e CPF ou CNPJ.
+> **Critérios de aceitação:** Quando a Web Share API estiver disponível, o sistema deve oferecer o compartilhamento nativo; nos demais casos, deve copiar a URL. A ação deve apresentar feedback acessível de sucesso ou falha, sem alterar a URL compartilhada.
 
-> **Critério:** Cadastro válido deve retornar HTTP 201. E-mail duplicado deve retornar HTTP 409. A senha deve possuir no mínimo 8 caracteres. A interface deve separar claramente os fluxos `Cadastrar` e `Entrar`, evitando que lojistas já registrados tentem realizar novo cadastro quando precisarem apenas acessar a conta novamente.
----
+### [RF010] – Visualização pública dos planos
 
-**[RF013] – Validação de CPF ou CNPJ**
+O sistema deve permitir que visitantes e lojistas consultem os planos SaaS disponíveis.
 
-O sistema deve validar o CPF ou CNPJ informado pelo lojista antes da criação da conta.
+> **Critérios de aceitação:** Apenas planos ativos devem ser oferecidos para nova contratação. Cada plano deve informar nome, preço recorrente, benefícios, limites e disponibilidade. Planos anunciados como futuros não podem iniciar checkout.
 
-> **Critério:** O sistema deve verificar formato e dígitos verificadores do documento. Documento inválido deve impedir a criação da conta e retornar HTTP 422 com o campo `errors.document` na resposta.
----
+## Identidade, autenticação e onboarding do lojista
 
-**[RF014A] – Status pendente pós-cadastro**
+### [RF011] – Login do lojista
 
-O sistema deve definir o status inicial do lojista como `PENDENTE` após o cadastro, até que exista confirmação de pagamento.
+O sistema deve autenticar o lojista por e-mail e senha.
 
-> **Critério:** Usuário com status `PENDENTE` não deve conseguir acessar rotas administrativas protegidas, como `/admin/*`, e deve receber HTTP 403 ao tentar acessar recursos restritos ao lojista ativo. O usuário pendente pode acessar apenas as etapas necessárias do onboarding, como escolha de plano, configuração inicial da loja, revisão e pagamento.
----
+> **Critérios de aceitação:** Credenciais válidas devem retornar sessão com `access token` de curta duração e mecanismo de renovação. Credenciais inválidas devem retornar HTTP 401 sem revelar qual campo está incorreto. O acesso posterior deve respeitar o tenant, a situação da conta e a assinatura.
 
-**[RF014B] – Ativação via webhook de pagamento**
+### [RF012] – Cadastro do perfil do lojista
 
-O sistema deve alterar automaticamente o status do lojista de `PENDENTE` para `LOJISTA` após confirmação de pagamento via webhook.
+O sistema deve permitir que uma pessoa responsável crie sua conta informando nome completo, e-mail único, senha, telefone e CPF.
 
-> **Critério:** A atualização deve ocorrer em até 5 segundos após o recebimento do evento válido. O webhook deve ser validado por assinatura `HMAC-SHA256`. Eventos inválidos ou com assinatura incorreta devem retornar HTTP 400 e não devem ativar a conta.
----
+> **Critérios de aceitação:** O CPF identifica o perfil pessoal e deve ser armazenado sem máscara. O cadastro deve exigir aceite dos Termos de Uso e da Política de Privacidade vigentes. E-mail ou CPF já cadastrado deve retornar HTTP 409. Cadastro válido deve criar a identidade no Supabase Auth e o perfil correspondente e retornar HTTP 201.
 
-**[RF015] – Recuperação de senha**
+### [RF013] – Validação do CPF do perfil
 
-O sistema deve permitir que o lojista redefina sua senha por meio de um link enviado por e-mail.
+O sistema deve validar o CPF antes da criação ou alteração do perfil.
 
-> **Critério:** O link de redefinição deve ser válido por 1 hora. Após uso ou expiração, o link deve retornar HTTP 410. Link expirado ou já utilizado não deve alterar a senha.
----
+> **Critérios de aceitação:** Devem ser verificados presença, quantidade de dígitos e dígitos verificadores após remoção da máscara. CPF inválido deve impedir a operação e retornar HTTP 422 associado ao campo `document`. Validação visual no frontend não substitui a validação do backend.
 
-**[RF016] – Criação de loja**
+### [RF014A] – Estado de onboarding e período de avaliação
 
-O sistema deve permitir que um lojista crie uma única loja vinculada à sua conta.
+O sistema deve controlar separadamente a conclusão do onboarding, o estado do tenant e o direito de uso concedido por trial ou assinatura paga.
 
-> **Critério:** A criação da primeira loja deve ser permitida durante o onboarding do lojista, mesmo antes da confirmação do pagamento, para que as informações da loja sejam revisadas antes da ativação. A loja criada antes do pagamento deve permanecer indisponível na vitrine pública até que o lojista seja ativado. Uma segunda tentativa de criação de loja para o mesmo lojista deve retornar HTTP 409.
----
+> **Critérios de aceitação:** O cadastro do perfil, sozinho, não deve publicar uma vitrine. Ao registrar o tenant, o sistema pode conceder um trial de 30 dias sem plano pago, com início e término definidos. A publicação só pode ocorrer depois da configuração mínima da loja, da validação documental, do aceite legal e da existência de direito de uso vigente. Trial expirado não deve ser tratado como assinatura paga ativa.
 
-**[RF017] – Atualização de dados da loja**
+### [RF014B] – Ativação e atualização por webhook de pagamento
 
-O sistema deve permitir que o lojista atualize parcialmente os dados da sua loja.
+O sistema deve atualizar a assinatura SaaS somente a partir de eventos válidos do Stripe.
 
-> **Critério:** A atualização deve permitir alteração de nome, descrição, endereço textual, horário, telefone e WhatsApp. A operação deve seguir semântica `PATCH`, sem sobrescrever campos não enviados. Atualização bem-sucedida deve retornar HTTP 200 com os dados atualizados.
----
+> **Critérios de aceitação:** O retorno do navegador não confirma pagamento. O webhook deve validar a assinatura sobre o corpo bruto, identificar tenant, plano, assinatura e evento, rejeitar assinatura inválida com HTTP 400 e processar eventos repetidos de forma idempotente. A situação deve ser refletida em até 5 segundos após o recebimento válido.
 
-**[RF018A] – Desativação da loja**
+### [RF015] – Recuperação e redefinição de senha
 
-O sistema deve permitir que o lojista desative sua loja sem remover definitivamente seus dados.
+O sistema deve permitir a recuperação segura da senha por e-mail.
 
-> **Critério:** Loja desativada não deve aparecer no catálogo público e deve retornar HTTP 404 em `GET /stores/:slug` para visitantes não autenticados. A desativação deve ser reversível e não deve apagar loja, produtos, pedidos ou histórico relacionado.
----
+> **Critérios de aceitação:** A solicitação não deve revelar se o e-mail existe. O link ou token deve ser de uso único, possuir validade máxima de 1 hora e deixar de funcionar depois do uso, revogação ou expiração. A nova senha deve obedecer à política de credenciais.
 
-**[RF018B] – Ativação da loja**
+### [RF035] – Registro do tenant comercial
 
-O sistema deve permitir que o lojista reative uma loja desativada.
+O sistema deve permitir que o usuário autenticado registre seu tenant como pessoa física ou jurídica.
 
-> **Critério:** Loja reativada deve voltar a ficar disponível no catálogo público e deve retornar HTTP 200 em `GET /stores/:slug`, desde que o lojista esteja ativo e a loja esteja válida para exibição.
----
+> **Critérios de aceitação:** Pessoa física deve utilizar o CPF válido do perfil. Pessoa jurídica deve informar CNPJ válido e único, armazenado separadamente como documento empresarial. O sistema deve impedir mais de um tenant por perfil, retornar HTTP 409 em duplicidade e usar o CPF como documento de cobrança quando não houver CNPJ.
 
-**[RF019] – Cadastro de produtos**
+### [RF036] – Atualização do perfil pessoal
 
-O sistema deve permitir que o lojista cadastre produtos vinculados à sua loja.
+O sistema deve permitir que o usuário autenticado atualize seus próprios dados de perfil.
 
-> **Critério:** Nome e preço são obrigatórios; ausência deve retornar HTTP 422. O preço deve ser informado em reais na interface e armazenado internamente em centavos. A descrição deve ser opcional. O produto deve iniciar com disponibilidade `true`, salvo quando o lojista definir o contrário durante o cadastro.
----
+> **Critérios de aceitação:** Nome, telefone e CPF devem ser validados no backend. A alteração não pode alcançar o perfil de outro usuário nem romper a unicidade documental. Campos não enviados em uma atualização parcial devem ser preservados.
 
-**[RF020] – Edição de produtos**
+### [RF037] – Renovação e encerramento de sessão
 
-O sistema deve permitir que o lojista atualize parcialmente os dados de produtos da sua loja.
+O sistema deve permitir renovar e encerrar sessões autenticadas.
 
-> **Critério:** A atualização deve permitir alteração de nome, preço, descrição, disponibilidade, preço promocional e data de encerramento da promoção. A operação deve preservar campos não enviados. Atualização bem-sucedida deve retornar HTTP 200 com os dados atualizados.
----
+> **Critérios de aceitação:** Token de renovação válido deve produzir uma nova sessão; token expirado, revogado ou inválido deve exigir novo login. O logout deve revogar a sessão correspondente e impedir seu uso posterior, inclusive em dispositivos ou contextos nos quais a revogação se aplique.
 
-**[RF021] – Remoção de produtos por soft delete**
+## Gestão da loja
 
-O sistema deve permitir a remoção lógica de produtos, sem apagar imediatamente o registro do banco de dados.
+### [RF016] – Criação da loja
 
-> **Critério:** Produto removido por soft delete não deve aparecer na vitrine. A remoção bem-sucedida deve retornar HTTP 204. Tentativa de remover produto pertencente a outra loja ou outro lojista deve retornar HTTP 403. O tempo de retenção dos dados removidos deve seguir política de retenção definida pelo projeto.
----
+O sistema deve permitir que cada tenant crie uma única loja.
 
-**[RF022] – Listagem de produtos no painel administrativo**
+> **Critérios de aceitação:** A criação deve exigir direito de uso vigente e dados mínimos: nome, slug único, endereço, cidade, UF, WhatsApp e horários quando informados. O sistema deve criar a categoria sistêmica `Todos`. Segunda loja para o mesmo tenant ou slug duplicado deve retornar HTTP 409. A loja não pode ser publicada sem cumprir as condições de elegibilidade.
 
-O sistema deve listar os produtos ativos da loja no painel administrativo do lojista.
+### [RF017] – Atualização dos dados da loja
 
-> **Critério:** A listagem deve possuir paginação de até 20 itens por página e não deve retornar produtos com soft delete aplicado.
----
+O sistema deve permitir que o lojista atualize parcialmente sua loja.
 
-**[RF023] – Upload de imagens de produto**
+> **Critérios de aceitação:** Podem ser alterados nome, descrição, endereço, cidade, UF, horários, WhatsApp, slug e identidade visual conforme permissões. Campos ausentes devem ser preservados. Slug e demais valores únicos devem ser revalidados. Alteração bem-sucedida deve retornar os dados atuais da loja.
 
-O sistema deve permitir que o lojista envie imagens para produtos cadastrados.
+### [RF018A] – Desativação e exclusão lógica da loja
 
-> **Critério:** O upload deve aceitar apenas formatos de imagem aprovados pelo projeto, inicialmente `JPEG` e `PNG`, e deve rejeitar arquivos inválidos com HTTP 422. A resposta deve retornar as URLs das imagens armazenadas. O limite de quantidade de imagens por produto e o tamanho máximo por arquivo devem seguir a regra de imagens definida pela equipe.
----
+O sistema deve permitir retirar a loja de circulação sem perda imediata de seus dados.
 
-**[RF025] – Criação de categorias**
+> **Critérios de aceitação:** Loja desativada ou excluída logicamente não deve aparecer no catálogo nem responder publicamente pelo slug. A desativação deve ser reversível. A exclusão lógica deve preservar loja, categorias, produtos, imagens e histórico durante o período de retenção e deve exigir confirmação explícita.
 
-O sistema deve permitir que o lojista crie categorias para organizar os produtos da sua loja durante o cadastro de produto.
+### [RF018B] – Reativação da loja
 
-> **Critério:** A criação de categoria deve estar disponível como ação auxiliar no fluxo de cadastro de produto e não deve ser oferecida na seção dedicada de gerenciamento de categorias. A categoria deve possuir nome e ordem de exibição. Criação válida deve retornar HTTP 201, disponibilizar a nova categoria para seleção e permitir sua associação ao produto em cadastro. Cada loja deve possuir uma categoria padrão `Todos`, criada automaticamente pelo sistema ou garantida como categoria sistêmica da loja.
----
+O sistema deve permitir reativar uma loja desativada.
 
-**[RF026] – Gerenciamento de categorias**
+> **Critérios de aceitação:** A reativação só pode publicar a loja se tenant e assinatura estiverem aptos, os dados mínimos estiverem completos e a loja não estiver excluída. Produtos continuam sujeitos à própria disponibilidade e exclusão lógica.
 
-O sistema deve permitir que o lojista edite, ordene e remova categorias criadas para sua loja.
+### [RF029] – Upload de banner da loja
 
-> **Critério:** O lojista deve conseguir atualizar nome e ordem de exibição de uma categoria. Edição bem-sucedida deve retornar HTTP 200 com os dados atualizados. Categorias criadas pelo lojista podem ser removidas quando não possuírem produtos vinculados. Remoção de categoria com produtos vinculados deve retornar HTTP 409. Remoção bem-sucedida deve retornar HTTP 204. A categoria padrão `Todos` não deve poder ser removida, pois representa a listagem geral dos produtos da loja.
----
+O sistema deve permitir que o lojista envie ou substitua, opcionalmente, o banner de sua loja.
 
-**[RF027] – Associação de categorias ao produto**
+> **Critérios de aceitação:** O arquivo deve seguir o fluxo seguro de imagens, possuir formato e tamanho permitidos e só ter sua referência persistida após upload confirmado. A ausência de banner deve usar apresentação neutra, sem imagem quebrada.
 
-O sistema deve permitir que o lojista associe categorias ao produto durante o cadastro ou edição do produto.
+### [RF030] – Upload da imagem de perfil da loja
 
-> **Critério:** Todo produto deve pertencer automaticamente à categoria padrão `Todos`. Além da categoria `Todos`, o produto pode possuir no máximo 1 categoria específica criada pelo lojista. Caso o lojista não selecione uma categoria específica, o produto permanece apenas em `Todos`. Ao cadastrar ou editar um produto, o frontend deve apresentar claramente o campo de categoria específica como opcional.
----
+O sistema deve permitir que o lojista envie ou substitua, opcionalmente, o logotipo ou avatar da loja.
 
-**[RF028] – Exibição e filtro de produtos por categoria**
+> **Critérios de aceitação:** O arquivo deve seguir o fluxo seguro de imagens. A imagem deve ser exibida em cards, cabeçalhos e áreas compactas. Falhas de upload não podem apagar a referência válida anterior.
 
-O sistema deve permitir que consumidores filtrem os produtos de uma loja por categoria.
+### [RF032] – Acesso à vitrine por slug
 
-> **Critério:** A categoria `Todos` deve exibir todos os produtos disponíveis da loja. Categorias específicas devem exibir apenas produtos associados a elas. As categorias devem funcionar como filtro principal de navegação da vitrine e respeitar a ordem de exibição definida pelo lojista.
----
+O sistema deve disponibilizar uma URL pública e única para cada loja elegível.
 
-**[RF029] – Upload de banner da loja**
+> **Critérios de aceitação:** Slug inexistente, loja inativa, excluída, tenant suspenso ou ausência de direito de uso deve resultar em HTTP 404 para visitantes. A disponibilidade de produtos, isoladamente, não torna uma loja pública. Alteração de slug deve impedir colisão e seguir política explícita de redirecionamento ou invalidação do endereço anterior.
 
-O sistema deve permitir que o lojista envie opcionalmente uma imagem de banner para a loja.
+## Gestão de produtos, categorias e imagens
 
-> **Critério:** O banner deve representar a imagem principal horizontal da loja na vitrine pública. O upload deve aceitar apenas formatos de imagem aprovados pelo projeto, inicialmente `JPEG` e `PNG`, e deve rejeitar arquivos inválidos com HTTP 422. Após upload bem-sucedido, a URL da imagem deve ser atualizada automaticamente no campo correspondente do cadastro da loja. O limite de tamanho do arquivo deve seguir a regra de imagens definida pela equipe; `2 MB` pode ser usado apenas como limite inicial até validação final.
----
+### [RF019] – Cadastro de produtos
 
-**[RF030] – Upload de imagem de perfil da loja**
+O sistema deve permitir que o lojista cadastre produtos em sua própria loja.
 
-O sistema deve permitir que o lojista envie opcionalmente uma imagem de perfil para a loja.
+> **Critérios de aceitação:** Nome, categoria e preço maior que zero são obrigatórios. Valores monetários devem chegar ao domínio em centavos. Descrição, detalhes, promoção, imagens e variações são opcionais. O produto deve iniciar disponível, salvo escolha explícita em contrário, e a operação deve respeitar o plano e o tenant autenticado.
 
-> **Critério:** A imagem de perfil deve representar o ícone ou avatar da loja em listagens, cards, cabeçalhos e áreas compactas da interface. O upload deve aceitar apenas formatos de imagem aprovados pelo projeto, inicialmente `JPEG` e `PNG`, e deve rejeitar arquivos inválidos com HTTP 422. Após upload bem-sucedido, a URL da imagem deve ser atualizada automaticamente no campo correspondente do cadastro da loja. O limite de tamanho do arquivo deve seguir a regra de imagens definida pela equipe; `2 MB` pode ser usado apenas como limite inicial até validação final.
----
+### [RF020] – Edição de produtos
 
-**[RF031] – Limite de produtos por plano**
+O sistema deve permitir a atualização parcial dos produtos da loja.
 
-O sistema deve restringir o número de produtos cadastrados pelo lojista conforme o plano contratado.
+> **Critérios de aceitação:** Nome, descrição, preço, promoção, categoria, detalhes e disponibilidade podem ser alterados. Campos não enviados devem ser preservados mesmo quando a rota HTTP existente utilizar `PUT`. Produto de outro tenant deve retornar HTTP 403. A resposta deve conter o estado atualizado.
 
-> **Critério:** Cada plano deve possuir um limite de produtos definido no campo `max_products`. Ao tentar cadastrar produto acima do limite permitido pelo plano, o sistema deve bloquear a operação e retornar HTTP 403 com a mensagem `Limite do plano atingido`.
----
+### [RF021] – Remoção de produtos por exclusão lógica
 
-**[RF032] – Exibição da vitrine pública**
+O sistema deve permitir remover produtos sem apagá-los imediatamente do banco.
 
-O sistema deve exibir a loja para consumidores por meio de um `slug` público, sem exigir autenticação.
+> **Critérios de aceitação:** Produto excluído logicamente não deve aparecer na vitrine nem ser aceito no checkout. A remoção deve exigir confirmação e retornar HTTP 204. Produto existente pertencente a outro tenant deve retornar HTTP 403. Referências e imagens devem seguir a política de retenção e limpeza.
 
-> **Critério:** A vitrine pública deve ser acessível por `slug` quando a loja estiver ativa. Loja inativa deve retornar HTTP 404. `Slug` inexistente deve retornar HTTP 404.
----
+### [RF022] – Listagem de produtos no painel do lojista
 
-**[RF033] – Processamento de checkout e validação**
+O sistema deve permitir que o lojista consulte e gerencie os produtos de sua loja.
 
-O sistema deve receber os produtos selecionados pelo frontend e validar os dados no backend antes de criar o pedido.
+> **Critérios de aceitação:** A listagem deve ser paginada em até 20 itens, permitir busca, filtros por disponibilidade e categoria e não misturar produtos de outros tenants. Itens excluídos devem ficar fora da listagem padrão e só podem aparecer em contexto explícito de recuperação ou auditoria.
 
-> **Critério:** O frontend deve enviar apenas IDs dos produtos e quantidades. O sistema deve ignorar qualquer valor financeiro enviado pelo consumidor e sempre consultar os preços atuais no banco de dados. Antes de criar o pedido, o backend deve verificar a disponibilidade manual e a validade de cada item. Se algum produto estiver indisponível ou inválido, a operação deve ser cancelada, nenhum pedido deve ser criado e o sistema deve retornar HTTP 400 com a lista de itens inválidos em `errors.items`. Em caso de sucesso, deve retornar HTTP 201 com o ID do pedido criado e a mensagem formatada para o WhatsApp.
----
+### [RF023] – Upload e gerenciamento de imagens de produto
 
-**[RF034] – Checkout via WhatsApp**
+O sistema deve permitir adicionar, ordenar, substituir e remover imagens de produto.
 
-O sistema deve redirecionar o usuário ao WhatsApp com o pedido formatado após a validação bem-sucedida do checkout.
+> **Critérios de aceitação:** O backend deve autorizar a operação e emitir URL pré-assinada de curta duração; o frontend deve enviar o binário diretamente ao Cloudflare R2 e confirmar o upload; somente então a referência deve ser persistida. Ordem, chave do objeto, URL, MIME e tamanho devem ser registrados. A operação deve respeitar a quota do tenant.
 
-> **Critério:** A mensagem deve conter nome do produto, quantidade, preço unitário e total. A URL deve seguir o formato `wa.me/{numero}?text={mensagem_codificada}`. Os preços exibidos na mensagem devem ser os valores retornados pelo backend após a validação do checkout.
----
+### [RF024] – Gerenciamento de variações e opções do produto
+
+O sistema deve permitir criar, listar, editar, ordenar e remover variações e suas opções.
+
+> **Critérios de aceitação:** Cada variação deve possuir um rótulo, como `Cor` ou `Tamanho`, e opções ordenáveis. Uma opção pode modificar o preço-base em centavos, desde que o preço final permaneça válido. Todas as operações devem validar a propriedade do produto e impedir acesso entre tenants.
+
+### [RF025] – Criação de categorias
+
+O sistema deve permitir criar categorias específicas para organizar os produtos da loja.
+
+> **Critérios de aceitação:** Categoria deve possuir nome e ordem de exibição e pertencer à loja e ao tenant autenticado. A criação pode ocorrer no fluxo de produto ou na gestão de categorias. Nomes duplicados na mesma loja devem ser impedidos após normalização.
+
+### [RF026] – Gerenciamento de categorias
+
+O sistema deve permitir editar, ordenar e remover categorias da loja.
+
+> **Critérios de aceitação:** Nome, descrição e ordem podem ser alterados. A categoria sistêmica `Todos` não pode ser renomeada nem removida. Categoria com produtos vinculados deve exigir remapeamento ou retornar HTTP 409. Categoria de outro tenant deve retornar HTTP 403.
+
+### [RF027] – Associação de categoria ao produto
+
+O sistema deve permitir associar cada produto a uma categoria específica da própria loja.
+
+> **Critérios de aceitação:** A categoria deve pertencer à mesma loja e tenant do produto. Cada produto deve possuir exatamente uma categoria persistida; quando nenhuma categoria específica for escolhida, deve usar a categoria padrão `Todos`. Na vitrine, o filtro `Todos` deve reunir todos os produtos públicos, e não apenas aqueles cujo `category_id` aponta para a categoria padrão.
+
+### [RF028] – Navegação pública por categoria
+
+O sistema deve permitir que consumidores filtrem os produtos pela categoria da loja.
+
+> **Critérios de aceitação:** `Todos` deve exibir todos os produtos públicos da loja; categorias específicas devem exibir apenas seus produtos. A ordem deve seguir a configuração do lojista. Categorias excluídas, vazias quando ocultadas pela regra de apresentação ou pertencentes a outra loja não devem produzir resultados indevidos.
+
+### [RF031] – Limites de produtos e armazenamento por plano
+
+O sistema deve restringir produtos e armazenamento de imagens conforme o direito de uso do tenant.
+
+> **Critérios de aceitação:** O plano deve definir limites verificáveis, incluindo quantidade de produtos e quota de imagens. Tentativa de exceder um limite deve ser bloqueada no backend com HTTP 403 e mensagem orientativa. Downgrade não pode apagar dados automaticamente; deve bloquear novas inclusões e conduzir o lojista à adequação conforme política vigente.
+
+## Checkout, pedido e WhatsApp
+
+### [RF033] – Validação server-side do checkout
+
+O sistema deve validar o conteúdo do carrinho no backend antes de preparar o pedido.
+
+> **Critérios de aceitação:** O frontend deve enviar IDs, variações escolhidas, quantidades e dados do consumidor, nunca valores financeiros confiáveis. O backend deve consultar loja, WhatsApp, produtos, preços atuais, promoções, variações e disponibilidade. Se qualquer item for inválido, nenhum pedido deve ser criado e a resposta deve identificar os itens problemáticos. Em sucesso, o sistema deve criar o registro de pedido de forma idempotente e devolver seu identificador, totais validados e mensagem formatada.
+
+### [RF034] – Redirecionamento do pedido ao WhatsApp
+
+O sistema deve permitir abrir o WhatsApp do lojista com a mensagem do pedido validado.
+
+> **Critérios de aceitação:** A URL deve seguir `wa.me/{numero}?text={mensagem_codificada}` e usar o WhatsApp atual da loja. A mensagem deve conter identificação do pedido, produtos, variações, quantidades, valores unitários, total e dados adicionais autorizados. O sistema não pode afirmar que a mensagem foi enviada, pois apenas abre um serviço externo. Falha ao abrir deve permitir nova tentativa sem duplicar o pedido.
+
+### [RF038] – Acompanhamento do pedido pelo lojista
+
+O sistema deve permitir que o lojista consulte os pedidos preparados para sua loja e atualize seus estados operacionais.
+
+> **Critérios de aceitação:** A listagem deve ser restrita ao tenant, paginada e pesquisável. O estado inicial deve indicar que o envio pelo WhatsApp não foi confirmado. Mudanças de estado devem ser explícitas e auditáveis. O sistema não deve representar pagamento, entrega ou aceite comercial como concluídos sem ação ou evidência correspondente.
+
+## Planos e assinaturas SaaS
+
+### [RF039] – Contratação de plano pelo Stripe Checkout
+
+O sistema deve permitir que o lojista elegível inicie a contratação de um plano ativo.
+
+> **Critérios de aceitação:** O backend deve resolver o `stripe_price_id` a partir do plano interno, criar a sessão com os metadados de tenant e plano e retornar somente a URL de checkout. Não deve aceitar preço enviado pelo frontend. Tenant com assinatura paga ativa não pode criar contratação duplicada incompatível.
+
+### [RF040] – Gestão do ciclo de vida da assinatura
+
+O sistema deve refletir os estados `active`, `past_due`, `unpaid` e `canceled` e a vigência da assinatura.
+
+> **Critérios de aceitação:** Mudanças devem vir de eventos válidos do provedor ou de operação administrativa autorizada. `past_due` deve seguir período de tolerância configurado; `unpaid`, cancelamento sem vigência e expiração devem suspender recursos pagos e a publicação, sem apagar dados. Cancelamento com vigência restante deve manter direitos até `ends_at`.
+
+### [RF041] – Reconciliação de pagamentos
+
+O sistema deve permitir reconciliar assinaturas quando o webhook estiver ausente, atrasado ou fora de ordem.
+
+> **Critérios de aceitação:** A reconciliação deve consultar o Stripe por identificadores confiáveis, preservar idempotência, não confiar no navegador e registrar divergências. Enquanto não houver confirmação segura, a interface deve informar que o pagamento está em processamento, sem conceder acesso pago indevido.
+
+### [RF042] – Alteração ou cancelamento de plano
+
+O sistema deve permitir ao lojista solicitar mudança ou cancelamento da assinatura conforme as regras comerciais.
+
+> **Critérios de aceitação:** A operação deve apresentar impacto, vigência e limites antes da confirmação. Downgrade não deve excluir produtos ou imagens automaticamente. Cancelamento deve preservar os dados durante a retenção e registrar quando o direito de uso termina.
+
+## Administração da plataforma
+
+### [RF043] – Gestão administrativa de lojistas
+
+O sistema deve permitir que administradores autorizados consultem, suspendam e reativem tenants.
+
+> **Critérios de aceitação:** A listagem deve oferecer busca e filtros. Ações devem exigir confirmação, justificativa e permissão compatível com o papel do administrador. Suspensão deve bloquear operações privadas pagas e retirar a loja de circulação, sem apagar dados. Toda ação deve gerar auditoria.
+
+### [RF044] – Moderação de lojas e produtos
+
+O sistema deve permitir que administradores autorizados moderem conteúdo que viole regras legais, contratuais ou comerciais.
+
+> **Critérios de aceitação:** A ação deve identificar alvo, motivo, administrador e data, preservar evidência necessária e ser reversível quando aplicável. Conteúdo bloqueado não deve permanecer publicamente acessível. O lojista deve receber informação adequada sobre a restrição.
+
+### [RF045] – Gestão administrativa de planos
+
+O sistema deve permitir que administradores autorizados criem, consultem, alterem e desativem planos.
+
+> **Critérios de aceitação:** Nome, preço em centavos, limites, `stripe_price_id` e disponibilidade devem ser validados. Desativar um plano impede novas contratações, mas não altera silenciosamente contratos vigentes. Alterações críticas devem gerar auditoria.
+
+### [RF046] – Consulta de logs e eventos de auditoria
+
+O sistema deve permitir que administradores autorizados pesquisem logs de acesso, segurança, pagamento e ações administrativas.
+
+> **Critérios de aceitação:** A consulta deve permitir filtros por período, ator, tenant, ação e alvo, respeitar o papel do administrador e não permitir alteração do conteúdo auditado. Eventos devem possuir data, origem, resultado e correlação suficientes para investigação.
+
+### [RF047] – Gestão de administradores e papéis
+
+O sistema deve permitir que somente administradores com privilégio superior gerenciem outros administradores.
+
+> **Critérios de aceitação:** Devem existir, no mínimo, os papéis `super_admin`, `support` e `finance`, cada um com permissões explícitas. Criação, alteração de papel, desativação e reativação devem exigir autenticação reforçada e gerar auditoria.
+
+## Privacidade, transparência e suporte
+
+### [RF048] – Aceite e versionamento de documentos legais
+
+O sistema deve registrar o aceite dos Termos de Uso e da Política de Privacidade aplicáveis ao lojista e, quando houver coleta de dados do consumidor, apresentar a informação legal adequada.
+
+> **Critérios de aceitação:** O registro deve conter usuário ou contexto, documento, versão, data e finalidade. Nova versão que exija consentimento deve solicitar novo aceite. Quando dados do consumidor forem coletados para preparar o pedido, a informação de privacidade e o aceite aplicável devem ser apresentados antes do envio ao WhatsApp. A recusa deve impedir apenas o fluxo que depende legitimamente daquele aceite.
+
+### [RF049] – Exercício dos direitos do titular
+
+O sistema deve oferecer canal para solicitações de acesso, correção, portabilidade quando aplicável e exclusão de dados pessoais.
+
+> **Critérios de aceitação:** A solicitação deve receber protocolo, passar por verificação de identidade e ser rastreável até a conclusão. Exclusão deve respeitar obrigações legais, prevenção a fraude, retenção de logs e dados que pertencem ao lojista como controlador.
+
+### [RF050] – Transparência sobre a negociação externa
+
+O sistema deve informar que o PedeAqui oferece a vitrine e prepara o contato, mas que negociação, pagamento do produto, entrega e atendimento acontecem entre consumidor e lojista fora da plataforma.
+
+> **Critérios de aceitação:** A informação deve aparecer antes do redirecionamento e nos documentos legais. A interface não deve afirmar que a compra, o pagamento, o envio da mensagem ou a entrega foram concluídos apenas porque o WhatsApp foi aberto.
