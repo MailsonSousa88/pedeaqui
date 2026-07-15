@@ -20,14 +20,11 @@ export type CategoryManagementState = {
   editingCategoryId: string | null
   errorMessage: string | null
   formValues: CategoryManagementFormValues
-  newCategoryName: string
   status: CategoryManagementStatus
 }
 
 export type CategoryManagementHandlers = {
   onCategoryNameChange: (value: string) => void
-  onCreateCategory: () => void
-  onNewCategoryNameChange: (value: string) => void
   onCancelEditCategory: () => void
   onEditCategory: (categoryId: string) => void
   onRemoveCategory: (categoryId: string) => void

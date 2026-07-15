@@ -51,6 +51,8 @@ export type StorefrontUpdatePayload = StorefrontEditValues
 
 export type StorefrontLoadStatus = 'missing' | 'loading' | 'success' | 'error'
 
+export type StorefrontCopyLinkStatus = 'idle' | 'success' | 'error'
+
 export type StorefrontCatalogStatus = StorefrontLoadStatus
 
 export type StorefrontCategory = {

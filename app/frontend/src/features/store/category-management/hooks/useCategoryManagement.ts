@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 
 import { getAuthSession } from '../../../../shared/services/authSession'
 import {
-  createStoreCategory,
   deleteStoreCategory,
   listStoreCategories,
   listStoreProductsForCategoryCount,
@@ -29,7 +28,6 @@ export function useCategoryManagement(
   const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [formValues, setFormValues] = useState<CategoryManagementFormValues>(emptyFormValues)
-  const [newCategoryName, setNewCategoryName] = useState('')
   const [status, setStatus] = useState<CategoryManagementState['status']>(
     storeId ? 'loading' : 'missing',
   )
@@ -93,57 +91,6 @@ export function useCategoryManagement(
   const onCategoryNameChange = (value: string) => {
     setErrorMessage(null)
     setFormValues({ name: value })
-  }
-
-  const onNewCategoryNameChange = (value: string) => {
-    setErrorMessage(null)
-    setNewCategoryName(value)
-  }
-
-  const onCreateCategory = async () => {
-    const normalizedName = normalizeCategoryName(newCategoryName)
-    if (!storeId) {
-      setErrorMessage('Nenhuma loja foi carregada para criar a categoria.')
-      return
-    }
-
-    if (!normalizedName) {
-      setErrorMessage('Informe o nome da categoria.')
-      return
-    }
-
-    if (categories.some((category) => category.name === normalizedName)) {
-      setErrorMessage('Essa categoria já existe.')
-      return
-    }
-
-    const session = getAuthSession()
-    if (!session) {
-      setErrorMessage('Sua sessão expirou. Entre novamente para criar a categoria.')
-      return
-    }
-
-    try {
-      const createdCategory = await createStoreCategory(storeId, normalizedName, {
-        authToken: session.accessToken,
-      })
-      setCategories((currentCategories) => [
-        ...currentCategories,
-        {
-          editable: true,
-          id: createdCategory.id,
-          kind: 'custom',
-          name: normalizeCategoryName(createdCategory.name),
-          productCount: 0,
-          removable: true,
-        },
-      ])
-      setNewCategoryName('')
-      setErrorMessage(null)
-      onCategoriesChanged?.()
-    } catch {
-      setErrorMessage('Não foi possível criar a categoria. Tente novamente.')
-    }
   }
 
   const onCancelEditCategory = () => {
@@ -240,13 +187,10 @@ export function useCategoryManagement(
     editingCategoryId,
     errorMessage,
     formValues,
-    newCategoryName,
     onCancelEditCategory,
     onCategoryNameChange,
-    onCreateCategory,
     onEditCategory,
     onRemoveCategory,
-    onNewCategoryNameChange,
     onSaveCategory,
     status,
   }

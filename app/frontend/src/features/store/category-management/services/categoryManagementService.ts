@@ -24,17 +24,6 @@ export const listStoreCategories = (storeId: string) =>
 export const listStoreProductsForCategoryCount = (storeId: string) =>
   apiClient.get<ProductApiItem[]>(`/api/products/store/${encodeURIComponent(storeId)}`)
 
-export const createStoreCategory = (
-  storeId: string,
-  name: string,
-  options?: CategoryRequestOptions,
-) =>
-  apiClient.post<CategoryApiItem>(
-    '/api/categories',
-    { name, storeId },
-    { authToken: options?.authToken },
-  )
-
 export const updateStoreCategory = (
   categoryId: string,
   name: string,
