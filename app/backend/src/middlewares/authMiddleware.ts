@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import supabase from '../infra/supabase/supabaseClient';
 
 export interface AuthenticatedRequest extends Request {
+  accessToken?: string;
   user?: {
     id: string;
     email?: string;
@@ -36,6 +37,7 @@ export const authMiddleware = async (req: AuthenticatedRequest, res: Response, n
       email: data.user.email,
       tenantId: data.user.id,
     };
+    req.accessToken = token;
 
     next();
   } catch (error: any) {
