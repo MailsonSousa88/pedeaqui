@@ -24,7 +24,9 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
   return (
     <div className={`${styles.page} flex min-h-screen flex-col bg-[#f5f5f5]`}>
       <div className="fixed inset-x-0 top-0 z-50">
-        <ForgotPasswordHeader />
+        <ForgotPasswordHeader
+          onNavigate={(route, planId) => onNavigate?.(route, planId)}
+        />
       </div>
       <div
         aria-hidden="true"

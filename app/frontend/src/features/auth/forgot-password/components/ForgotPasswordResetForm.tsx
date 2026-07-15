@@ -1,6 +1,7 @@
 import { Eye, EyeOff, KeyRound, LockKeyhole } from 'lucide-react'
 
 import { ForgotPasswordField } from './ForgotPasswordField'
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import { useForgotPasswordResetForm } from '../hooks/useForgotPasswordResetForm'
 
 type ForgotPasswordResetFormProps = {
@@ -130,13 +131,13 @@ export function ForgotPasswordResetForm({
         Redefinir senha
       </button>
 
-      <button
+      <SecondaryButton
         type="button"
-        className="mt-5 text-sm font-semibold text-[#e30507] outline-none transition-colors hover:text-[#c80406] focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e30507]"
+        className="mt-5 w-full"
         onClick={onBackToLogin}
       >
         Voltar para login
-      </button>
+      </SecondaryButton>
     </form>
   )
 }
