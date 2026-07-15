@@ -7,6 +7,11 @@ import { UpdateProductUseCase } from '../../useCases/product/UpdateProductUseCas
 import { DeleteProductUseCase } from '../../useCases/product/DeleteProductUseCase';
 import { ToggleProductAvailabilityUseCase } from '../../useCases/product/ToggleProductAvailabilityUseCase';
 import { ListProductsUseCase } from '../../useCases/product/ListProductsUseCase';
+import { SupabaseProductDetailRepository } from '../../repositories/supabase/SupabaseProductDetailRepository';
+import { GetPublicProductDetailUseCase } from '../../useCases/product/GetPublicProductDetailUseCase';
+import { GetMerchantProductDetailUseCase } from '../../useCases/product/GetMerchantProductDetailUseCase';
+import { createAuthenticatedSupabaseClient } from '../../infra/supabase/supabaseClient';
+import { AuthenticatedRequest } from '../../middlewares/authMiddleware';
 
 export class ProductController {
   private productRepository = new SupabaseProductRepository();
@@ -78,6 +83,35 @@ export class ProductController {
       const { storeId } = req.params;
       const products = await this.listProductsUseCase.execute(storeId as string);
       return res.status(200).json(products);
+    } catch (error: any) {
+      if (error.message.includes('Not Found')) return res.status(404).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
+    }
+  };
+
+  getPublicDetail = async (req: Request, res: Response): Promise<Response> => {
+    try {
+      const { productId } = req.params;
+      const repository = new SupabaseProductDetailRepository();
+      const useCase = new GetPublicProductDetailUseCase(repository);
+      const product = await useCase.execute(productId as string);
+
+      return res.status(200).json(product);
+    } catch (error: any) {
+      if (error.message.includes('Not Found')) return res.status(404).json({ error: error.message });
+      return res.status(400).json({ error: error.message });
+    }
+  };
+
+  getPrivateDetail = async (req: AuthenticatedRequest, res: Response): Promise<Response> => {
+    try {
+      const { productId } = req.params;
+      const client = createAuthenticatedSupabaseClient(req.accessToken!);
+      const repository = new SupabaseProductDetailRepository(client);
+      const useCase = new GetMerchantProductDetailUseCase(repository);
+      const product = await useCase.execute(productId as string, req.user!.id);
+
+      return res.status(200).json(product);
     } catch (error: any) {
       if (error.message.includes('Not Found')) return res.status(404).json({ error: error.message });
       return res.status(400).json({ error: error.message });

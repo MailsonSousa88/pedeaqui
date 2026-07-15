@@ -56,6 +56,16 @@ describe('UpdateProductUseCase', () => {
       .rejects.toThrow('less than base');
   });
 
+  it('should reject a nonpositive promo price', async () => {
+    const existing = new Product({
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+    });
+    mockProductRepo.findById.mockResolvedValue(existing);
+
+    await expect(updateProductUseCase.execute('prod-1', 'tenant-1', { promoPriceCents: 0 }))
+      .rejects.toThrow('Promo price cents must be greater than 0');
+  });
+
   it('should throw if changing to invalid category', async () => {
     const existing = new Product({
       id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
@@ -67,6 +77,22 @@ describe('UpdateProductUseCase', () => {
       .rejects.toThrow('Conflict: Cannot move product to an invalid or deleted category');
   });
 
+  it('should move the product to an active category from the same store', async () => {
+    const existing = new Product({
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+    });
+    const newCategory = new Category({
+      id: 'cat-2', storeId: 'store-1', tenantId: 'tenant-1', name: 'Nova categoria', description: null, sortOrder: 1, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+    });
+    mockProductRepo.findById.mockResolvedValue(existing);
+    mockCategoryRepo.findById.mockResolvedValue(newCategory);
+    mockProductRepo.update.mockImplementation(async (product) => product);
+
+    const result = await updateProductUseCase.execute('prod-1', 'tenant-1', { categoryId: 'cat-2' });
+
+    expect(result.categoryId).toBe('cat-2');
+  });
+
   it('should throw if promo ends at is set without promo price', async () => {
     const existing = new Product({
       id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: null, priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
@@ -75,5 +101,17 @@ describe('UpdateProductUseCase', () => {
 
     await expect(updateProductUseCase.execute('prod-1', 'tenant-1', { promoEndsAt: '2026-12-31' }))
       .rejects.toThrow('Promo ends at requires promo price cents to be defined');
+  });
+
+  it('should clear the description when an empty description is provided', async () => {
+    const existing = new Product({
+      id: 'prod-1', storeId: 'store-1', tenantId: 'tenant-1', categoryId: 'cat-1', name: 'A', description: 'Descrição atual', priceCents: 1000, promoPriceCents: null, promoEndsAt: null, details: {}, available: true, deletedAt: null, createdAt: new Date(), updatedAt: new Date()
+    });
+    mockProductRepo.findById.mockResolvedValue(existing);
+    mockProductRepo.update.mockImplementation(async (product) => product);
+
+    const result = await updateProductUseCase.execute('prod-1', 'tenant-1', { description: '' });
+
+    expect(result.description).toBeNull();
   });
 });

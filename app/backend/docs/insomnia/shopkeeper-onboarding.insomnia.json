@@ -490,6 +490,57 @@
       "_type": "request"
     },
     {
+      "_id": "req_get_public_product_detail",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/products/public/{{ _.product_id }}",
+      "name": "15A - Consultar detalhe publico do produto",
+      "description": "Consulta publica com imagens, variacoes e opcoes agregadas. O produto precisa estar disponivel.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [],
+      "authentication": {},
+      "metaSortKey": 1350,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_private_product_detail",
+      "parentId": "fld_onboarding_flow",
+      "modified": 1783216241000,
+      "created": 1783216241000,
+      "url": "{{ _.base_url }}/api/products/{{ _.product_id }}",
+      "name": "15B - Consultar detalhe privado do produto",
+      "description": "Consulta autenticada do agregado; tambem retorna produto indisponivel quando pertence ao lojista logado.",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": 1375,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
       "_id": "req_update_product",
       "parentId": "fld_onboarding_flow",
       "modified": 1783216241000,
