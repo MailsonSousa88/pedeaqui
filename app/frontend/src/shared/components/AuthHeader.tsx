@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 
 import type { AppRoute } from '../../app/routes/types'
 
 type AuthHeaderProps = {
   onNavigate: (route: AppRoute, planId?: number) => void
+  rightAction?: ReactNode
 }
 
-export function AuthHeader({ onNavigate }: AuthHeaderProps) {
+export function AuthHeader({ onNavigate, rightAction }: AuthHeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false)
 
   useEffect(() => {
@@ -42,17 +43,9 @@ export function AuthHeader({ onNavigate }: AuthHeaderProps) {
           />
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-4">
-          <button
-            onClick={() => {
-              sessionStorage.setItem('scrollToPlanos', 'true')
-              onNavigate('/')
-            }}
-            className="rounded-lg bg-primary px-3.5 py-1.5 font-sans text-xs font-semibold text-white shadow-md shadow-primary/10 transition-colors hover:bg-primary-dark hover:shadow-lg sm:px-5 sm:py-2 sm:text-sm"
-          >
-            Começar Agora
-          </button>
-        </div>
+        {rightAction ? (
+          <div className="flex items-center gap-2 sm:gap-4">{rightAction}</div>
+        ) : null}
       </div>
     </header>
   )
