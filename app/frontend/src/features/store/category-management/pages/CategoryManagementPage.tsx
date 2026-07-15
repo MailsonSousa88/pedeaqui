@@ -2,7 +2,6 @@ import { AlertCircle, Loader2 } from 'lucide-react'
 
 import { CategoryForm } from '../components/CategoryForm'
 import { CategoryList } from '../components/CategoryList'
-import { CreateCategoryForm } from '../components/CreateCategoryForm'
 import { useCategoryManagement } from '../hooks/useCategoryManagement'
 
 type CategoryManagementPageProps = {
@@ -16,13 +15,10 @@ export function CategoryManagementPage({ onCategoriesChanged, storeId }: Categor
     editingCategoryId,
     errorMessage,
     formValues,
-    newCategoryName,
     onCancelEditCategory,
     onCategoryNameChange,
-    onCreateCategory,
     onEditCategory,
     onRemoveCategory,
-    onNewCategoryNameChange,
     onSaveCategory,
     status,
   } = useCategoryManagement(storeId, onCategoriesChanged)
@@ -39,7 +35,7 @@ export function CategoryManagementPage({ onCategoriesChanged, storeId }: Categor
           Categorias da loja
         </h2>
         <p className="max-w-2xl text-sm leading-6 text-[#6b7280]">
-          Organize as categorias cadastradas na loja. A criação também está disponível durante o
+          Organize as categorias cadastradas na loja. Novas categorias são criadas durante o
           cadastro do produto; aqui ficam edição, revisão e remoção das categorias existentes.
         </p>
       </div>
@@ -59,15 +55,6 @@ export function CategoryManagementPage({ onCategoriesChanged, storeId }: Categor
           <AlertCircle aria-hidden="true" className="mt-0.5 text-[#dc2626]" size={18} />
           <p className="text-sm text-[#dc2626]">{errorMessage}</p>
         </div>
-      ) : null}
-
-      {status === 'success' ? (
-        <CreateCategoryForm
-          errorMessage={errorMessage}
-          name={newCategoryName}
-          onCreate={onCreateCategory}
-          onNameChange={onNewCategoryNameChange}
-        />
       ) : null}
 
       <CategoryForm

@@ -1,17 +1,24 @@
 import { motion } from 'framer-motion'
-import { Link2, Pencil } from 'lucide-react'
+import { Check, Link2, Pencil } from 'lucide-react'
 
-import type { StorefrontEditValues, StorefrontStore } from '../types/storefront'
+import type {
+  StorefrontCopyLinkStatus,
+  StorefrontEditValues,
+  StorefrontStore,
+} from '../types/storefront'
 import { ImagePlaceholder } from './ImagePlaceholder'
 import { StoreEditForm } from './StoreEditForm'
 import { StoreInfoList } from './StoreInfoList'
 
 type StoreHeroCardProps = {
+  canCopyPublicLink: boolean
   canEdit: boolean
+  copyLinkStatus: StorefrontCopyLinkStatus
   isEditing: boolean
   isLoading: boolean
   isSaving: boolean
   onCancelEditing: () => void
+  onCopyPublicLink: () => Promise<void>
   onEdit: () => void
   onSave: (values: StorefrontEditValues) => Promise<boolean>
   saveError: string | null
@@ -19,11 +26,14 @@ type StoreHeroCardProps = {
 }
 
 export function StoreHeroCard({
+  canCopyPublicLink,
   canEdit,
+  copyLinkStatus,
   isEditing,
   isLoading,
   isSaving,
   onCancelEditing,
+  onCopyPublicLink,
   onEdit,
   onSave,
   saveError,
@@ -93,30 +103,56 @@ export function StoreHeroCard({
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:shrink-0">
-            <motion.button
-              aria-pressed={isEditing}
-              className="inline-flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm font-semibold text-[#111111] shadow-sm transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              disabled={!canEdit || isEditing}
-              onClick={onEdit}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              type="button"
-              whileHover={canEdit && !isEditing ? { scale: 1.03 } : undefined}
-              whileTap={canEdit && !isEditing ? { scale: 0.97 } : undefined}
-            >
-              <Pencil aria-hidden="true" size={24} strokeWidth={2.2} />
-              {isEditing ? 'Editando' : 'Editar'}
-            </motion.button>
+          <div className="flex flex-col gap-2 sm:shrink-0">
+            <div className="grid grid-cols-2 gap-3">
+              <motion.button
+                aria-pressed={isEditing}
+                className="inline-flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm font-semibold text-[#111111] shadow-sm transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!canEdit || isEditing}
+                onClick={onEdit}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                type="button"
+                whileHover={canEdit && !isEditing ? { scale: 1.03 } : undefined}
+                whileTap={canEdit && !isEditing ? { scale: 0.97 } : undefined}
+              >
+                <Pencil aria-hidden="true" size={24} strokeWidth={2.2} />
+                {isEditing ? 'Editando' : 'Editar'}
+              </motion.button>
 
-            <button
-              aria-disabled="true"
-              className="inline-flex min-h-24 cursor-not-allowed flex-col items-center justify-center gap-2 rounded-2xl border border-gray-200 bg-white px-4 py-4 text-sm font-semibold text-gray-400 shadow-sm"
-              disabled
-              type="button"
-            >
-              <Link2 aria-hidden="true" size={24} strokeWidth={2.2} />
-              Copiar link
-            </button>
+              <motion.button
+                aria-describedby={copyLinkStatus !== 'idle' ? 'copy-link-feedback' : undefined}
+                aria-label="Copiar link público da loja"
+                className="inline-flex min-h-24 flex-col items-center justify-center gap-2 rounded-2xl border border-gray-300 bg-white px-4 py-4 text-sm font-semibold text-[#111111] shadow-sm transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!canCopyPublicLink}
+                onClick={() => void onCopyPublicLink()}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                type="button"
+                whileHover={canCopyPublicLink ? { scale: 1.03 } : undefined}
+                whileTap={canCopyPublicLink ? { scale: 0.97 } : undefined}
+              >
+                {copyLinkStatus === 'success' ? (
+                  <Check aria-hidden="true" size={24} strokeWidth={2.2} />
+                ) : (
+                  <Link2 aria-hidden="true" size={24} strokeWidth={2.2} />
+                )}
+                Copiar link
+              </motion.button>
+            </div>
+
+            {copyLinkStatus !== 'idle' ? (
+              <p
+                aria-live="polite"
+                className={`text-center text-xs font-semibold ${
+                  copyLinkStatus === 'success' ? 'text-emerald-700' : 'text-[#dc2626]'
+                }`}
+                id="copy-link-feedback"
+                role={copyLinkStatus === 'error' ? 'alert' : 'status'}
+              >
+                {copyLinkStatus === 'success'
+                  ? 'Link copiado com sucesso ✅'
+                  : 'Não foi possível copiar o link. Tente novamente.'}
+              </p>
+            ) : null}
           </div>
         </div>
 

@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { getAuthSession } from '../../../../shared/services/authSession'
 import { getStorefrontBySlug, updateStorefront } from '../services/storefrontService'
 import type {
   StorefrontEditValues,
+  StorefrontCopyLinkStatus,
   StorefrontLoadStatus,
   StorefrontStore,
 } from '../types/storefront'
@@ -15,6 +16,8 @@ export function useStorefront(slug?: string) {
   const [editingStoreId, setEditingStoreId] = useState<string | null>(null)
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
+  const [copyLinkStatus, setCopyLinkStatus] = useState<StorefrontCopyLinkStatus>('idle')
+  const copyFeedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     let isActive = true
@@ -55,6 +58,51 @@ export function useStorefront(slug?: string) {
         : 'loading'
 
   const visibleStore = status === 'success' ? store : null
+  const canCopyPublicLink = Boolean(visibleStore?.slug.trim())
+
+  useEffect(() => {
+    return () => {
+      if (copyFeedbackTimer.current) {
+        clearTimeout(copyFeedbackTimer.current)
+        copyFeedbackTimer.current = null
+      }
+    }
+  }, [])
+
+  const copyPublicLink = useCallback(async () => {
+    const publicSlug = visibleStore?.slug.trim()
+
+    if (!publicSlug) {
+      return
+    }
+
+    if (copyFeedbackTimer.current) {
+      clearTimeout(copyFeedbackTimer.current)
+      copyFeedbackTimer.current = null
+    }
+
+    setCopyLinkStatus('idle')
+
+    try {
+      if (!navigator.clipboard?.writeText) {
+        throw new Error('Clipboard API unavailable')
+      }
+
+      const publicUrl = new URL(
+        `/storefront/${encodeURIComponent(publicSlug)}`,
+        window.location.origin,
+      ).toString()
+
+      await navigator.clipboard.writeText(publicUrl)
+      setCopyLinkStatus('success')
+      copyFeedbackTimer.current = setTimeout(() => {
+        setCopyLinkStatus('idle')
+        copyFeedbackTimer.current = null
+      }, 2000)
+    } catch {
+      setCopyLinkStatus('error')
+    }
+  }, [visibleStore?.slug])
 
   const canEdit = useMemo(() => {
     const session = getAuthSession()
@@ -121,12 +169,15 @@ export function useStorefront(slug?: string) {
   return {
     store: visibleStore,
     status,
+    canCopyPublicLink,
+    copyLinkStatus,
     canEdit,
     isEditing,
     isSaving,
     saveError,
     startEditing,
     cancelEditing,
+    copyPublicLink,
     saveStore,
   }
 }
