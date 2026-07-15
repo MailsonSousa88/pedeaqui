@@ -304,10 +304,11 @@ Authorization: Bearer SEU_ACCESS_TOKEN
 
 ## 📚 Documentação
 
-- [Visão do produto](docs/business/product-vision.md)
+- [PRD — Product Requirements Document](docs/product/prd.md)
 - [Roadmap](docs/business/roadmap/pruduct-roadmap.md)
 - [Requisitos funcionais](docs/requirements/functional/functional-requirements.md)
 - [Requisitos não funcionais](docs/requirements/non-functional/non-functional-requirements.md)
+- [Diagramas e fluxos Mermaid](docs/diagrams/README.md)
 - [Arquitetura e organização do código](docs/architeture/adr/0002-escolha-do-estilo-e-organizacao-de-codigo.md)
 - [Stack tecnológica](docs/architeture/adr/0003-definicao-da-stack-tecnologica-do-mvp.md)
 - [Arquitetura do banco de dados](app/backend/docs/DATABASE.md)

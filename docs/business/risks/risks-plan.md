@@ -7,7 +7,7 @@
 
 > Este documento é uma extensão e aprofundamento da Matriz de Riscos presente no RVS.  
 > Incorpora riscos técnicos, operacionais, legais, econômicos e de produto identificados  
-> a partir da análise integral dos artefatos do projeto (RVS + Product Vision + Roadmap).
+> a partir da análise integral dos artefatos do projeto (RVS + PRD + Roadmap).
 
 ---
 
