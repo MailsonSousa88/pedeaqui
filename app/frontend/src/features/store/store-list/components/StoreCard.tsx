@@ -1,6 +1,6 @@
 import { ChevronRight, Store } from 'lucide-react'
 import { useState } from 'react'
-import type { KeyboardEvent, MouseEvent } from 'react'
+import type { KeyboardEvent } from 'react'
 
 import type { StoreListCallbacks, StoreSummary } from '../types/storeList'
 
@@ -28,15 +28,6 @@ export function StoreCard({ store, onSelectStore }: StoreCardProps) {
       event.preventDefault()
       selectStore()
     }
-  }
-
-  const handleButtonClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation()
-    selectStore()
-  }
-
-  const handleButtonKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
-    event.stopPropagation()
   }
 
   return (
@@ -75,17 +66,12 @@ export function StoreCard({ store, onSelectStore }: StoreCardProps) {
         </p>
       </div>
 
-      <button
-        type="button"
-        disabled={!store.isSelectable}
-        aria-label={`Ver loja ${store.name}`}
-        onClick={handleButtonClick}
-        onKeyDown={handleButtonKeyDown}
-        className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1 rounded-lg border border-[#e5e7eb] bg-white px-3 py-2 text-sm font-semibold text-[#e30507] transition-[border-color] duration-200 enabled:hover:border-[#e30507] enabled:active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#e30507] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:text-[#9ca3af]"
+      <div
+        className="inline-flex min-h-10 shrink-0 items-center justify-center gap-1 text-sm font-semibold text-[#e30507]"
       >
         <span>Ver loja</span>
         <ChevronRight size={16} aria-hidden="true" />
-      </button>
+      </div>
     </article>
   )
 }
