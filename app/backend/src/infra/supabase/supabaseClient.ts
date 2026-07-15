@@ -6,4 +6,15 @@ if (!config.supabase.url || !config.supabase.anonKey) {
 }
 
 export const supabase = createClient(config.supabase.url, config.supabase.anonKey);
+
+export const createAuthenticatedSupabaseClient = (accessToken: string) =>
+  createClient(config.supabase.url, config.supabase.anonKey, {
+    accessToken: async () => accessToken,
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+      detectSessionInUrl: false,
+    },
+  });
+
 export default supabase;
