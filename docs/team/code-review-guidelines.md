@@ -148,6 +148,22 @@ Antes de solicitar revisão, o autor deve verificar:
 - Testes foram adicionados ou atualizados quando necessário.
 - O projeto continua executando conforme esperado.
 
+## Automação de reviewers, labels e políticas
+
+O `CODEOWNERS` solicita automaticamente os reviewers responsáveis pelos arquivos modificados. Os workflows aplicam labels de área, validam as políticas do PR e identificam mudanças sensíveis.
+
+O autor não precisa repetir essas ações manualmente. Depois da execução dos workflows, deve conferir se:
+
+- os reviewers correspondem às áreas alteradas;
+- as labels representam todos os caminhos modificados;
+- a label `sensitive` foi aplicada quando necessária;
+- os checks obrigatórios foram executados;
+- erros de política foram corrigidos antes da revisão.
+
+A solicitação automática de reviewers não representa aprovação. Trabalhos comuns continuam exigindo pelo menos 2 aprovações, e mudanças sensíveis ou PRs para `main` continuam exigindo pelo menos 4 aprovações válidas.
+
+Consulte [Automações do GitHub](github-automation.md) para os caminhos monitorados, responsabilidades manuais e instruções para agentes de programação.
+
 ## Regras para revisão
 
 - Verificar se a alteração atende ao objetivo proposto.
