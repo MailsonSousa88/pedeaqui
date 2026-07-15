@@ -46,7 +46,10 @@ export function LoginHeader({ onNavigate }: LoginHeaderProps) {
             Não tem uma conta?
           </span>
           <button
-            onClick={() => onNavigate('/register', 1)}
+            onClick={() => {
+              sessionStorage.setItem('scrollToPlanos', 'true');
+              onNavigate('/');
+            }}
             className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs sm:text-sm px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
           >
             Começar Agora

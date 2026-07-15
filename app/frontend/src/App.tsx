@@ -70,6 +70,15 @@ export default function App() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  useEffect(() => {
+    if (currentPath === '/' && sessionStorage.getItem('scrollToPlanos') === 'true') {
+      sessionStorage.removeItem('scrollToPlanos');
+      setTimeout(() => {
+        document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }, [currentPath]);
+
   const triggerToast = (message: string) => {
     setToastMessage(message);
     setTimeout(() => {
