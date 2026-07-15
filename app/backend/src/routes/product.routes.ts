@@ -9,6 +9,7 @@ const productVariationController = new ProductVariationController();
 
 // Vitrine (Public)
 router.get('/store/:storeId', productController.listByStore);
+router.get('/public/:productId', productController.getPublicDetail);
 
 // Lojista (Private)
 router.use(authMiddleware);
@@ -20,6 +21,7 @@ router.post('/:productId/variations/:variationId/options', productVariationContr
 router.get('/:productId/variations/:variationId/options', productVariationController.listOptions);
 router.put('/:productId/variations/:variationId/options/:optionId', productVariationController.updateOption);
 router.delete('/:productId/variations/:variationId/options/:optionId', productVariationController.deleteOption);
+router.get('/:productId', productController.getPrivateDetail);
 router.post('/', productController.create);
 router.put('/:id', productController.update);
 router.delete('/:id', productController.delete);
