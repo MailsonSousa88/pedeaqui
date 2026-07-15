@@ -49,7 +49,7 @@ export function LoginHeader({ onNavigate }: LoginHeaderProps) {
             onClick={() => onNavigate('/register', 1)}
             className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs sm:text-sm px-3.5 py-1.5 sm:px-5 sm:py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
           >
-            Começar agora
+            Começar Agora
           </button>
         </div>
       </div>
