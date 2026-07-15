@@ -86,6 +86,7 @@ const getProductDetailParams = (route: AppRoute) => {
 
 export default function App() {
   const [currentPath, setCurrentPath] = useState<AppRoute>(getRouteFromLocation);
+  const [cartKey, setCartKey] = useState(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [createdStore, setCreatedStore] = useState<CreatedStore | null>(getCreatedStore);
   const [activationError, setActivationError] = useState<string | null>(null);
@@ -133,7 +134,11 @@ export default function App() {
   };
 
   const handleCartClick = () => {
-    navigateTo('/market-cart');
+    if (currentPath === '/market-cart') {
+      setCartKey((prev) => prev + 1);
+    } else {
+      navigateTo('/market-cart');
+    }
   };
 
   const renderPage = () => {
@@ -223,6 +228,7 @@ export default function App() {
     if (currentPath === '/market-cart') {
       return (
         <MarketCartPage
+          key={`cart-${cartKey}`}
           addToast={(_type, title, message) => triggerToast(`${title}: ${message}`)}
         />
       );
