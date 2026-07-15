@@ -19,12 +19,10 @@ export function StoreCard({ store, isSelected, onSelect }: StoreCardProps) {
     <motion.div
       layoutId={`store-card-${store.id}`}
       onClick={() => onSelect(store.id)}
-      className={`p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between cursor-pointer relative overflow-hidden bg-white ${isSelected
+      className={`p-5 rounded-2xl border transition-[border-color,box-shadow,transform] duration-200 flex flex-col justify-between cursor-pointer relative overflow-hidden bg-white hover:-translate-y-0.5 hover:shadow-md ${isSelected
           ? "border-[#e30507] shadow-lg shadow-red-500/5 ring-2 ring-[#e30507]/10 bg-red-50/5"
-          : "border-gray-200 hover:shadow-md"
+          : "border-gray-200 hover:border-[#e30507]"
         }`}
-      whileHover={{ scale: 1.01 }}
-      whileTap={{ scale: 0.99 }}
     >
       <div className="flex items-start justify-between">
         <div className="flex items-center gap-3">
