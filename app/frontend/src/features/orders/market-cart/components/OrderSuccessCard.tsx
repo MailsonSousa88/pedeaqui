@@ -15,7 +15,7 @@ interface OrderSuccessCardProps {
   onBack: () => void;
 }
 
-export function OrderSuccessCard({ order, onBack }: OrderSuccessCardProps) {
+export function OrderSuccessCard({ order, onBack: _onBack }: OrderSuccessCardProps) {
   return (
     <div className="flex-1 w-full relative flex items-center justify-center py-10 px-4 sm:px-10 bg-[#fbfbfd]">
       {/* Decorative Dot Grid Top Right */}
@@ -171,12 +171,6 @@ export function OrderSuccessCard({ order, onBack }: OrderSuccessCardProps) {
 
         </div>
 
-        <button
-          onClick={onBack}
-          className="w-full py-3.5 bg-[#e30507] hover:bg-red-600 text-white font-extrabold text-xs sm:text-sm rounded-xl transition-all cursor-pointer shadow-lg shadow-red-500/10"
-        >
-          Voltar para as Lojas
-        </button>
       </motion.div>
     </div>
   );
