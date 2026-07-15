@@ -62,7 +62,7 @@ export function CheckoutForm({
   onSubmit,
 }: CheckoutFormProps) {
   return (
-    <div className="flex-1 w-full relative flex items-center justify-center px-4 py-8 sm:px-6 bg-[#fbfbfd]">
+    <div className="flex-1 w-full relative flex items-center justify-center px-4 pt-8 pb-28 md:pb-12 sm:px-6 bg-[#fbfbfd]">
       {/* Decorative Dot Grid Top Right */}
       <div className="absolute top-6 right-10 opacity-30 pointer-events-none hidden md:block">
         <div className="grid grid-cols-5 gap-3">

@@ -39,7 +39,9 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
 
   return (
     <div
-      className="w-full bg-[#f8f9fa] flex flex-col font-sans relative min-h-screen pb-24 md:pb-0"
+      className={`w-full bg-[#f8f9fa] flex flex-col font-sans relative min-h-screen ${
+        (isFillingCheckoutForm && cart.activeStore) || completedOrder ? "" : "pb-24 md:pb-0"
+      }`}
     >
       {/* Conditional page render */}
       {completedOrder ? (
