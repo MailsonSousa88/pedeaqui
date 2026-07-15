@@ -24,12 +24,25 @@ import SuccessPage from './features/billing/stripe-status/pages/SuccessPage';
 import FailedPage from './features/billing/stripe-status/pages/FailedPage';
 import type { AppRoute } from './app/routes/types';
 import { MarketCartPage } from './features/orders/market-cart/pages/MarketCartPage';
+import { ProductDetailPage } from './features/orders/product-detail/pages/ProductDetailPage';
+
+const decodeRouteSegment = (segment: string) => {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+};
 
 const getRouteFromLocation = (): AppRoute => {
   const path = window.location.pathname;
 
   if (path.startsWith('/storefront/')) {
     return path as `/storefront/${string}`;
+  }
+
+  if (path.startsWith('/lojas/')) {
+    return path as `/lojas/${string}`;
   }
 
   if (
@@ -50,17 +63,25 @@ const getRouteFromLocation = (): AppRoute => {
 };
 
 const getStorefrontSlug = (route: AppRoute) => {
-  if (!route.startsWith('/storefront/')) {
-    return undefined;
+  if (route.startsWith('/storefront/')) {
+    return decodeRouteSegment(route.slice('/storefront/'.length));
   }
 
-  const encodedSlug = route.slice('/storefront/'.length);
+  const publicStoreMatch = route.match(/^\/lojas\/([^/]+)\/?$/);
+  return publicStoreMatch ? decodeRouteSegment(publicStoreMatch[1]) : undefined;
+};
 
-  try {
-    return decodeURIComponent(encodedSlug);
-  } catch {
-    return encodedSlug;
+const getProductDetailParams = (route: AppRoute) => {
+  const productDetailMatch = route.match(/^\/lojas\/([^/]+)\/produtos\/([^/]+)\/?$/);
+
+  if (!productDetailMatch) {
+    return null;
   }
+
+  return {
+    productId: decodeRouteSegment(productDetailMatch[2]),
+    storeSlug: decodeRouteSegment(productDetailMatch[1]),
+  };
 };
 
 export default function App() {
@@ -107,6 +128,8 @@ export default function App() {
   };
 
   const renderPage = () => {
+    const productDetailParams = getProductDetailParams(currentPath);
+
     if (currentPath === '/login') {
       return <LoginPage onNavigate={handleNavigate} />;
     }
@@ -128,8 +151,39 @@ export default function App() {
       );
     }
 
-    if (currentPath === '/storefront' || currentPath.startsWith('/storefront/')) {
-      return <StorefrontPage slug={getStorefrontSlug(currentPath)} />;
+    if (productDetailParams) {
+      return (
+        <ProductDetailPage
+          onBackToStore={() =>
+            handleNavigate(`/lojas/${encodeURIComponent(productDetailParams.storeSlug)}`)
+          }
+          productId={productDetailParams.productId}
+          storeSlug={productDetailParams.storeSlug}
+        />
+      );
+    }
+
+    if (
+      currentPath === '/storefront' ||
+      currentPath.startsWith('/storefront/') ||
+      currentPath.startsWith('/lojas/')
+    ) {
+      const storeSlug = getStorefrontSlug(currentPath);
+
+      return (
+        <StorefrontPage
+          onSelectProduct={(productId) => {
+            if (!storeSlug) {
+              return;
+            }
+
+            navigateTo(
+              `/lojas/${encodeURIComponent(storeSlug)}/produtos/${encodeURIComponent(productId)}`,
+            );
+          }}
+          slug={storeSlug}
+        />
+      );
     }
 
     if (currentPath === '/store-preconfiguration') {

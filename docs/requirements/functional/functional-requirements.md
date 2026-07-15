@@ -177,9 +177,9 @@ O sistema deve permitir que o lojista envie imagens para produtos cadastrados.
 
 **[RF025] – Criação de categorias**
 
-O sistema deve permitir que o lojista crie categorias para organizar os produtos da sua loja.
+O sistema deve permitir que o lojista crie categorias para organizar os produtos da sua loja durante o cadastro de produto.
 
-> **Critério:** A categoria deve possuir nome e ordem de exibição. Criação válida deve retornar HTTP 201. Cada loja deve possuir uma categoria padrão `Todos`, criada automaticamente pelo sistema ou garantida como categoria sistêmica da loja.
+> **Critério:** A criação de categoria deve estar disponível como ação auxiliar no fluxo de cadastro de produto e não deve ser oferecida na seção dedicada de gerenciamento de categorias. A categoria deve possuir nome e ordem de exibição. Criação válida deve retornar HTTP 201, disponibilizar a nova categoria para seleção e permitir sua associação ao produto em cadastro. Cada loja deve possuir uma categoria padrão `Todos`, criada automaticamente pelo sistema ou garantida como categoria sistêmica da loja.
 ---
 
 **[RF026] – Gerenciamento de categorias**
