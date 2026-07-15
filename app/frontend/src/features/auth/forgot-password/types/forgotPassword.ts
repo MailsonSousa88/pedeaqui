@@ -11,4 +11,8 @@ export type ForgotPasswordResetFormValues = {
 
 export type ForgotPasswordRequestPayload = ForgotPasswordRequestFormValues
 
+export type ForgotPasswordRequestResult = {
+  message: string
+}
+
 export type ForgotPasswordResetPayload = ForgotPasswordResetFormValues

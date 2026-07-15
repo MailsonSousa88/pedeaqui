@@ -20,6 +20,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
       >
         <div className="relative z-10 flex w-full justify-center">
           <LoginCard
+            onForgotPasswordClick={() => onNavigate('/forgot-password')}
             onRegisterClick={() => onNavigate('/register')}
             onSuccess={(store) =>
               onNavigate(`/storefront/${encodeURIComponent(store.slug)}`)

@@ -3,10 +3,23 @@ import { ForgotPasswordHeader } from '../components/ForgotPasswordHeader'
 import { ForgotPasswordStepper } from '../components/ForgotPasswordStepper'
 import { useForgotPasswordFlow } from '../hooks/useForgotPasswordFlow'
 import styles from '../styles/ForgotPasswordPage.module.css'
+import type { AppRoute } from '../../../../app/routes/types'
 
-export function ForgotPasswordPage() {
-  const { currentStep, goToEmailSent, simulateResetLinkOpening } =
-    useForgotPasswordFlow()
+type ForgotPasswordPageProps = {
+  onNavigate?: (route: AppRoute, planId?: number) => void
+}
+
+export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
+  const {
+    currentStep,
+    isSubmitting,
+    isResending,
+    requestError,
+    resendError,
+    resendSuccessMessage,
+    resendRecoveryRequest,
+    submitRecoveryRequest,
+  } = useForgotPasswordFlow()
 
   return (
     <div className={`${styles.page} flex min-h-screen flex-col bg-[#f5f5f5]`}>
@@ -27,8 +40,14 @@ export function ForgotPasswordPage() {
           <div className="mt-7 w-full sm:mt-8">
             <ForgotPasswordCard
               currentStep={currentStep}
-              onRequestSuccess={goToEmailSent}
-              onSimulateResetLinkOpening={simulateResetLinkOpening}
+              onBackToLogin={() => onNavigate?.('/login')}
+              onRequestSubmit={submitRecoveryRequest}
+              isSubmitting={isSubmitting}
+              requestError={requestError}
+              onResend={resendRecoveryRequest}
+              isResending={isResending}
+              resendError={resendError}
+              resendSuccessMessage={resendSuccessMessage}
             />
           </div>
         </div>

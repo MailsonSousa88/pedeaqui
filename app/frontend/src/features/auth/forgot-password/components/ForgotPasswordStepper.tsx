@@ -1,4 +1,4 @@
-type ForgotPasswordStep = 'request' | 'sent' | 'reset'
+import type { ForgotPasswordStep } from '../types/forgotPassword'
 
 type StepDefinition = {
   id: ForgotPasswordStep

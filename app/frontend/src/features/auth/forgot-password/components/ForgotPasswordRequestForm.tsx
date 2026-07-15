@@ -4,11 +4,17 @@ import { ForgotPasswordField } from './ForgotPasswordField'
 import { useForgotPasswordRequestForm } from '../hooks/useForgotPasswordRequestForm'
 
 type ForgotPasswordRequestFormProps = {
-  onRequestSuccess: () => void
+  onBackToLogin: () => void
+  onRequestSubmit: (email: string) => Promise<void>
+  isSubmitting: boolean
+  submitError?: string
 }
 
 export function ForgotPasswordRequestForm({
-  onRequestSuccess,
+  onBackToLogin,
+  onRequestSubmit,
+  isSubmitting,
+  submitError,
 }: ForgotPasswordRequestFormProps) {
   const {
     form: {
@@ -16,7 +22,7 @@ export function ForgotPasswordRequestForm({
       formState: { errors },
     },
     handleRequestSubmit,
-  } = useForgotPasswordRequestForm({ onRequestSuccess })
+  } = useForgotPasswordRequestForm({ onRequestSubmit })
 
   return (
     <form
@@ -54,6 +60,7 @@ export function ForgotPasswordRequestForm({
           autoComplete="email"
           inputMode="email"
           required
+          disabled={isSubmitting}
           icon={<Mail size={19} strokeWidth={2.1} />}
           helperText="Enviaremos um link valido por 1 hora para este e-mail."
           error={errors.email?.message}
@@ -63,14 +70,23 @@ export function ForgotPasswordRequestForm({
 
       <button
         type="submit"
-        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-bold text-white shadow-lg shadow-red-200/60 outline-none transition-colors hover:bg-[#c80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507]"
+        disabled={isSubmitting}
+        aria-busy={isSubmitting}
+        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-bold text-white shadow-lg shadow-red-200/60 outline-none transition-colors hover:bg-[#c80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] disabled:cursor-not-allowed disabled:bg-[#d34747]"
       >
-        Enviar link de recuperacao
+        {isSubmitting ? 'Enviando...' : 'Enviar link de recuperacao'}
       </button>
+
+      {submitError ? (
+        <p className="mt-4 text-sm font-medium text-[#e30507]" role="alert">
+          {submitError}
+        </p>
+      ) : null}
 
       <button
         type="button"
         className="mt-5 text-sm font-semibold text-[#e30507] outline-none transition-colors hover:text-[#c80406] focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e30507]"
+        onClick={onBackToLogin}
       >
         Voltar para login
       </button>

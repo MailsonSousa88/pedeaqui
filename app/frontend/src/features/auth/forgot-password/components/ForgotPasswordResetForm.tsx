@@ -3,7 +3,13 @@ import { Eye, EyeOff, KeyRound, LockKeyhole } from 'lucide-react'
 import { ForgotPasswordField } from './ForgotPasswordField'
 import { useForgotPasswordResetForm } from '../hooks/useForgotPasswordResetForm'
 
-export function ForgotPasswordResetForm() {
+type ForgotPasswordResetFormProps = {
+  onBackToLogin: () => void
+}
+
+export function ForgotPasswordResetForm({
+  onBackToLogin,
+}: ForgotPasswordResetFormProps) {
   const {
     form: {
       register,
@@ -127,6 +133,7 @@ export function ForgotPasswordResetForm() {
       <button
         type="button"
         className="mt-5 text-sm font-semibold text-[#e30507] outline-none transition-colors hover:text-[#c80406] focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e30507]"
+        onClick={onBackToLogin}
       >
         Voltar para login
       </button>

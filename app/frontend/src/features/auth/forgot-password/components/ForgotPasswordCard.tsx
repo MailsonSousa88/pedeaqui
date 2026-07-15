@@ -7,24 +7,47 @@ import type { ForgotPasswordStep } from '../types/forgotPassword'
 
 type ForgotPasswordCardProps = {
   currentStep: ForgotPasswordStep
-  onRequestSuccess: () => void
-  onSimulateResetLinkOpening: () => void
+  onBackToLogin: () => void
+  onRequestSubmit: (email: string) => Promise<void>
+  isSubmitting: boolean
+  requestError?: string
+  onResend: () => Promise<void>
+  isResending: boolean
+  resendError?: string
+  resendSuccessMessage?: string
 }
 
 export function ForgotPasswordCard({
   currentStep,
-  onRequestSuccess,
-  onSimulateResetLinkOpening,
+  onBackToLogin,
+  onRequestSubmit,
+  isSubmitting,
+  requestError,
+  onResend,
+  isResending,
+  resendError,
+  resendSuccessMessage,
 }: ForgotPasswordCardProps) {
   const shouldReduceMotion = useReducedMotion()
   const content = {
-    request: <ForgotPasswordRequestForm onRequestSuccess={onRequestSuccess} />,
-    sent: (
-      <ForgotPasswordEmailSent
-        onSimulateResetLinkOpening={onSimulateResetLinkOpening}
+    request: (
+      <ForgotPasswordRequestForm
+        onBackToLogin={onBackToLogin}
+        onRequestSubmit={onRequestSubmit}
+        isSubmitting={isSubmitting}
+        submitError={requestError}
       />
     ),
-    reset: <ForgotPasswordResetForm />,
+    sent: (
+      <ForgotPasswordEmailSent
+        onBackToLogin={onBackToLogin}
+        onResend={onResend}
+        isResending={isResending}
+        resendError={resendError}
+        resendSuccessMessage={resendSuccessMessage}
+      />
+    ),
+    reset: <ForgotPasswordResetForm onBackToLogin={onBackToLogin} />,
   }[currentStep]
 
   return (
