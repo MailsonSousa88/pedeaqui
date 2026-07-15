@@ -16,7 +16,7 @@
 
 ## Mudanca sensivel
 
-<!-- Mudancas sensiveis e PRs para main exigem pelo menos 4 aprovacoes. -->
+<!-- Sensitive identifica mudancas criticas do backend. PRs development para main recebem integration e exigem 4 aprovacoes. -->
 
 - [ ] Arquitetura
 - [ ] Banco de dados

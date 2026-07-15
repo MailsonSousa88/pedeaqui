@@ -44,17 +44,18 @@ As labels de área e os reviewers do Pull Request são definidos automaticamente
 
 O merge de uma branch de trabalho para a `development` deve ser feito pelo autor do Pull Request após aprovação mínima de 2 pessoas revisoras.
 
-Mudanças sensíveis devem ter validação dos revisores que foram requisitados (Mínimo) antes do merge.
+Mudanças sensíveis do backend devem ser revisadas pelos Code Owners da área e permanecem sujeitas ao mínimo de 2 aprovações do ruleset.
 
-São consideradas mudanças sensíveis:
+São consideradas mudanças sensíveis do backend:
 
 - Alterações em arquitetura.
 - Alterações em banco de dados.
 - Alterações em autenticação ou autorização.
 - Alterações em pagamento.
-- Alterações em deploy ou infraestrutura.
+- Alterações em infraestrutura do backend.
 - Alterações em regras de negócio críticas.
-- Alterações em documentos oficiais do projeto.
+
+Pull Requests de integração entre `development` e `main` recebem a label `integration` e exigem no mínimo 4 aprovações válidas. Essa exigência não se aplica a branches de trabalho destinadas à `development`.
 
 O merge da `development` para a `main` deve ser feito pelo responsável ou por uma pessoa autorizada pelo responsável, após validação da versão.
 

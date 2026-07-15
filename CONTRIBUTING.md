@@ -124,7 +124,7 @@ Prefixos permitidos:
 
 | Prefixo | Uso |
 |---|---|
-| `feature/` | Nova funcionalidade. |
+| `feat/` | Nova funcionalidade. |
 | `fix/` | Correção de bug. |
 | `docs/` | Documentação. |
 | `refactor/` | Refatoração sem mudança intencional de comportamento. |
@@ -136,7 +136,7 @@ Use letras minúsculas, hífens entre palavras e nomes objetivos, sem espaços, 
 Exemplos:
 
 ```text
-feature/cadastro-produtos
+feat/cadastro-produtos
 fix/validacao-cpf-cnpj
 docs/guia-contribuicao
 test/login-lojista
@@ -297,17 +297,19 @@ Consulte [Automações do GitHub](docs/team/github-automation.md) para conhecer 
 Todo Pull Request exige revisão efetiva:
 
 - alterações comuns: no mínimo **2 pessoas revisoras**;
-- alterações sensíveis ou complexas: no mínimo **4 pessoas revisoras**.
+- alterações comuns ou sensíveis do backend: no mínimo **2 aprovações**, respeitando os Code Owners da área;
+- Pull Requests de integração entre `development` e `main`: no mínimo **4 aprovações**.
 
-São sensíveis as mudanças em:
+São sensíveis no backend as mudanças em:
 
 - arquitetura;
 - banco de dados;
 - autenticação ou autorização;
 - pagamentos;
-- deploy ou infraestrutura;
-- regras de negócio críticas;
-- documentos oficiais do projeto.
+- infraestrutura do backend;
+- regras de negócio críticas.
+
+Mudanças sensíveis do backend recebem a label `sensitive` e solicitam os responsáveis `@MailsonSousa88`, `@vitorlopes-coder` e `@Rikelry`. A label `integration` é exclusiva de Pull Requests de `development` para `main` e representa a exigência de 4 aprovações.
 
 Comentários de revisão devem ser respeitosos, objetivos e acionáveis. Diferencie claramente bloqueios, sugestões e dúvidas. Um PR não deve ser aprovado enquanto houver comentários críticos pendentes, validações obrigatórias ausentes ou divergência relevante em relação ao escopo.
 

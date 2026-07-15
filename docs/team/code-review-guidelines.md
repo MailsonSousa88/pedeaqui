@@ -8,17 +8,18 @@ Padronizar a abertura, revisão e aprovação de Pull Requests no projeto PedeAq
 
 Todo Pull Request deve ter pelo menos **2 pessoas revisoras** antes de ser aprovado para merge.
 
-Mudanças sensíveis devem ter pelo menos **4 pessoas revisoras**, conforme o fluxo do time.
+Mudanças sensíveis do backend continuam exigindo pelo menos **2 aprovações**, mas devem ser revisadas pelos Code Owners do backend: `@MailsonSousa88`, `@vitorlopes-coder` e `@Rikelry`.
 
-São consideradas mudanças sensíveis:
+Somente Pull Requests de integração entre `development` e `main` exigem pelo menos **4 aprovações válidas** e recebem a label `integration`.
+
+São consideradas mudanças sensíveis do backend:
 
 - Alterações em arquitetura.
 - Alterações em banco de dados.
 - Alterações em autenticação ou autorização.
 - Alterações em pagamento.
-- Alterações em deploy ou infraestrutura.
+- Alterações em infraestrutura do backend.
 - Alterações em regras de negócio críticas.
-- Alterações em documentos oficiais do projeto.
 
 ## Padrão obrigatório para título de Pull Request
 
@@ -160,7 +161,7 @@ O autor não precisa repetir essas ações manualmente. Depois da execução dos
 - os checks obrigatórios foram executados;
 - erros de política foram corrigidos antes da revisão.
 
-A solicitação automática de reviewers não representa aprovação. Trabalhos comuns continuam exigindo pelo menos 2 aprovações, e mudanças sensíveis ou PRs para `main` continuam exigindo pelo menos 4 aprovações válidas.
+A solicitação automática de reviewers não representa aprovação. Trabalhos comuns e mudanças sensíveis do backend exigem pelo menos 2 aprovações. Somente PRs de `development` para `main`, identificados por `integration`, exigem pelo menos 4 aprovações válidas.
 
 Consulte [Automações do GitHub](github-automation.md) para os caminhos monitorados, responsabilidades manuais e instruções para agentes de programação.
 
@@ -202,7 +203,8 @@ Dúvida: esse fluxo também precisa tratar usuário sem tenant?
 Um PR só deve ser aprovado quando:
 
 - Tiver pelo menos 2 revisores para trabalhos simples.
-- Tiver pelo menos 4 revisores para trabalhos complexos ou sensíveis.
+- Tiver pelo menos 2 aprovações dos responsáveis da área para mudanças sensíveis do backend.
+- Tiver pelo menos 4 aprovações para integração de `development` em `main`.
 - Não houver comentários críticos pendentes.
 - A branch estiver atualizada com a base, quando necessário.
 - O código ou documentação estiver coerente com o escopo do PR.
