@@ -5,6 +5,8 @@ export interface ICreateStoreDTO {
   horarioAbertura?: string;
   horarioFechamento?: string;
   endereco: string;
+  city: string;
+  state: string;
   descricao?: string;
   logoUrl?: string;
   whatsappNumber: string;
@@ -16,6 +18,8 @@ export interface IUpdateStoreDTO {
   horarioAbertura?: string;
   horarioFechamento?: string;
   endereco?: string;
+  city?: string;
+  state?: string;
   descricao?: string;
   logoUrl?: string;
   whatsappNumber?: string;

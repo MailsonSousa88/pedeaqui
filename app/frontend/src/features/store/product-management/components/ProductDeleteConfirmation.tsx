@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion'
 import { AlertTriangle, Loader2, Trash2, X } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import type {
   ManageProductListItem,
   ProductManagementActionState,
@@ -64,15 +65,14 @@ export function ProductDeleteConfirmation({
         ) : null}
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <button
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+          <SecondaryButton
             disabled={isDeleting}
             onClick={onCancel}
             type="button"
           >
             <X aria-hidden="true" size={16} />
             Cancelar
-          </button>
+          </SecondaryButton>
 
           <button
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#dc2626] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-[#dc2626] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"

@@ -17,18 +17,33 @@ import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
 import { localStores } from './features/store/store-list/data/localStores';
 import { StorefrontPage } from './features/store/storefront/pages/StorefrontPage';
 import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
-import { useToast } from './features/billing/stripe-status/hooks/useToast';
-import { useBillingRetry } from './features/billing/stripe-status/hooks/useBillingRetry';
-import { useBillingStatus } from './features/billing/stripe-status/hooks/useBillingStatus';
-import RetryOverlay from './features/billing/stripe-status/components/RetryOverlay';
-import ToastContainer from './features/billing/stripe-status/components/ToastContainer';
+import { CheckoutReviewPage } from './features/billing/checkout-review/pages/CheckoutReviewPage';
+import { getCreatedStore } from './features/billing/checkout-review/services/checkoutReviewService';
+import type { CreatedStore } from './features/billing/checkout-review/types/checkoutReview';
 import SuccessPage from './features/billing/stripe-status/pages/SuccessPage';
 import FailedPage from './features/billing/stripe-status/pages/FailedPage';
 import type { AppRoute } from './app/routes/types';
 import { MarketCartPage } from './features/orders/market-cart/pages/MarketCartPage';
+import { ProductDetailPage } from './features/orders/product-detail/pages/ProductDetailPage';
+
+const decodeRouteSegment = (segment: string) => {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    return segment;
+  }
+};
 
 const getRouteFromLocation = (): AppRoute => {
   const path = window.location.pathname;
+
+  if (path.startsWith('/storefront/')) {
+    return path as `/storefront/${string}`;
+  }
+
+  if (path.startsWith('/lojas/')) {
+    return path as `/lojas/${string}`;
+  }
 
   if (
     path === '/login' ||
@@ -37,6 +52,7 @@ const getRouteFromLocation = (): AppRoute => {
     path === '/storefront' ||
     path === '/store-preconfiguration' ||
     path === '/market-cart' ||
+    path === '/billing/checkout' ||
     path === '/billing/success' ||
     path === '/billing/failed'
   ) {
@@ -46,22 +62,36 @@ const getRouteFromLocation = (): AppRoute => {
   return '/';
 };
 
+const getStorefrontSlug = (route: AppRoute) => {
+  if (route.startsWith('/storefront/')) {
+    return decodeRouteSegment(route.slice('/storefront/'.length));
+  }
+
+  const publicStoreMatch = route.match(/^\/lojas\/([^/]+)\/?$/);
+  return publicStoreMatch ? decodeRouteSegment(publicStoreMatch[1]) : undefined;
+};
+
+const getProductDetailParams = (route: AppRoute) => {
+  const productDetailMatch = route.match(/^\/lojas\/([^/]+)\/produtos\/([^/]+)\/?$/);
+
+  if (!productDetailMatch) {
+    return null;
+  }
+
+  return {
+    productId: decodeRouteSegment(productDetailMatch[2]),
+    storeSlug: decodeRouteSegment(productDetailMatch[1]),
+  };
+};
+
 export default function App() {
   const [currentPath, setCurrentPath] = useState<AppRoute>(getRouteFromLocation);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [createdStore, setCreatedStore] = useState<CreatedStore | null>(getCreatedStore);
+  const [activationError, setActivationError] = useState<string | null>(null);
   const [, setSelectedPlanId] = useState<number | null>(() => {
     const saved = localStorage.getItem('selectedPlanId');
     return saved ? parseInt(saved, 10) : null;
-  });
-
-  const { status: billingStatus, setStatus: setBillingStatus } = useBillingStatus();
-  const { toasts: billingToasts, addToast: addBillingToast, removeToast: removeBillingToast } = useToast();
-  const { isProcessingRetry, handleRetry } = useBillingRetry({
-    setStatus: setBillingStatus,
-    onProcessing: () =>
-      addBillingToast('info', 'Processando pagamento', 'Verificando saldo e tentando novamente via Stripe...'),
-    onSuccess: () =>
-      addBillingToast('success', 'Pagamento concluido!', 'Sua assinatura basica do PedeAqui foi ativada.'),
   });
 
   useEffect(() => {
@@ -107,6 +137,8 @@ export default function App() {
   };
 
   const renderPage = () => {
+    const productDetailParams = getProductDetailParams(currentPath);
+
     if (currentPath === '/login') {
       return <LoginPage onNavigate={handleNavigate} />;
     }
@@ -128,16 +160,61 @@ export default function App() {
       );
     }
 
-    if (currentPath === '/storefront') {
-      return <StorefrontPage />;
+    if (productDetailParams) {
+      return (
+        <ProductDetailPage
+          onBackToStore={() =>
+            handleNavigate(`/lojas/${encodeURIComponent(productDetailParams.storeSlug)}`)
+          }
+          productId={productDetailParams.productId}
+          storeSlug={productDetailParams.storeSlug}
+        />
+      );
+    }
+
+    if (
+      currentPath === '/storefront' ||
+      currentPath.startsWith('/storefront/') ||
+      currentPath.startsWith('/lojas/')
+    ) {
+      const storeSlug = getStorefrontSlug(currentPath);
+
+      return (
+        <StorefrontPage
+          onSelectProduct={(productId) => {
+            if (!storeSlug) {
+              return;
+            }
+
+            navigateTo(
+              `/lojas/${encodeURIComponent(storeSlug)}/produtos/${encodeURIComponent(productId)}`,
+            );
+          }}
+          slug={storeSlug}
+        />
+      );
     }
 
     if (currentPath === '/store-preconfiguration') {
       return (
         <StorePreconfigurationPage
           onBackToRegister={() => handleNavigate('/register')}
-          onSuccess={() => {
-            triggerToast('Pre-registro concluido. A proxima etapa sera conectada em seguida.');
+          onSuccess={() => handleNavigate('/billing/checkout')}
+        />
+      );
+    }
+
+    if (currentPath === '/billing/checkout') {
+      return (
+        <CheckoutReviewPage
+          onError={(message) => {
+            setActivationError(message);
+            handleNavigate('/billing/failed');
+          }}
+          onSuccess={(store) => {
+            setCreatedStore(store);
+            setActivationError(null);
+            handleNavigate('/billing/success');
           }}
         />
       );
@@ -153,41 +230,25 @@ export default function App() {
 
     if (currentPath === '/billing/success') {
       return (
-        <div className="relative">
-          <RetryOverlay isVisible={isProcessingRetry} />
-          <SuccessPage
-            onConfigureStore={() =>
-              addBillingToast(
-                'success',
-                'Configuracao de Loja',
-                'Redirecionando para a area de integracao e configuracao...',
-              )
-            }
-            onGoToDashboard={() =>
-              addBillingToast('info', 'Carregando Painel', 'Redirecionando para o dashboard central do PedeAqui...')
-            }
-          />
-          <ToastContainer toasts={billingToasts} onRemove={removeBillingToast} />
-        </div>
+        <SuccessPage
+          onConfigureStore={() =>
+            handleNavigate(
+              createdStore?.slug
+                ? `/storefront/${encodeURIComponent(createdStore.slug)}`
+                : '/storefront',
+            )
+          }
+        />
       );
     }
 
     if (currentPath === '/billing/failed') {
       return (
-        <div className="relative">
-          <RetryOverlay isVisible={isProcessingRetry} />
-          <FailedPage
-            onTryAgain={handleRetry}
-            onBackToPlans={() =>
-              addBillingToast(
-                'info',
-                'Voltando aos planos',
-                'Redirecionando para a selecao de planos de assinatura...',
-              )
-            }
-          />
-          <ToastContainer toasts={billingToasts} onRemove={removeBillingToast} />
-        </div>
+        <FailedPage
+          errorMessage={activationError ?? undefined}
+          onTryAgain={() => handleNavigate('/billing/checkout')}
+          onBackToPlans={() => handleNavigate('/store-preconfiguration')}
+        />
       );
     }
 
@@ -214,7 +275,7 @@ export default function App() {
       <main className="flex-grow">
         <AnimatePresence mode="wait">
           <motion.div
-            key={`${currentPath}-${billingStatus}`}
+            key={currentPath}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

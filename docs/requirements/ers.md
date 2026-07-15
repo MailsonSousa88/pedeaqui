@@ -65,9 +65,8 @@ O consumidor clica em finalizar pedido via whatsapp.
 **[RF007] – Busca e Filtragem de Produtos dentro da Loja**
 O sistema deve disponibilizar um campo de pesquisa da loja. A partir de uma busca realizada, o usuário poderá aplicar filtros sobre os resultados: por faixa de valor, ordem alfabética (A–Z / Z–A), menor preço e maior preço. Campo de busca aceita termos parciais do nome do produto. Filtros são aplicados sobre o resultado da busca sem recarregar a página. Combinação de filtros é permitida. Resultados paginados com máximo de 20 itens por página.
 
-**[RF008] – Exibição de Produtos em Destaque via Banner Dinâmico**
-O sistema deve exibir produtos selecionados pelo lojista como destaque. O produto é colocado em uma moldura para destacar esse produto.
-Apenas produtos em destaque podem estar em promoção, o sistema exibe o valor antigo cortado e o valor novo em uma nova cor para destacar o preço de promoção.
+**[RF008] – Exibição de Produtos em Promoção**
+O sistema deve permitir que o lojista configure uma promoção com preço promocional menor que o preço base e data final opcional. A promoção não depende de um estado separado de destaque. Na vitrine, o sistema exibe o valor antigo cortado e o valor promocional com destaque visual próprio.
 
 **[RF009] – Compartilhamento de loja**
 O sistema deve permitir que o usuário compartilhe o link de uma loja em aplicativos externos. 

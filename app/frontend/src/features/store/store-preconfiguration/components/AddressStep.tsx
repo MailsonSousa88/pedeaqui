@@ -28,10 +28,10 @@ export function AddressStep({ disabled = false, errors, register }: AddressStepP
   return (
     <section className="space-y-6" aria-labelledby="address-step-title">
       <div className="space-y-1">
-        <h2 id="address-step-title" className="text-xl font-bold text-gray-950">
+        <h2 id="address-step-title" className="text-xl font-semibold leading-tight text-[#111111] md:text-2xl">
           Endereco da loja
         </h2>
-        <p className="text-sm leading-6 text-gray-500">
+        <p className="text-sm leading-relaxed text-gray-500 md:text-base">
           Informe o endereco completo da loja para concluir os dados minimos do pre-registro.
         </p>
       </div>

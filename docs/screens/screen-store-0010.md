@@ -31,7 +31,7 @@ Detalhes do produto, carrinho da loja, checkout do pedido por loja ou retorno pa
 ## Objetivo
 
 **Descrição da tela:**  
-Tela pública que apresenta uma loja ativa dentro do PedeAqui, exibindo informações da loja, produtos disponíveis, categorias, produtos em destaque e ações para o consumidor montar um pedido.
+Tela pública que apresenta uma loja ativa dentro do PedeAqui, exibindo informações da loja, produtos disponíveis, categorias, produtos em promoção e ações para o consumidor montar um pedido.
 
 **Função principal:**  
 Permitir que o consumidor conheça a loja, encontre produtos, filtre ou pesquise itens e adicione produtos ao carrinho temporário.
@@ -139,13 +139,13 @@ Exemplo de organização visual:
   - `Categorias`, quando a tela permitir navegação ou gestão de categorias.
 - Para consumidores, priorizar `Produtos`, categorias e carrinho. A aba `Adicionar` não deve aparecer para consumidor comum.
 
-### Produtos em destaque
+### Produtos em promoção
 
 - Tipo de container: seção horizontal, banner dinâmico ou cards destacados.
-- Título: `Destaques da loja`.
-- Subtítulo: texto curto indicando produtos selecionados pelo lojista.
+- Título: `Promoções da loja`.
+- Subtítulo: texto curto indicando produtos com preço promocional ativo.
 - Ícone principal: opcional.
-- Conteúdo: produtos marcados como destaque, podendo exibir preço promocional quando existir.
+- Conteúdo: produtos que possuem preço promocional válido.
 
 ### Busca e filtros
 
@@ -204,7 +204,7 @@ Exemplo de organização visual:
 ## Estados da tela
 
 **Estado inicial:**  
-A tela carrega a identidade da loja, o card com informações vindas da pré-configuração, produtos em destaque quando existirem, filtros/categorias e listagem de produtos disponíveis.
+A tela carrega a identidade da loja, o card com informações vindas da pré-configuração, produtos em promoção quando existirem, filtros/categorias e listagem de produtos disponíveis.
 
 **Estado de carregamento:**  
 Exibir skeletons ou placeholders para banner, informações da loja, filtros e cards de produto. A estrutura principal não deve pular de forma brusca.
@@ -260,7 +260,7 @@ Nome da loja em destaque. Descrição e informações de funcionamento em tamanh
 Manter respiro entre cabeçalho da loja, filtros e produtos. Cards devem ter espaçamento suficiente para imagem, nome, preço e botão sem sobreposição.
 
 **Componentes reutilizáveis:**  
-`PublicStoreHeader`, `StoreHero`, `StoreAvatar`, `StoreInfoList`, `StoreInfoItem`, `ShareButton`, `CopyLinkButton`, `CartShortcut`, `StoreTabs`, `FeaturedProductSection`, `ProductSearch`, `CategoryTabs`, `ProductCard`, `ProductGrid`, `EmptyState`, `LoadingSkeleton`.
+`PublicStoreHeader`, `StoreHero`, `StoreAvatar`, `StoreInfoList`, `StoreInfoItem`, `ShareButton`, `CopyLinkButton`, `CartShortcut`, `StoreTabs`, `PromotionalProductSection`, `ProductSearch`, `CategoryTabs`, `ProductCard`, `ProductGrid`, `EmptyState`, `LoadingSkeleton`.
 
 **Ícones:**  
 Loja, localização, relógio, WhatsApp/telefone, e-mail, compartilhar, copiar link, carrinho, busca, filtro, categoria e adicionar.

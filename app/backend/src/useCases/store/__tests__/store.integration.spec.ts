@@ -12,11 +12,17 @@ import {
   getTestCNPJ,
   supabaseAdmin,
 } from '../../../test-helpers/integrationSetup';
+import {
+  makeTestPhone,
+  makeTestStoreName,
+  makeTestStoreSlug,
+} from '../../../test-helpers/testDataFactory';
 
 describe('Store Integration — Criação + Consulta', () => {
   const email = makeTestEmail();
   const password = 'TestPass@123';
-  const slug = `loja-teste-${Date.now()}`;
+  const slug = makeTestStoreSlug();
+  const storeName = makeTestStoreName();
   let userId: string;
   let accessToken: string;
 
@@ -32,7 +38,7 @@ describe('Store Integration — Criação + Consulta', () => {
     // Setup: signup → login → register tenant
     const signupRes = await request(app)
       .post('/api/auth/signup')
-      .send({ email, password, name: 'Store Tester', phone: '11966666666', document: getTestCPF(2) });
+      .send({ email, password, name: 'Store Tester', phone: makeTestPhone(), document: getTestCPF(2) });
     userId = signupRes.body.profile.id;
 
     const loginRes = await request(app)
@@ -57,11 +63,13 @@ describe('Store Integration — Criação + Consulta', () => {
       .set('Authorization', `Bearer ${accessToken}`)
       .send({
         slug,
-        storeName: 'Loja de Teste',
+        storeName,
         horarioAbertura: '08:00',
         horarioFechamento: '18:00',
         endereco: 'Rua dos Testes, 1',
-        whatsappNumber: '11999990001',
+        city: 'Sao Paulo',
+        state: 'SP',
+        whatsappNumber: makeTestPhone(),
       });
 
     if (res.status !== 201) {
@@ -87,7 +95,7 @@ describe('Store Integration — Criação + Consulta', () => {
   it('POST /api/stores sem token → 401', async () => {
     const res = await request(app)
       .post('/api/stores')
-      .send({ slug: `outro-${Date.now()}`, storeName: 'Sem Auth', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua X', whatsappNumber: '11999990002' });
+      .send({ slug: makeTestStoreSlug('outro'), storeName: makeTestStoreName(), horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua X', city: 'Sao Paulo', state: 'SP', whatsappNumber: makeTestPhone() });
 
     expect(res.status).toBe(401);
   });
@@ -100,7 +108,7 @@ describe('Store Integration — Criação + Consulta', () => {
     const emailNoSub = makeTestEmail();
     const signupRes = await request(app)
       .post('/api/auth/signup')
-      .send({ email: emailNoSub, password, name: 'Sem Sub', phone: '11955555555', document: getTestCPF(6) });
+      .send({ email: emailNoSub, password, name: 'Sem Sub', phone: makeTestPhone(), document: getTestCPF(6) });
     const noSubUserId = signupRes.body.profile?.id;
 
     if (!noSubUserId) {
@@ -114,7 +122,7 @@ describe('Store Integration — Criação + Consulta', () => {
     const res = await request(app)
       .post('/api/stores')
       .set('Authorization', `Bearer ${noSubToken}`)
-      .send({ slug: `nosub-${Date.now()}`, storeName: 'Sem Sub', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Y', whatsappNumber: '11999990003' });
+      .send({ slug: makeTestStoreSlug('nosub'), storeName: makeTestStoreName(), horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Y', city: 'Sao Paulo', state: 'SP', whatsappNumber: makeTestPhone() });
 
     expect(res.status).toBe(403);
 
@@ -127,7 +135,7 @@ describe('Store Integration — Criação + Consulta', () => {
     const res = await request(app)
       .post('/api/stores')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ slug: `duplicado-${Date.now()}`, storeName: 'Segunda Loja', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Z', whatsappNumber: '11999990004' });
+      .send({ slug: makeTestStoreSlug('duplicado'), storeName: 'Segunda Loja', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Z', city: 'Sao Paulo', state: 'SP', whatsappNumber: makeTestPhone() });
 
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/tenant already has a store/i);
@@ -139,7 +147,7 @@ describe('Store Integration — Criação + Consulta', () => {
     const email2 = makeTestEmail();
     const signupRes2 = await request(app)
       .post('/api/auth/signup')
-      .send({ email: email2, password, name: 'Outro Lojista', phone: '11944444444', document: getTestCPF(7) });
+      .send({ email: email2, password, name: 'Outro Lojista', phone: makeTestPhone(), document: getTestCPF(7) });
     const userId2 = signupRes2.body.profile?.id;
 
     if (!userId2) return; // CPF em uso — skip
@@ -151,7 +159,7 @@ describe('Store Integration — Criação + Consulta', () => {
     const res = await request(app)
       .post('/api/stores')
       .set('Authorization', `Bearer ${token2}`)
-      .send({ slug, storeName: 'Conflito de Slug', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Conflito', whatsappNumber: '11999990005' });
+      .send({ slug, storeName: 'Conflito de Slug', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Conflito', city: 'Sao Paulo', state: 'SP', whatsappNumber: makeTestPhone() });
 
     expect(res.status).toBe(409);
     expect(res.body.error).toMatch(/slug already exists/i);
@@ -166,6 +174,6 @@ describe('Store Integration — Criação + Consulta', () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toHaveProperty('slug', slug);
-    expect(res.body).toHaveProperty('storeName', 'Loja de Teste');
+    expect(res.body).toHaveProperty('storeName', storeName);
   });
 });

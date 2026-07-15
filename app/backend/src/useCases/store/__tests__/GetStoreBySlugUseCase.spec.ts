@@ -15,6 +15,8 @@ describe('GetStoreBySlugUseCase', () => {
       horarioAbertura,
       horarioFechamento,
       endereco: 'Rua A',
+      city: 'Sao Paulo',
+      state: 'SP',
       descricao: null,
       logoUrl: null,
       whatsappNumber: '123',

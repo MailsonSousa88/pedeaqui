@@ -1,7 +1,10 @@
 import { ApiError, ApiNetworkError, apiClient } from '../../../../shared/services/api'
 import {
   PRODUCT_MANAGEMENT_ERROR_MESSAGES,
+  type CreateCategoryPayload,
+  type CreateProductPayload,
   type ManageProductListItem,
+  type ProductManagementApiCategory,
   type ProductManagementError,
   type ProductManagementErrorCode,
   type UpdateProductPayload,
@@ -12,6 +15,7 @@ type ProductManagementRequestOptions = {
 }
 
 const productsBasePath = '/api/products'
+const categoriesBasePath = '/api/categories'
 
 const productByIdPath = (productId: string) => `${productsBasePath}/${productId}`
 
@@ -122,6 +126,28 @@ export async function listProductsByStore(storeId: string) {
   const response = await apiClient.get<unknown>(`${productsBasePath}/store/${storeId}`)
 
   return normalizeProductListResponse(response)
+}
+
+export function createProduct(
+  payload: CreateProductPayload,
+  options?: ProductManagementRequestOptions,
+) {
+  return apiClient.post<ManageProductListItem>(productsBasePath, payload, {
+    authToken: options?.authToken,
+  })
+}
+
+export function listCategoriesByStore(storeId: string) {
+  return apiClient.get<ProductManagementApiCategory[]>(`${categoriesBasePath}/store/${storeId}`)
+}
+
+export function createCategory(
+  payload: CreateCategoryPayload,
+  options?: ProductManagementRequestOptions,
+) {
+  return apiClient.post<ProductManagementApiCategory>(categoriesBasePath, payload, {
+    authToken: options?.authToken,
+  })
 }
 
 export function updateProduct(

@@ -48,7 +48,7 @@ describe('Product Integration — Criação + Listagem', () => {
     const storeRes = await request(app)
       .post('/api/stores')
       .set('Authorization', `Bearer ${accessToken}`)
-      .send({ slug, storeName: 'Loja Produto Teste', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Produto, 1', whatsappNumber: '11999990006' });
+      .send({ slug, storeName: 'Loja Produto Teste', horarioAbertura: '08:00', horarioFechamento: '18:00', endereco: 'Rua Produto, 1', city: 'Sao Paulo', state: 'SP', whatsappNumber: '11999990006' });
 
     if (storeRes.status !== 201) {
       console.error('PRODUCT SETUP - STORE CREATE FAILED:', storeRes.body);

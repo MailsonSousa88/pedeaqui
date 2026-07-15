@@ -1,9 +1,3 @@
-export const PRODUCT_IMAGE_SLOT_LIMIT = 3
-
-export type ProductImageSlot = 1 | 2 | 3
-
-export type ProductStockMode = 'free' | 'controlled'
-
 export type ProductCategoryKind = 'system' | 'custom'
 
 export type ProductManagementFormMode = 'create' | 'edit'
@@ -47,71 +41,34 @@ export type ProductCategoryOption = {
   removable: boolean
 }
 
-export type ProductImagePlaceholder = {
-  slot: ProductImageSlot
-  label: string
+export type ProductManagementApiCategory = {
+  id: string
+  storeId: string
+  tenantId: string
+  name: string
+  description?: string | null
+  sortOrder: number
+  deletedAt?: string | null
+  createdAt?: string
+  updatedAt?: string
 }
 
 export type ProductPromotionFormValues = {
-  featured: boolean
   promotionEnabled: boolean
   promoPrice: string
   promoEndsAt: string
 }
 
-export type ProductStockFormValues = {
-  mode: ProductStockMode
-  initialQuantity: string
-}
-
-export type ProductVariationOptionFormValues = {
-  value: string
-  priceModifier: string
-}
-
-export type ProductVariationFormValues = {
-  label: string
-  options: ProductVariationOptionFormValues[]
-}
-
-export type AddProductFormValues = {
-  name: string
-  description: string
-  price: string
-  available: boolean
-  categoryId: string | null
-  newCategoryName: string
-  imageSlots: typeof PRODUCT_IMAGE_SLOT_LIMIT
-  activeImageSlot: ProductImageSlot
-  promotion: ProductPromotionFormValues
-  stock: ProductStockFormValues
-  variations: ProductVariationFormValues[]
-}
-
-export type ProductVariationOptionInput = {
-  value: string
-  priceModifierCents?: number
-}
-
-export type ProductVariationInput = {
-  label: string
-  options: ProductVariationOptionInput[]
-}
-
 export type AddProductPayload = {
+  storeId: string
+  categoryId: string
   name: string
   description?: string
   priceCents: number
-  categoryId?: string | null
-  available: boolean
-  featured: boolean
-  promotionEnabled: boolean
   promoPriceCents?: number
   promoEndsAt?: string
-  stockMode: ProductStockMode
-  initialStockQuantity?: number
-  imageSlots: typeof PRODUCT_IMAGE_SLOT_LIMIT
-  variations: ProductVariationInput[]
+  details?: Record<string, unknown>
+  available?: boolean
 }
 
 export type ProductManagementFilters = {
@@ -167,15 +124,22 @@ export type ProductManagementProductActionHandlers = {
 }
 
 export type ProductManagementEditableFormValues = {
+  available: boolean
   categoryId: string | null
   description: string
   name: string
   price: string
-  promotion: Pick<
-    ProductPromotionFormValues,
-    'featured' | 'promotionEnabled' | 'promoEndsAt' | 'promoPrice'
-  >
+  promotion: ProductPromotionFormValues
 }
+
+export type CreateCategoryPayload = {
+  storeId: string
+  name: string
+  description?: string
+  sortOrder?: number
+}
+
+export type CreateProductPayload = AddProductPayload
 
 export type ProductManagementState = {
   action: ProductManagementActionState
@@ -187,13 +151,13 @@ export type ProductManagementState = {
   listError: ProductManagementError | null
   listStatus: ProductManagementAsyncStatus
   products: ManageProductListItem[]
-  activeImageSlot: ProductImageSlot
   selectedProductForDelete: ManageProductListItem | null
   storeId: string | null
   view: ProductManagementPanelView
 }
 
 export type ProductFormActionHandlers = {
+  disabled?: boolean
   onCancel: () => void
   onSave: () => void
   saveLabel?: string

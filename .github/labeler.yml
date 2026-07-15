@@ -1,0 +1,35 @@
+frontend:
+  - changed-files:
+      - any-glob-to-any-file: "app/frontend/**"
+
+backend:
+  - changed-files:
+      - any-glob-to-any-file: "app/backend/**"
+
+docs:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "docs/**"
+          - "README.md"
+          - "CONTRIBUTING.md"
+
+database:
+  - changed-files:
+      - any-glob-to-any-file: "app/backend/supabase/**"
+
+github:
+  - changed-files:
+      - any-glob-to-any-file: ".github/**"
+
+dependencies:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/package.json"
+          - "**/package-lock.json"
+
+test:
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.spec.ts"
+          - "**/__tests__/**"
+

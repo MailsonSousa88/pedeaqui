@@ -29,7 +29,7 @@ export function StepProgress({ currentStep, totalSteps = 3 }: StepProgressProps)
             <span
               aria-hidden="true"
               className={`h-2 rounded-full transition-colors ${
-                isCompleted ? 'bg-red-600' : 'bg-gray-200'
+                isCompleted ? 'bg-[#e30507]' : 'bg-[#e5e7eb]'
               }`}
               key={stepNumber}
             />
@@ -44,7 +44,7 @@ export function StepProgress({ currentStep, totalSteps = 3 }: StepProgressProps)
 
           return (
             <span
-              className={isCurrent ? 'text-red-600' : 'text-gray-500'}
+              className={isCurrent ? 'text-[#e30507]' : 'text-gray-500'}
               key={label}
             >
               {label}

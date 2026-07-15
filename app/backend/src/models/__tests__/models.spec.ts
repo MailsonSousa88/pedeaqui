@@ -210,6 +210,8 @@ describe('Domain Entities', () => {
         horarioAbertura: '08:00:00',
         horarioFechamento: '18:00:00',
         endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'SP',
         descricao: 'Store Description',
         logoUrl: 'http://image.url',
         whatsappNumber: '11999999999',
@@ -220,6 +222,8 @@ describe('Domain Entities', () => {
       };
       const store = new Store(storeProps);
       expect(store.slug).toBe('my-store');
+      expect(store.city).toBe('Sao Paulo');
+      expect(store.state).toBe('SP');
     });
 
     it('should throw error if slug is empty', () => {
@@ -231,6 +235,8 @@ describe('Domain Entities', () => {
         horarioAbertura: '08:00:00',
         horarioFechamento: '18:00:00',
         endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'SP',
         descricao: null,
         logoUrl: null,
         whatsappNumber: '11999999999',
@@ -251,6 +257,8 @@ describe('Domain Entities', () => {
         horarioAbertura: '08:00:00',
         horarioFechamento: '18:00:00',
         endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'SP',
         descricao: null,
         logoUrl: null,
         whatsappNumber: '11999999999',
@@ -260,6 +268,50 @@ describe('Domain Entities', () => {
         updatedAt: new Date()
       };
       expect(() => new Store(storeProps)).toThrow('Store name is required');
+    });
+
+    it('should throw error if city is empty', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: 'my-store',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: '',
+        state: 'SP',
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Store(storeProps)).toThrow('Store city is required');
+    });
+
+    it('should throw error if state is not a two-letter uppercase UF', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: 'my-store',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'sp',
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Store(storeProps)).toThrow('Store state must be a two-letter uppercase UF');
     });
   });
 
@@ -497,4 +549,3 @@ describe('Domain Entities', () => {
     });
   });
 });
-

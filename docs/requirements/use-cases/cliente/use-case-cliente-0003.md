@@ -107,7 +107,7 @@ O consumidor acessa o carrinho, abre o card de uma loja e clica em "Finalizar pe
 
 | Passo | Ação |
 |-------|------|
-| 12a | O backend identifica produto indisponível, sem estoque, inválido ou com preço alterado. |
+| 12a | O backend identifica produto indisponível, inválido ou com preço alterado. |
 | 12b | O sistema cancela a geração do pedido. |
 | 12c | O sistema informa os itens inválidos e mantém o consumidor no fluxo para revisão. |
 

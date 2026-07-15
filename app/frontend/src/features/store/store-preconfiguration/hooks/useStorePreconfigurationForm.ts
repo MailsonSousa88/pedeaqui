@@ -136,6 +136,7 @@ export const useStorePreconfigurationForm = ({
     }
 
     applyValidationIssues(result.error.issues)
+    setSubmissionError('Revise os campos destacados antes de continuar para a proxima etapa.')
     return false
   }
 
@@ -162,7 +163,15 @@ export const useStorePreconfigurationForm = ({
       return false
     }
 
-    return goToStep((currentStep + 1) as StorePreconfigurationStep)
+    const isCurrentStepValid = await validateStep(currentStep)
+
+    if (!isCurrentStepValid) {
+      return false
+    }
+
+    const nextStep: StorePreconfigurationStep = currentStep === 1 ? 2 : 3
+    setCurrentStep(nextStep)
+    return true
   }
 
   const goToPreviousStep = () => {
@@ -194,6 +203,8 @@ export const useStorePreconfigurationForm = ({
         horarioAbertura: result.data.businessHours.opensAt,
         horarioFechamento: result.data.businessHours.closesAt,
         endereco: toAddressLine(result.data.address),
+        city: result.data.address.city.trim(),
+        state: result.data.address.state.trim().toUpperCase(),
         descricao: null,
         logoUrl: null,
         whatsappNumber: toDigits(result.data.whatsappNumber),
@@ -208,6 +219,11 @@ export const useStorePreconfigurationForm = ({
 
   const submit = form.handleSubmit(async () => {
     setSubmissionError(null)
+
+    if (currentStep !== 3) {
+      await goToNextStep()
+      return null
+    }
 
     const payload = buildPayload()
 

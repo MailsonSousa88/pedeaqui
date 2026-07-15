@@ -8,6 +8,7 @@ export interface Toast {
 }
 
 export interface FailedPageProps {
+  errorMessage?: string;
   onTryAgain?: () => void;
   onBackToPlans?: () => void;
 }

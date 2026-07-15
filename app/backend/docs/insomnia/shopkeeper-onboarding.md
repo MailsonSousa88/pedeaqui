@@ -141,7 +141,7 @@ Erros comuns:
 - Auth: signup, login, validar token, refresh, recover password, reset password, logout.
 - Profile: atualizar perfil.
 - Tenant: registrar, consultar e atualizar tenant.
-- Store: criar, listar lojas publicas, consultar por slug, atualizar, alternar active e deletar.
+- Store: criar com cidade/estado, listar lojas publicas, consultar por slug, atualizar cidade/estado, alternar active e deletar.
 - Category: criar, listar por loja, atualizar e deletar.
 - Product: criar, listar por loja, atualizar, alternar disponibilidade e deletar.
 - Product variations: criar, listar por produto, atualizar e deletar.

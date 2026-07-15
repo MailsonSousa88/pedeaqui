@@ -1,7 +1,13 @@
 import { ApiError, apiClient } from '../../../../shared/services/api'
-import type { LoginFormValues, LoginPayload, LoginResponse } from '../types/login'
+import type {
+  LoginFormValues,
+  LoginPayload,
+  LoginResolvedStore,
+  LoginResponse,
+} from '../types/login'
 
 export interface LoginService {
+  findStoreForTenant(tenantId: string): Promise<LoginResolvedStore>
   login(payload: LoginPayload): Promise<LoginResponse>
 }
 
@@ -33,6 +39,32 @@ export function buildLoginPayload(values: LoginFormValues): LoginPayload {
 }
 
 export const loginService: LoginService = {
+  async findStoreForTenant(tenantId) {
+    try {
+      const stores = await apiClient.get<LoginResolvedStore[]>('/api/stores/public')
+      const store = stores.find((candidate) => candidate.tenantId === tenantId)
+
+      if (!store) {
+        throw new Error(
+          'Sua conta foi autenticada, mas nenhuma loja ativa foi encontrada para este perfil.',
+        )
+      }
+
+      return store
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message ===
+          'Sua conta foi autenticada, mas nenhuma loja ativa foi encontrada para este perfil.'
+      ) {
+        throw error
+      }
+
+      throw new Error('Não foi possível carregar sua loja agora. Tente entrar novamente.', {
+        cause: error,
+      })
+    }
+  },
   async login(payload) {
     try {
       return await apiClient.post<LoginResponse>('/api/auth/login', payload)

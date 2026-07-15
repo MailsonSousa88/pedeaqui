@@ -14,6 +14,8 @@ describe('ListPublicStoresUseCase', () => {
       horarioAbertura: '10:00',
       horarioFechamento: '18:00',
       endereco: 'Rua A',
+      city: 'Sao Paulo',
+      state: 'SP',
       descricao: null,
       logoUrl: null,
       whatsappNumber: '11999990000',

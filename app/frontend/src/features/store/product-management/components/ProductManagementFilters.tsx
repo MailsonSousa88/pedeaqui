@@ -1,3 +1,4 @@
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import {
   type ProductAvailabilityFilter,
   type ProductManagementFilters,
@@ -73,13 +74,13 @@ export function ProductManagementFilters({
       </label>
 
       <div className="flex items-end">
-        <button
-          className="w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+        <SecondaryButton
+          className="w-full px-4"
           onClick={onResetFilters}
           type="button"
         >
           Limpar filtros
-        </button>
+        </SecondaryButton>
       </div>
     </div>
   )

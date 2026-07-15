@@ -1,0 +1,103 @@
+name: PR policy
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+    types:
+      - opened
+      - assigned
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - unassigned
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: pr-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate PR policy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      PR_TITLE: ${{ github.event.pull_request.title }}
+      PR_BODY: ${{ github.event.pull_request.body }}
+      HEAD_REF: ${{ github.head_ref }}
+      BASE_REF: ${{ github.base_ref }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+      PR_ASSIGNEES: ${{ toJSON(github.event.pull_request.assignees) }}
+    steps:
+      - name: Validar titulo, branch, destino e descricao
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          errors=0
+          title_pattern='^(feat|fix|docs|chore|refactor|test)\([a-z0-9]+\): .+'
+          branch_pattern='^(feature|fix|docs|refactor|chore|test)/[a-z0-9]+(-[a-z0-9]+)*$'
+
+          report_error() {
+            echo "::error::$1"
+            echo "- $1" >> "$GITHUB_STEP_SUMMARY"
+            errors=$((errors + 1))
+          }
+
+          echo "## Validacao das politicas do Pull Request" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          if [[ ! "$PR_TITLE" =~ $title_pattern ]]; then
+            report_error "O titulo deve seguir 'tipo(contexto): mensagem objetiva'. Tipos permitidos: feat, fix, docs, chore, refactor e test."
+          fi
+
+          if [[ "$BASE_REF" == "main" ]]; then
+            if [[ "$HEAD_REF" != "development" ]]; then
+              report_error "Somente a branch development pode abrir Pull Request para main."
+            fi
+          elif [[ "$BASE_REF" == "development" ]]; then
+            if [[ ! "$HEAD_REF" =~ $branch_pattern ]]; then
+              report_error "A branch deve seguir 'tipo/nome-da-alteracao' com um prefixo permitido."
+            fi
+          else
+            report_error "Pull Requests devem apontar para development ou main."
+          fi
+
+          if [[ -z "${PR_BODY//[[:space:]]/}" ]]; then
+            report_error "A descricao do Pull Request nao pode estar vazia."
+          else
+            required_sections=(
+              "## Objetivo"
+              "## Alteracoes realizadas"
+              "## Como validar"
+              "## Issue relacionada"
+              "## Observacoes"
+            )
+
+            for section in "${required_sections[@]}"; do
+              if ! grep -Fq "$section" <<< "$PR_BODY"; then
+                report_error "A descricao deve conter a secao '$section'."
+              fi
+            done
+          fi
+
+          if ! jq -e --arg author "$PR_AUTHOR" '
+            map(.login | ascii_downcase)
+            | index($author | ascii_downcase) != null
+          ' <<< "$PR_ASSIGNEES" >/dev/null; then
+            report_error "O autor do Pull Request deve marcar a si mesmo no campo Assignees."
+          fi
+
+          if (( errors > 0 )); then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Consulte CONTRIBUTING.md e docs/team/code-review-guidelines.md." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          echo "Politicas obrigatorias atendidas." >> "$GITHUB_STEP_SUMMARY"

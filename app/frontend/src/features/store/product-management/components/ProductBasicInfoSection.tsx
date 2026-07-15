@@ -42,6 +42,7 @@ export function ProductBasicInfoSection({
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
+        <input name="available" type="hidden" value={String(isAvailable)} />
         <label className="flex flex-col gap-1.5 sm:col-span-2">
           <span className="text-sm font-semibold text-[#111111]">Nome do produto</span>
           <span className="relative">

@@ -31,10 +31,10 @@ Retorno para produtos, adicionar produto ou permanência na gestão de categoria
 ## Objetivo
 
 **Descrição da tela:**  
-Tela usada pelo lojista para visualizar, criar e organizar visualmente as categorias da sua loja.
+Tela usada pelo lojista para visualizar e gerenciar categorias existentes da sua loja.
 
 **Função principal:**  
-Permitir que o lojista entenda e teste a gestão de categorias como entidade própria da loja, independente do cadastro de produto.
+Permitir que o lojista consulte, edite e remova categorias existentes. Novas categorias são criadas exclusivamente durante o cadastro de produto.
 
 **Ator principal:**  
 Lojista.
@@ -95,13 +95,12 @@ A tela deve deixar claro que `Todos` é uma categoria fixa/sistêmica e que cate
 | Card | Comportamento | Observação |
 | --- | --- | --- |
 | `Todos` | Card fixo, primeiro da lista, não removível | Representa a listagem geral da loja |
-| Categoria específica | Card criado visualmente pelo lojista | Pode exibir contador mockado de produtos |
+| Categoria específica | Card de categoria existente | Exibe a quantidade de produtos vinculados |
 
 ### Botões e ações
 
 | Elemento | Tipo | Estado inicial | Ação esperada |
 | --- | --- | --- | --- |
-| Criar categoria | Botão primário | Habilitado quando houver nome | Adiciona categoria visual/local |
 | Editar categoria | Botão de ação | Habilitado em categorias específicas | Permite testar edição visual/local |
 | Remover categoria | Botão de ação | Clicável em categorias específicas | Apenas visual nesta versão, sem remoção real |
 
@@ -114,7 +113,7 @@ A tela deve deixar claro que `Todos` é uma categoria fixa/sistêmica e que cate
 ## Estados da tela
 
 **Estado inicial:**  
-Exibe o card fixo `Todos` e o formulário para criar categoria específica.
+Exibe o card fixo `Todos` e as categorias específicas já existentes, sem formulário ou ação de criação.
 
 **Estado de carregamento:**  
 Não se aplica nesta primeira versão visual/local.
@@ -140,10 +139,10 @@ Quando não houver categorias específicas, apenas `Todos` aparece.
 ## Comportamento esperado
 
 1. O lojista acessa a tela de loja em modo gestão.
-2. O lojista abre a área `Categorias`.
-3. O sistema exibe `Todos` como primeiro card fixo.
-4. O lojista digita o nome de uma categoria.
-5. O lojista cria a categoria.
+2. O lojista abre a área `Categorias` para consultar, editar ou remover categorias existentes.
+3. O sistema exibe `Todos` como primeiro card fixo e lista as categorias específicas existentes.
+4. O lojista pode editar ou remover uma categoria específica pelas ações disponíveis.
+5. Para criar uma categoria, o lojista utiliza a ação auxiliar disponível durante o cadastro de produto.
 6. O sistema adiciona um card local com o nome em uppercase.
 7. O lojista pode testar ações visuais de edição e remoção.
 8. Nenhuma alteração é enviada ao backend nesta primeira versão.
@@ -184,7 +183,6 @@ Evitar cards largos demais, texto sobreposto e ações pequenas demais em mobile
 
 ## Acessibilidade
 
-- Campo de nome deve possuir label visível.
 - Botões devem ter texto ou `aria-label`.
 - `Todos` não deve depender apenas de cor para indicar estado fixo.
 - Contador de produtos deve ter texto compreensível.

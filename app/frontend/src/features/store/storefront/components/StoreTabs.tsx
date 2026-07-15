@@ -22,7 +22,7 @@ type StoreTabsProps = {
 export function StoreTabs({ activeTab, onTabChange }: StoreTabsProps) {
   return (
     <nav
-      aria-label="Navegação visual da vitrine"
+      aria-label="Navegação da loja"
       className="grid grid-cols-3 overflow-hidden rounded-3xl border border-gray-100 bg-white shadow-sm"
     >
       {storefrontTabs.map((tab) => {

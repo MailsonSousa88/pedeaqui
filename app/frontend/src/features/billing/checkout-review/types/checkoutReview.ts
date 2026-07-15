@@ -1,80 +1,72 @@
-export type PlanId = "basic";
+export type PlanId = 'basic'
 
-export type CheckoutFlowStatus =
-  | "idle"
-  | "loading"
-  | "error"
-  | "ready";
+export type CheckoutFlowStatus = 'idle' | 'loading' | 'error' | 'ready'
 
-export type PaymentMethodId = "pix" | "credit-card";
-
-export type Benefit = {
-  id: string;
-  label: string;
-};
+export type PaymentMethodId = 'pix' | 'credit-card'
 
 export type PaymentMethod = {
-  id: PaymentMethodId;
-  title: string;
-  description: string;
-};
+  id: PaymentMethodId
+  title: string
+  description: string
+}
+
+export type Benefit = {
+  id: string
+  label: string
+}
 
 export type PlanSummary = {
-  id: PlanId;
-  name: string;
-  priceLabel: string;
-  billingLabel: string;
-  benefits: Benefit[];
-};
+  id: PlanId
+  name: string
+  priceLabel: string
+  billingLabel: string
+  benefits: Benefit[]
+}
 
-export type CheckoutSessionRequest = {
-  planId: PlanId;
-  onboardingContextId?: string;
-};
-
-export type CheckoutSessionResult =
-  | {
-      status: "ready";
-      checkoutUrl: string;
-      expiresAt?: string;
-    }
-  | {
-      status: "unavailable";
-      code: "CHECKOUT_SESSION_UNAVAILABLE";
-      message: string;
-    };
-
-export type CheckoutReviewState = {
-  selectedPlan: PlanSummary | null;
-  status: CheckoutFlowStatus;
-  errorMessage: string | null;
-};
+export type CreatedStore = {
+  id: string
+  tenantId: string
+  slug: string
+  storeName: string
+  horarioAbertura: string | null
+  horarioFechamento: string | null
+  endereco: string
+  city: string
+  state: string
+  descricao: string | null
+  logoUrl: string | null
+  whatsappNumber: string
+  active: boolean
+  deletedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
 
 export const CHECKOUT_REDIRECT_UNAVAILABLE_MESSAGE =
-  "Não foi possível realizar o redirecionamento para a plataforma de pagamento";
+  'Nao foi possivel criar sua loja. Tente novamente.'
 
 export const BASIC_PLAN: PlanSummary = {
-  id: "basic",
-  name: "Plano Básico",
-  priceLabel: "R$ 29,99/mês",
-  billingLabel: "Cobrança mensal",
+  id: 'basic',
+  name: 'Plano Basico',
+  priceLabel: '30 dias gratis',
+  billingLabel: 'Periodo de teste sem cobranca',
   benefits: [
-    { id: "store", label: "Criar loja no PedeAqui" },
-    { id: "products", label: "Cadastrar produtos" },
-    { id: "orders", label: "Receber pedidos dos clientes" },
-    { id: "management", label: "Gerenciar pedidos recebidos" },
+    { id: 'store', label: 'Criar loja no PedeAqui' },
+    { id: 'products', label: 'Cadastrar produtos' },
+    { id: 'orders', label: 'Receber pedidos dos clientes' },
+    { id: 'management', label: 'Gerenciar pedidos recebidos' },
   ],
-};
+}
 
 export const ACCEPTED_PAYMENT_METHODS: PaymentMethod[] = [
   {
-    id: "pix",
-    title: "PIX",
-    description: "Pagamento instantâneo",
+    id: 'pix',
+    title: 'PIX',
+    description: 'Pagamento instantaneo',
   },
   {
-    id: "credit-card",
-    title: "Cartão de crédito",
-    description: "Visa, Mastercard, Elo, e mais",
+    id: 'credit-card',
+    title: 'Cartao de credito',
+    description: 'Visa, Mastercard, Elo, e mais',
   },
-];
+]

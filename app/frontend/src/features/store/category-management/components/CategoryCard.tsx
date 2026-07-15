@@ -1,5 +1,6 @@
 import { Edit3, Lock, Package, Trash2 } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import type {
   CategoryManagementHandlers,
   CategoryManagementItem,
@@ -67,22 +68,24 @@ export function CategoryCard({ category, onEditCategory, onRemoveCategory }: Cat
           </span>
         ) : (
           <div className="flex items-center gap-2">
-            <button
+            <SecondaryButton
               aria-label={`Editar categoria ${category.name}`}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-600 transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+              className="text-gray-600"
               onClick={() => onEditCategory(category.id)}
+              size="icon"
               type="button"
             >
               <Edit3 aria-hidden="true" size={17} />
-            </button>
-            <button
-              aria-label={`Ação visual de remover categoria ${category.name}`}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-gray-200 text-gray-600 transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+            </SecondaryButton>
+            <SecondaryButton
+              aria-label={`Remover categoria ${category.name}`}
+              className="text-gray-600"
               onClick={() => onRemoveCategory(category.id)}
+              size="icon"
               type="button"
             >
               <Trash2 aria-hidden="true" size={17} />
-            </button>
+            </SecondaryButton>
           </div>
         )}
       </div>

@@ -1,5 +1,7 @@
 export type CategoryManagementKind = 'system' | 'custom'
 
+export type CategoryManagementStatus = 'missing' | 'loading' | 'success' | 'error'
+
 export type CategoryManagementItem = {
   id: string
   name: string
@@ -18,6 +20,7 @@ export type CategoryManagementState = {
   editingCategoryId: string | null
   errorMessage: string | null
   formValues: CategoryManagementFormValues
+  status: CategoryManagementStatus
 }
 
 export type CategoryManagementHandlers = {

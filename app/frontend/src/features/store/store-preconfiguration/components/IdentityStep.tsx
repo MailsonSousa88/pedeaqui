@@ -65,10 +65,10 @@ export function IdentityStep({ disabled = false, errors, register }: IdentitySte
   return (
     <section className="space-y-6" aria-labelledby="identity-step-title">
       <div className="space-y-1">
-        <h2 id="identity-step-title" className="text-xl font-bold text-gray-950">
+        <h2 id="identity-step-title" className="text-xl font-semibold leading-tight text-[#111111] md:text-2xl">
           Identidade da loja
         </h2>
-        <p className="text-sm leading-6 text-gray-500">
+        <p className="text-sm leading-relaxed text-gray-500 md:text-base">
           Preencha os dados usados para identificar sua loja.
         </p>
       </div>
