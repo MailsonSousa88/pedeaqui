@@ -34,6 +34,8 @@ npm run dev
 - `13 - Criar produto`
 - copie `id` da resposta de criacao de produto para a variavel de ambiente `product_id`
 - `14 - Listar produtos da loja`
+- `15A - Consultar detalhe publico do produto`
+- `15B - Consultar detalhe privado do produto`
 - `15 - Atualizar produto`
 - `16 - Alternar disponibilidade do produto`
 - `17 - Deletar produto`
@@ -97,6 +99,8 @@ Troque `email`, `profile_document`, `updated_profile_document`, `tenant_document
 - Atualizar categoria: `200`
 - Criar produto: `201`
 - Listar produtos da loja: `200`
+- Detalhe publico do produto: `200` com imagens, variacoes e opcoes; `404` se indisponivel ou nao visivel.
+- Detalhe privado do produto: `200` para produto proprio, inclusive indisponivel.
 - Atualizar produto: `200`
 - Alternar disponibilidade do produto: `200`
 - Criar variacao do produto: `201`
@@ -143,7 +147,7 @@ Erros comuns:
 - Tenant: registrar, consultar e atualizar tenant.
 - Store: criar com cidade/estado, listar lojas publicas, consultar por slug, atualizar cidade/estado, alternar active e deletar.
 - Category: criar, listar por loja, atualizar e deletar.
-- Product: criar, listar por loja, atualizar, alternar disponibilidade e deletar.
+- Product: criar, listar por loja, consultar detalhe publico/privado agregado, atualizar, alternar disponibilidade e deletar.
 - Product variations: criar, listar por produto, atualizar e deletar.
 - Variation options: criar, listar por variacao, atualizar e deletar.
 - Plans: criar, listar e atualizar status.
