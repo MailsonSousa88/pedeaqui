@@ -52,6 +52,8 @@ Adicionar links, decisões, arquivos relacionados ou dependências.
 
 Labels devem ajudar a identificar o tipo e a área da issue.
 
+As labels automáticas configuradas em `.github/` atuam somente em Pull Requests. Nas issues, a pessoa responsável ainda deve selecionar manualmente as labels adequadas.
+
 Exemplos de tipo:
 
 ```text

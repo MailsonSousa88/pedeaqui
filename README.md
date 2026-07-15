@@ -334,8 +334,10 @@ Consulte também os guias de [branches](docs/team/branch-name-guidelines.md) e [
 | Responsabilidade | Desenvolvedores |
 |---|---|
 | Scrum Master | **Mailson Sousa** |
-| Frontend | **Mateus Araujo** e **Cássio Sampaio** |
-| Backend | **Vitor Lopes** e **Rikelry Monteiro** |
+| Dev Frontend | **Mateus Araujo** |
+| Dev Frontend | **Cássio Sampaio** |
+| Dev Backend | **Vitor Lopes** |
+| Dev Backend | **Rikelry Monteiro** |
 
 ---
 

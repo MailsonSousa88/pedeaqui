@@ -1,0 +1,121 @@
+name: Sensitive change policy
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - labeled
+      - unlabeled
+  pull_request_review:
+    types:
+      - submitted
+      - dismissed
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+concurrency:
+  group: sensitive-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  enforce:
+    name: Enforce sensitive approvals
+    if: github.event.pull_request.base.ref == 'development' || github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPOSITORY: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      BASE_REF: ${{ github.event.pull_request.base.ref }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+    steps:
+      - name: Detectar mudanca sensivel e validar aprovacoes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          sensitive=false
+          reasons=()
+
+          if [[ "$BASE_REF" == "main" ]]; then
+            sensitive=true
+            reasons+=("Pull Request direcionado para main")
+          fi
+
+          labels="$(gh api "repos/$REPOSITORY/issues/$PR_NUMBER/labels" --jq '.[].name')"
+          if grep -Fxqi "sensitive" <<< "$labels"; then
+            sensitive=true
+            reasons+=("label sensitive aplicada")
+          fi
+
+          files="$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename')"
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+
+            case "$file" in
+              app/backend/supabase/*|app/backend/src/middlewares/*|app/backend/src/useCases/auth/*|app/backend/src/useCases/subscription/*|app/backend/src/infra/providers/*|app/backend/src/controllers/AuthController.ts|app/backend/src/controllers/SubscriptionController.ts|app/backend/src/controllers/WebhookController.ts|app/backend/src/routes/authRoutes.ts|app/backend/src/routes/subscription.routes.ts|app/backend/src/routes/webhook.routes.ts|app/frontend/src/features/auth/*|app/frontend/src/features/billing/*|app/frontend/src/shared/services/authSession.ts|docs/*|.github/*|README.md|CONTRIBUTING.md|Dockerfile|docker-compose.yml|docker-compose.yaml)
+                sensitive=true
+                reasons+=("arquivo sensivel: $file")
+                ;;
+            esac
+          done <<< "$files"
+
+          if [[ "$sensitive" != "true" ]]; then
+            echo "## Politica de mudancas sensiveis" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Nenhuma mudanca sensivel foi identificada. Permanecem obrigatorias as 2 aprovacoes configuradas no ruleset." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          if ! grep -Fxqi "sensitive" <<< "$labels"; then
+            printf '{"labels":["sensitive"]}' | gh api \
+              --method POST \
+              "repos/$REPOSITORY/issues/$PR_NUMBER/labels" \
+              --input - >/dev/null
+          fi
+
+          reviews="$(gh api --paginate --slurp "repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100")"
+          author="${PR_AUTHOR,,}"
+
+          approvals="$(jq --arg author "$author" '
+            ["mailsonsousa88", "mateusarj", "cassiosampaio2016", "vitorlopes-coder", "rikelry"] as $team
+            | add
+            | map(select(.user.login != null))
+            | map(. + {normalized_login: (.user.login | ascii_downcase)})
+            | map(select(.normalized_login != $author))
+            | map(select(.normalized_login as $login | $team | index($login)))
+            | map(select(.state != "COMMENTED" and .state != "PENDING"))
+            | sort_by(.normalized_login, (.submitted_at // ""))
+            | group_by(.normalized_login)
+            | map(last)
+            | map(select(.state == "APPROVED"))
+            | length
+          ' <<< "$reviews")"
+
+          echo "## Politica de mudancas sensiveis" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Este Pull Request exige pelo menos **4 aprovacoes validas**." >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Motivos identificados:" >> "$GITHUB_STEP_SUMMARY"
+          printf -- '- %s\n' "${reasons[@]}" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Aprovacoes atuais: **$approvals/4**." >> "$GITHUB_STEP_SUMMARY"
+
+          if (( approvals < 4 )); then
+            echo "::error::Mudancas sensiveis e Pull Requests para main exigem 4 aprovacoes. Estado atual: $approvals/4."
+            exit 1
+          fi
+
+          echo "Quantidade minima de aprovacoes sensiveis atendida." >> "$GITHUB_STEP_SUMMARY"

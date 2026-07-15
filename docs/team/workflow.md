@@ -14,11 +14,13 @@ Definir o fluxo básico de trabalho do time Cloud Hive no desenvolvimento do Ped
 6. Atualizar documentação quando a alteração impactar regras, fluxos, arquitetura ou requisitos.
 7. Abrir Pull Request apontando para a branch `development`.
 8. Relacionar o PR com a issue correspondente, quando existir.
-9. Solicitar revisão de pelo menos 2 pessoas.
+9. Confirmar os reviewers solicitados automaticamente pelo `CODEOWNERS` e complementar somente quando necessário.
 10. Corrigir pontos levantados na revisão.
 11. O autor do PR deve fazer o merge na `development` somente após aprovação mínima.
 12. Após validação na `development`, abrir Pull Request da `development` para a `main`.
 13. Fazer merge na `main` somente quando a versão estiver validada e estável.
+
+As labels de área e os reviewers do Pull Request são definidos automaticamente. O autor continua responsável por preencher o template, marcar-se em `Assignees`, relacionar issue e milestone quando aplicável e confirmar se a automação classificou corretamente a alteração. Consulte [Automações do GitHub](github-automation.md).
 
 ## Branch principal (Main)
 

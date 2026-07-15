@@ -14,6 +14,7 @@ As regras em [`docs/team/`](docs/team/) são **obrigatórias** para todas as pes
 | [Guia de commits](docs/team/commit-message-guidelines.md) | Define o padrão obrigatório das mensagens de commit. |
 | [Guia de Pull Requests e Code Review](docs/team/code-review-guidelines.md) | Define abertura, revisão, aprovação e merge de Pull Requests. |
 | [Guia de milestones](docs/team/milestone-guidelines.md) | Define a organização das entregas e a responsabilidade do Scrum Master. |
+| [Automações do GitHub](docs/team/github-automation.md) | Define reviewers, labels, checks automáticos e responsabilidades manuais. |
 
 Em caso de dúvida ou aparente conflito entre regras, não presuma uma exceção: registre a dúvida e alinhe com o Scrum Master ou com a pessoa responsável antes de prosseguir.
 
@@ -283,6 +284,14 @@ Antes de solicitar revisão:
 - remova arquivos desnecessários;
 - informe os testes e validações executados.
 
+### Automações aplicadas ao Pull Request
+
+Quando as configurações necessárias estiverem disponíveis, o GitHub preenche o template, solicita reviewers pelo `CODEOWNERS`, aplica labels conforme os arquivos e executa as validações de política e sensibilidade. O `CODEOWNERS` e os workflows de validação usam o contexto da branch de destino, enquanto o template e automações baseadas em `pull_request_target` dependem da branch padrão (`main`).
+
+Não solicite manualmente reviewers nem aplique labels de caminho antes da execução das automações. Depois que os workflows terminarem, confira o resultado e complemente apenas quando houver uma exceção. `Assignees`, milestone, relação com issue e aprovações continuam dependendo de ação humana.
+
+Consulte [Automações do GitHub](docs/team/github-automation.md) para conhecer os comportamentos esperados e as instruções destinadas a agentes de programação.
+
 ## 8. Revisão e aprovação
 
 Todo Pull Request exige revisão efetiva:
@@ -329,6 +338,6 @@ Uma issue só deve ser fechada quando seus critérios de aceite estiverem atendi
 - [ ] Meus commits seguem o padrão obrigatório.
 - [ ] Revisei meu próprio diff.
 - [ ] O PR aponta para `development`, referencia a issue e segue o modelo do time.
-- [ ] Solicitei a quantidade obrigatória de revisores.
+- [ ] Confirmei que os revisores corretos foram solicitados pelo `CODEOWNERS` e complementei somente quando necessário.
 
 Ao contribuir, você concorda em seguir este documento e todas as diretrizes oficiais mantidas em [`docs/team/`](docs/team/).
