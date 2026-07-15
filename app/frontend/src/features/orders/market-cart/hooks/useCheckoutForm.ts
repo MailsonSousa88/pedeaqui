@@ -49,14 +49,7 @@ export function useCheckoutForm({
   }
 
   function resetForm() {
-    setFullName("");
     setPaymentMethod("");
-    setAddressStreet("");
-    setAddressNumber("");
-    setAddressNeighborhood("");
-    setAddressReference("");
-    setAddressCity("");
-    setAddressState("");
     setOrderObservation("");
     setValidationErrors({});
   }
