@@ -218,7 +218,7 @@ export default function App() {
 
       {isHome && <Footer />}
 
-      {(isHome || isMarketCart) && (
+      {(isHome || isMarketCart || currentPath === '/stores' || currentPath === '/storefront') && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}
