@@ -206,6 +206,7 @@ STRIPE_SUCCESS_URL=http://localhost:5173/billing/success
 STRIPE_CANCEL_URL=http://localhost:5173/billing/failed
 ```
 
+> [!WARNING]
 > Nunca envie o arquivo `.env` ou credenciais reais para o repositório.
 
 ### 3. Prepare o banco de dados
