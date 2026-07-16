@@ -82,7 +82,6 @@ export function ProductDetailPage({
     }
 
     localStorage.setItem('pedeaqui:cart:stores', JSON.stringify(cartStores))
-    addToast?.(`Adicionado ao carrinho: ${qty}x ${product.name}`)
     handleBackToStore()
   }
 
