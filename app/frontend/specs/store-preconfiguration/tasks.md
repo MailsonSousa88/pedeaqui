@@ -1,0 +1,402 @@
+# Tasks: store-preconfiguration
+
+## Dependency Graph
+
+```text
+T001 -> T001A -> T002 -> T003 -> T004 -> T005 -> T006 -> T007 -> T008 -> T009 -> T010 -> T011 -> T012
+```
+
+## Tasks
+
+- [x] T001 Instalar dependências frontend previstas para a feature
+  - Type: setup
+  - Paths allowed:
+    - `app/frontend/package.json`
+    - `app/frontend/package-lock.json`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/`
+  - Depends on: nenhuma
+  - Requirements:
+    - instalar apenas dependências já previstas no spec kit: `lucide-react`, `react-hook-form`, `zod`
+    - não instalar `framer-motion` nesta task, pois o plano não tornou motion obrigatório para a primeira implementação
+  - Done when:
+    - `package.json` contém as dependências necessárias
+    - `package-lock.json` foi atualizado pelo npm
+  - Checks:
+    - `npm install lucide-react react-hook-form zod`
+    - `npm run build`
+
+- [x] T001A Corrigir baseline de build do frontend
+  - Type: preflight
+  - Paths allowed:
+    - `app/frontend/src/App.tsx`
+    - `app/frontend/src/App.css`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/store/store-preconfiguration/`
+  - Depends on: T001
+  - Requirements:
+    - remover imports quebrados do placeholder Vite
+    - manter apenas tela neutra temporaria para build
+    - nao implementar a tela de pre-registro nesta task
+    - nao criar roteamento
+  - Done when:
+    - `src/App.tsx` nao importa assets inexistentes
+    - `npm run build` passa antes da T002
+  - Checks:
+    - `npm run build`
+
+- [x] T002 Criar contrato esperado do payload de pré-configuração
+  - Type: docs/spec-contract
+  - Paths allowed:
+    - `app/frontend/specs/store-preconfiguration/contracts/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/`
+  - Depends on: T001A
+  - Requirements:
+    - documentar o payload planejado da tela
+    - deixar explícito que endpoint real ainda não deve ser assumido
+    - registrar que slug e plano não fazem parte da UI desta tela
+  - Done when:
+    - `store-preconfiguration-payload.md` existe em `contracts/`
+    - contrato reflete `StorePreconfigurationPayload` do plan
+  - Checks:
+    - revisar manualmente contra `spec.md` e `plan.md`
+
+- [x] T003 Criar tipos base da feature
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/types/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T002
+  - Requirements:
+    - criar tipos para steps, dias da semana, valores do formulário e payload
+    - usar nomes técnicos em inglês
+    - não criar lógica de UI
+  - Done when:
+    - tipos exportados cobrem etapas, formulário, payload e resultado futuro do service
+  - Checks:
+    - `npm run build`
+
+- [x] T004 Criar schema Zod e validações por etapa
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/schemas/`
+    - `app/frontend/src/features/store/store-preconfiguration/types/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T003
+  - Requirements:
+    - validar campos obrigatórios
+    - validar e-mail
+    - validar WhatsApp com máscara brasileira
+    - validar intervalo contínuo de dias
+    - validar `closesAt > opensAt`
+    - bloquear funcionamento atravessando meia-noite
+  - Done when:
+    - schema cobre etapa 1, etapa 2 e payload final
+    - mensagens de erro estão em português
+  - Checks:
+    - `npm run build`
+
+- [x] T005 Criar service/adapter desacoplado para integração futura
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/services/`
+    - `app/frontend/src/features/store/store-preconfiguration/types/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T003
+  - Requirements:
+    - preparar função de submit desacoplada
+    - não chamar endpoint real
+    - deixar retorno tipado para sucesso/erro futuro
+  - Done when:
+    - service existe e pode ser substituído por chamada HTTP futuramente
+    - não há URL backend inventada
+  - Checks:
+    - `npm run build`
+
+- [x] T006 Criar hook de orquestração do formulário multi-step
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/hooks/`
+    - `app/frontend/src/features/store/store-preconfiguration/schemas/`
+    - `app/frontend/src/features/store/store-preconfiguration/services/`
+    - `app/frontend/src/features/store/store-preconfiguration/types/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T004, T005
+  - Requirements:
+    - usar React Hook Form
+    - preservar dados durante navegação entre etapas
+    - validar etapa atual antes de avançar
+    - permitir voltar sem perda de dados
+    - limpar/poder descartar estado após sucesso
+  - Done when:
+    - hook expõe step atual, navegação, form state, handlers e submit
+  - Checks:
+    - `npm run build`
+
+- [x] T007 Criar componentes base da tela
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/components/`
+    - `app/frontend/src/features/store/store-preconfiguration/styles/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T006
+  - Requirements:
+    - criar `StorePreconfigurationHeader`
+    - criar `StepProgress`
+    - criar `FormField`
+    - usar logo `/logoPedeAqui.jpeg`
+    - usar Tailwind como padrão
+    - usar CSS Module apenas se necessário para apoio visual
+  - Done when:
+    - componentes base renderizam sem lógica de backend
+    - progress bar possui acessibilidade básica
+  - Checks:
+    - `npm run build`
+
+- [x] T008 Criar etapas do formulário
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/components/`
+    - `app/frontend/src/features/store/store-preconfiguration/types/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T007
+  - Requirements:
+    - criar `IdentityStep`
+    - criar `AddressStep`
+    - criar `ReviewStep`
+    - não exibir plano, slug, upload ou pagamento
+    - erros devem aparecer próximos aos campos
+    - review deve permitir `Editar` por bloco
+  - Done when:
+    - as 3 etapas renderizam os campos e ações definidos na spec
+  - Checks:
+    - `npm run build`
+
+- [x] T009 Criar página da feature e conectar componentes ao hook
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/pages/`
+    - `app/frontend/src/features/store/store-preconfiguration/components/`
+    - `app/frontend/src/features/store/store-preconfiguration/hooks/`
+    - `app/frontend/src/features/store/store-preconfiguration/styles/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - `app/frontend/src/features/*` fora de `store-preconfiguration`
+  - Depends on: T008
+  - Requirements:
+    - compor tela mobile-first
+    - conectar navegação das etapas
+    - conectar loading de finalização
+    - preservar dados ao voltar/editar
+  - Done when:
+    - `StorePreconfigurationPage` renderiza fluxo completo local
+  - Checks:
+    - `npm run build`
+
+- [x] T010 Integrar a página no app atual para visualização
+  - Type: code
+  - Paths allowed:
+    - `app/frontend/src/App.tsx`
+    - `app/frontend/src/App.css`
+    - `app/frontend/src/index.css`
+    - `app/frontend/src/features/store/store-preconfiguration/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+  - Depends on: T009
+  - Requirements:
+    - substituir ou isolar conteúdo placeholder do Vite para exibir a página
+    - não criar roteamento complexo sem spec
+    - manter Tailwind funcionando
+  - Done when:
+    - app abre diretamente a tela de pré-configuração para teste visual local
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T011 Revisar acessibilidade, responsividade e estados
+  - Type: verification
+  - Paths allowed:
+    - `app/frontend/src/`
+    - `app/frontend/specs/store-preconfiguration/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+  - Depends on: T010
+  - Requirements:
+    - labels visíveis
+    - erros próximos aos campos
+    - botões com foco visível
+    - progress bar acessível
+    - mobile-first sem sobreposição
+  - Done when:
+    - revisão manual confirma estados inicial/loading/erro/sucesso local
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T012 Validar escopo final contra spec e atualizar tasks
+  - Type: verification
+  - Paths allowed:
+    - `app/frontend/specs/store-preconfiguration/tasks.md`
+    - `app/frontend/src/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+  - Depends on: T011
+  - Requirements:
+    - confirmar que não foram implementados itens fora de escopo
+    - confirmar que não há plano visível, slug, upload, pagamento, dashboard ou CRUD
+    - marcar tasks concluídas somente após checks
+  - Done when:
+    - todas as tasks concluídas refletem implementação real
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T013 Alinhar a tela, os hovers e as microinteracoes ao design system
+  - Type: ui-polish
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/components/`
+    - `app/frontend/src/features/store/store-preconfiguration/pages/`
+    - `app/frontend/specs/store-preconfiguration/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - `docs/`
+    - hooks, services, schemas e types da feature
+  - Depends on: T012
+  - Requirements:
+    - aplicar tokens oficiais de cor, tipografia, borda e foco
+    - alinhar botoes primarios ao hover `#b80406`
+    - manter botoes secundarios com fundo branco e hover apenas em borda/texto
+    - reutilizar `PrimaryButton` e `SecondaryButton` para aplicar escala `1.03/0.97` e duracao `0.2s`
+    - preservar layout mobile-first, acessibilidade e logica do fluxo
+  - Done when:
+    - tela segue os modulos de design system citados no `plan.md`
+    - nenhum hover secundario usa preenchimento cinza, preto ou `primary-soft`
+    - nenhuma logica do formulario e alterada
+  - Checks:
+    - `npm run lint`
+    - `npm run build`
+  - Validation notes:
+    - `npm run lint`: passou
+    - `tsc -b --pretty false`: passou
+    - `git diff --check`: passou
+    - botoes reutilizam `PrimaryButton` e `SecondaryButton`, com motion `1.03/0.97` em `0.2s`
+    - `npm run build`: TypeScript passou, mas o Vite foi bloqueado pelo binario local invalido de `@tailwindcss/oxide-win32-x64-msvc` e por `spawn EPERM`
+
+## Notes
+
+- Marcar task como concluída somente após checks.
+- Não executar tasks futuras sem pedido explícito.
+- Não alterar backend.
+- Não inventar endpoint.
+- Não criar ADR nesta feature salvo se surgir decisão arquitetural nova durante implementação.
+- `app/frontend/specs/` está ignorado pelo Git e serve como artefato local do spec kit.
+
+## Evolução — remover WhatsApp duplicado do pré-registro
+
+```text
+T014 -> T015
+```
+
+- [x] T014 Remover WhatsApp da UI, validação, tipos, revisão e payload temporário
+  - Type: fix/frontend
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-preconfiguration/`
+    - `app/frontend/specs/store-preconfiguration/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+  - Depends on: T013
+  - Done when:
+    - nenhuma etapa do pré-registro renderizar ou exigir WhatsApp;
+    - `StorePreconfigurationPayload` não contiver `whatsappNumber`;
+    - revisão não repetir o contato do cadastro.
+  - Checks:
+    - `npx tsc -b --pretty false`
+    - lint dos paths alterados
+  - Validation notes:
+    - campo removido de `IdentityStep` e `ReviewStep`;
+    - tipos, valores iniciais, schema e payload temporário não possuem `whatsappNumber`;
+    - lint do escopo e TypeScript passaram;
+    - teste confirma que o schema aceita o pré-registro sem WhatsApp e remove uma propriedade legada recebida.
+
+- [x] T015 Reutilizar o WhatsApp do cadastro ao criar a loja
+  - Type: fix/integration
+  - Paths allowed:
+    - `app/frontend/src/features/billing/checkout-review/services/checkoutReviewService.ts`
+    - `app/frontend/specs/store-preconfiguration/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+  - Depends on: T014
+  - Done when:
+    - `/api/stores` receber `whatsappNumber` derivado de `session.profile.phone`;
+    - payload salvo pelo pré-registro não exigir WhatsApp;
+    - build e testes passarem.
+  - Checks:
+    - `npm test`
+    - `npm run build`
+    - `git diff --check`
+  - Validation notes:
+    - `checkoutReviewService` normaliza `session.profile.phone` e o envia como `whatsappNumber` somente na criação da loja;
+    - telefone ausente/inválido bloqueia a integração com mensagem clara;
+    - 4 arquivos e 10 testes passaram;
+    - build de produção e `git diff --check` passaram.
