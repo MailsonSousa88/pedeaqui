@@ -18,6 +18,10 @@ export default function BottomNav({ currentPath, onNavigate, onCartClick }: Bott
   }, [currentPath]);
 
   const isVitrineActive = currentPath.startsWith('/storefront') && currentPath.endsWith('/manage');
+  const isLojasActive =
+    currentPath === '/stores' ||
+    ((currentPath.startsWith('/lojas') || currentPath.startsWith('/storefront')) &&
+      !currentPath.includes('/manage'));
 
   return (
     <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200 z-50 py-2 flex justify-around items-center shadow-lg">
@@ -57,7 +61,7 @@ export default function BottomNav({ currentPath, onNavigate, onCartClick }: Bott
       >
         <div
           className={`flex items-center justify-center transition-all duration-200 ${
-            currentPath === '/stores'
+            isLojasActive
               ? 'text-primary'
               : 'text-slate-500 hover:text-primary'
           }`}
@@ -66,7 +70,7 @@ export default function BottomNav({ currentPath, onNavigate, onCartClick }: Bott
         </div>
         <span
           className={`text-[10px] font-sans font-bold tracking-tight ${
-            currentPath === '/stores' ? 'text-primary' : 'text-slate-500'
+            isLojasActive ? 'text-primary' : 'text-slate-500'
           }`}
         >
           Lojas

@@ -97,7 +97,9 @@ export default function Header({
               <button
                 onClick={() => onNavigate('/stores')}
                 className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${
-                  currentPath === '/stores'
+                  currentPath === '/stores' ||
+                  ((currentPath.startsWith('/lojas') || currentPath.startsWith('/storefront')) &&
+                    !currentPath.includes('/manage'))
                     ? 'text-primary'
                     : 'text-on-surface-variant hover:text-primary'
                 }`}

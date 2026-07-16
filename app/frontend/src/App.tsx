@@ -322,6 +322,7 @@ export default function App() {
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
   const isStorefront = currentPath.startsWith('/storefront') || currentPath.startsWith('/lojas');
+  const isConsumerStorefront = isStorefront && !currentPath.includes('/manage');
   const showHeader = isHome || isInstitutionalPage || isMarketCart || isBillingPage || currentPath === '/stores' || isStorefront;
 
   return (
@@ -352,7 +353,7 @@ export default function App() {
 
       {(isHome || isInstitutionalPage) && <Footer onNavigate={handleNavigate} />}
 
-      {(isHome || isMarketCart || currentPath === '/stores') && (
+      {(isHome || isMarketCart || currentPath === '/stores' || isConsumerStorefront) && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}
