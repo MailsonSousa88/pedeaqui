@@ -253,6 +253,24 @@ npm run dev
 
 Por padrão, o Vite abre a aplicação em `http://localhost:5173` e encaminha as chamadas `/api` para `http://localhost:3000`.
 
+### Execução integrada com Turborepo
+
+Depois de configurar o backend, o Supabase e o frontend, também é possível iniciar as duas aplicações pela raiz do repositório:
+
+```bash
+npm install
+npm run dev
+```
+
+O Turborepo apenas orquestra os scripts existentes: a API continua em `http://localhost:3000`, enquanto o Vite continua em `http://localhost:5173` com o mesmo proxy `/api`.
+
+Os comandos individuais permanecem disponíveis quando for necessário executar somente uma aplicação:
+
+```bash
+npm run dev:backend
+npm run dev:frontend
+```
+
 Em ambiente publicado, crie `app/frontend/.env` e defina a URL da API:
 
 ```dotenv
