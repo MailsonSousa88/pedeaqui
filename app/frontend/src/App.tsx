@@ -257,6 +257,7 @@ export default function App() {
           }}
           onSuccess={(store) => {
             setCreatedStore(store);
+            localStorage.setItem('pedeaqui.store-slug', store.slug);
             setActivationError(null);
             handleNavigate('/billing/success');
           }}
