@@ -29,7 +29,6 @@ const stepByKey = {
 const defaultValues: StorePreconfigurationFormValues = {
   storeName: '',
   businessDocument: '',
-  whatsappNumber: '',
   businessHours: {
     startDay: '',
     endDay: '',
@@ -207,7 +206,6 @@ export const useStorePreconfigurationForm = ({
         state: result.data.address.state.trim().toUpperCase(),
         descricao: null,
         logoUrl: null,
-        whatsappNumber: toDigits(result.data.whatsappNumber),
       },
       source: {
         businessDocument: businessDocument || null,

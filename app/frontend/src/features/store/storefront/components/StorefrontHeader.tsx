@@ -1,14 +1,40 @@
-export function StorefrontHeader() {
+import { ArrowLeft, ShoppingCart } from 'lucide-react'
+
+type StorefrontHeaderProps = {
+  onBackToStores: () => void
+  onOpenCart: () => void
+}
+
+export function StorefrontHeader({ onBackToStores, onOpenCart }: StorefrontHeaderProps) {
   return (
-    <>
-      <header className="fixed inset-x-0 top-0 z-50 flex w-full min-w-0 items-center border-b border-[#e5e7eb] bg-white px-3 py-3 shadow-sm sm:px-6 sm:py-4 md:px-10 lg:px-12">
+    <header className="sticky top-0 z-40 border-b border-[#e5e7eb] bg-white/95 shadow-sm backdrop-blur">
+      <div className="mx-auto flex min-h-16 w-full max-w-6xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <button
+          aria-label="Voltar para a lista de lojas"
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+          onClick={onBackToStores}
+          type="button"
+        >
+          <ArrowLeft aria-hidden="true" size={18} />
+          <span className="hidden sm:inline">Voltar para lojas</span>
+        </button>
+
         <img
-          src="/logoPedeAqui.jpeg"
           alt="PedeAqui"
-          className="h-9 w-auto max-w-[112px] object-contain sm:h-10 sm:max-w-[180px] md:h-12"
+          className="h-10 w-auto max-w-[140px] object-contain"
+          src="/logoPedeAqui.jpeg"
         />
-      </header>
-      <div aria-hidden="true" className="h-[61px] shrink-0 sm:h-[73px] md:h-[81px]" />
-    </>
+
+        <button
+          aria-label="Abrir carrinho"
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 text-sm font-semibold text-[#111111] transition-all hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+          onClick={onOpenCart}
+          type="button"
+        >
+          <ShoppingCart aria-hidden="true" size={19} />
+          <span className="hidden sm:inline">Carrinho</span>
+        </button>
+      </div>
+    </header>
   )
 }

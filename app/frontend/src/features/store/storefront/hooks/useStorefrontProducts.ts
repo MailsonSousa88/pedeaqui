@@ -12,7 +12,8 @@ export function useStorefrontProducts(storeId?: string | null, refreshKey = 0) {
   const [categories, setCategories] = useState<StorefrontCategory[]>([])
   const [resolvedRequestKey, setResolvedRequestKey] = useState<string | null>(null)
   const [failedRequestKey, setFailedRequestKey] = useState<string | null>(null)
-  const requestKey = storeId ? `${storeId}:${refreshKey}` : null
+  const [requestRevision, setRequestRevision] = useState(0)
+  const requestKey = storeId ? `${storeId}:${refreshKey}:${requestRevision}` : null
 
   useEffect(() => {
     let isActive = true
@@ -61,5 +62,10 @@ export function useStorefrontProducts(storeId?: string | null, refreshKey = 0) {
         ? 'success'
         : 'loading'
 
-  return { categories, products, status }
+  return {
+    categories: status === 'success' ? categories : [],
+    products: status === 'success' ? products : [],
+    retry: () => setRequestRevision((currentRevision) => currentRevision + 1),
+    status,
+  }
 }

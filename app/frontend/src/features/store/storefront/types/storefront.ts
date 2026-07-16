@@ -49,7 +49,12 @@ export type StorefrontEditValues = {
 
 export type StorefrontUpdatePayload = StorefrontEditValues
 
-export type StorefrontLoadStatus = 'missing' | 'loading' | 'success' | 'error'
+export type StorefrontLoadStatus =
+  | 'missing'
+  | 'loading'
+  | 'success'
+  | 'unavailable'
+  | 'error'
 
 export type StorefrontCopyLinkStatus = 'idle' | 'success' | 'error'
 
@@ -71,4 +76,26 @@ export type StorefrontProduct = {
   promoPriceCents?: number | null
   promoEndsAt?: string | null
   available: boolean
+  imageUrl?: string | null
+}
+
+export type StorefrontSortOption =
+  | 'name-asc'
+  | 'name-desc'
+  | 'price-asc'
+  | 'price-desc'
+
+export type StorefrontCatalogFilters = {
+  categoryId: string | null
+  maximumPriceCents: number | null
+  minimumPriceCents: number | null
+  searchTerm: string
+  sort: StorefrontSortOption
+}
+
+export type StorefrontCatalogPage = {
+  currentPage: number
+  pageCount: number
+  products: StorefrontProduct[]
+  totalProducts: number
 }

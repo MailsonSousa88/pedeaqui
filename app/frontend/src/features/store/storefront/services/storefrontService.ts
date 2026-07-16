@@ -14,6 +14,9 @@ const getApiMessage = (error: ApiError) => {
   return null
 }
 
+export const isStorefrontNotFoundError = (error: unknown) =>
+  error instanceof ApiError && error.status === 404
+
 export const getStorefrontBySlug = (slug: string) =>
   apiClient.get<StorefrontStore>(`/api/stores/${encodeURIComponent(slug)}`)
 

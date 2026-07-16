@@ -22,7 +22,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
           <LoginCard
             onRegisterClick={() => onNavigate('/register')}
             onSuccess={(store) =>
-              onNavigate(`/storefront/${encodeURIComponent(store.slug)}`)
+              onNavigate(`/storefront/${encodeURIComponent(store.slug)}/manage`)
             }
           />
         </div>

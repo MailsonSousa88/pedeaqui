@@ -16,6 +16,7 @@ import { RegisterPage } from './features/auth/register/pages/RegisterPage';
 import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
 import { localStores } from './features/store/store-list/data/localStores';
 import { StorefrontPage } from './features/store/storefront/pages/StorefrontPage';
+import { StorefrontManagementPage } from './features/store/storefront/pages/StorefrontManagementPage';
 import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
 import { CheckoutReviewPage } from './features/billing/checkout-review/pages/CheckoutReviewPage';
 import { getCreatedStore } from './features/billing/checkout-review/services/checkoutReviewService';
@@ -63,12 +64,21 @@ const getRouteFromLocation = (): AppRoute => {
 };
 
 const getStorefrontSlug = (route: AppRoute) => {
+  if (/^\/storefront\/[^/]+\/manage\/?$/.test(route)) {
+    return undefined;
+  }
+
   if (route.startsWith('/storefront/')) {
     return decodeRouteSegment(route.slice('/storefront/'.length));
   }
 
   const publicStoreMatch = route.match(/^\/lojas\/([^/]+)\/?$/);
   return publicStoreMatch ? decodeRouteSegment(publicStoreMatch[1]) : undefined;
+};
+
+const getStorefrontManagementSlug = (route: AppRoute) => {
+  const managementMatch = route.match(/^\/storefront\/([^/]+)\/manage\/?$/);
+  return managementMatch ? decodeRouteSegment(managementMatch[1]) : undefined;
 };
 
 const getProductDetailParams = (route: AppRoute) => {
@@ -157,8 +167,8 @@ export default function App() {
         <StoreListPage
           state={{ status: 'success', stores: localStores }}
           onSearchChange={() => undefined}
-          onSelectStore={() => {
-            handleNavigate('/storefront');
+          onSelectStore={(storeId) => {
+            handleNavigate(`/storefront/${encodeURIComponent(storeId)}`);
           }}
           onRetry={() => undefined}
         />
@@ -177,6 +187,26 @@ export default function App() {
       );
     }
 
+    const managementSlug = getStorefrontManagementSlug(currentPath);
+
+    if (managementSlug) {
+      return (
+        <StorefrontManagementPage
+          onBackToPublic={() =>
+            handleNavigate(`/storefront/${encodeURIComponent(managementSlug)}`)
+          }
+          onLogin={() => handleNavigate('/login')}
+          onOpenCart={handleCartClick}
+          onSelectProduct={(productId) =>
+            navigateTo(
+              `/lojas/${encodeURIComponent(managementSlug)}/produtos/${encodeURIComponent(productId)}`,
+            )
+          }
+          slug={managementSlug}
+        />
+      );
+    }
+
     if (
       currentPath === '/storefront' ||
       currentPath.startsWith('/storefront/') ||
@@ -186,6 +216,8 @@ export default function App() {
 
       return (
         <StorefrontPage
+          onBackToStores={() => handleNavigate('/stores')}
+          onOpenCart={handleCartClick}
           onSelectProduct={(productId) => {
             if (!storeSlug) {
               return;
@@ -240,7 +272,7 @@ export default function App() {
           onConfigureStore={() =>
             handleNavigate(
               createdStore?.slug
-                ? `/storefront/${encodeURIComponent(createdStore.slug)}`
+                ? `/storefront/${encodeURIComponent(createdStore.slug)}/manage`
                 : '/storefront',
             )
           }
@@ -264,7 +296,7 @@ export default function App() {
   const isHome = currentPath === '/';
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
-  const showHeader = isHome || isMarketCart || isBillingPage || currentPath === '/stores' || currentPath === '/storefront';
+  const showHeader = isHome || isMarketCart || isBillingPage || currentPath === '/stores';
 
   return (
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>
@@ -294,7 +326,7 @@ export default function App() {
 
       {isHome && <Footer />}
 
-      {(isHome || isMarketCart || currentPath === '/stores' || currentPath === '/storefront') && (
+      {(isHome || isMarketCart || currentPath === '/stores') && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}

@@ -99,7 +99,6 @@ export function ReviewStep({ onEdit, values }: ReviewStepProps) {
         >
           <ReviewItem label="Nome da loja" value={formatValue(values.storeName)} />
           <ReviewItem label="CNPJ da loja" value={formatValue(values.businessDocument)} />
-          <ReviewItem label="WhatsApp" value={formatValue(values.whatsappNumber)} />
           <ReviewItem
             label="Dias de funcionamento"
             value={`${formatWeekday(values.businessHours.startDay)} até ${formatWeekday(

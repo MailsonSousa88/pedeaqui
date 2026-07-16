@@ -104,6 +104,13 @@ export async function activateTrialStore(): Promise<CreatedStore> {
   }
 
   const requestOptions = { authToken: session.accessToken }
+  const whatsappNumber = session.profile.phone.replace(/\D/g, '')
+
+  if (whatsappNumber.length < 10 || whatsappNumber.length > 11) {
+    throw new Error(
+      'O WhatsApp informado no cadastro não é válido. Atualize seu cadastro para continuar.',
+    )
+  }
 
   try {
     await apiClient.post('/api/tenants', { document }, requestOptions)
@@ -121,7 +128,10 @@ export async function activateTrialStore(): Promise<CreatedStore> {
   try {
     const store = await apiClient.post<CreatedStore>(
       '/api/stores',
-      pendingPayload.store,
+      {
+        ...pendingPayload.store,
+        whatsappNumber,
+      },
       requestOptions,
     )
 
