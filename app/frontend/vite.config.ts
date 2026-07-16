@@ -12,7 +12,6 @@ export default defineConfig(() => {
       },
     },
     server: {
-      allowedHosts: ['dilation-clustered-opossum.ngrok-free.dev'],
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
       proxy: {

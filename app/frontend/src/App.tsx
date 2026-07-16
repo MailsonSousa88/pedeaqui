@@ -186,6 +186,7 @@ export default function App() {
           }
           productId={productDetailParams.productId}
           storeSlug={productDetailParams.storeSlug}
+          addToast={triggerToast}
         />
       );
     }

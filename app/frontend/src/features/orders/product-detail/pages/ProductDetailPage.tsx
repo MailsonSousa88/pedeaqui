@@ -13,18 +13,77 @@ type ProductDetailPageProps = {
   onBackToStore: () => void
   productId: string
   storeSlug: string
+  addToast?: (message: string) => void
 }
 
 export function ProductDetailPage({
   onBackToStore,
   productId,
   storeSlug,
+  addToast,
 }: ProductDetailPageProps) {
   const { gallery, quantity, retry, state } = useProductDetail(storeSlug, productId)
 
   const handleBackToStore = () => {
     quantity.reset()
     onBackToStore()
+  }
+
+  const handleAddToCart = () => {
+    if (state.status !== 'success') return
+
+    const product = state.product
+    const qty = quantity.value
+
+    const rawCart = localStorage.getItem('pedeaqui:cart:stores')
+    let cartStores: any[] = []
+    if (rawCart) {
+      try {
+        cartStores = JSON.parse(rawCart)
+      } catch {
+        cartStores = []
+      }
+    }
+
+    let storeCart = cartStores.find((s: any) => s.id === product.storeId)
+    const price = (product.promoPriceCents ?? product.priceCents) / 100
+
+    const newCartItem = {
+      id: product.id,
+      name: product.name,
+      price,
+      quantity: qty,
+      image: "🍔",
+      category: product.categoryName || 'Geral',
+    }
+
+    if (storeCart) {
+      const existingItem = storeCart.items.find((item: any) => item.id === product.id)
+      if (existingItem) {
+        existingItem.quantity += qty
+      } else {
+        storeCart.items.push(newCartItem)
+      }
+    } else {
+      storeCart = {
+        id: product.storeId,
+        name: product.storeName,
+        logo: '🏬',
+        category: product.categoryName || 'Restaurante',
+        rating: '4.8',
+        deliveryTime: '20-35 min',
+        deliveryFee: 4.90,
+        isOpen: true,
+        color: 'border-red-100 hover:border-red-200 bg-red-50/10',
+        phone: '5586999999999',
+        items: [newCartItem],
+      }
+      cartStores.push(storeCart)
+    }
+
+    localStorage.setItem('pedeaqui:cart:stores', JSON.stringify(cartStores))
+    addToast?.(`Adicionado ao carrinho: ${qty}x ${product.name}`)
+    handleBackToStore()
   }
 
   return (
@@ -86,7 +145,11 @@ export function ProductDetailPage({
                 value={quantity.value}
               />
               <div className="mt-6">
-                <ProductActions onBack={handleBackToStore} />
+                <ProductActions
+                  onBack={handleBackToStore}
+                  onAddToCart={handleAddToCart}
+                  isAvailable={state.product.available}
+                />
               </div>
             </div>
           </div>
