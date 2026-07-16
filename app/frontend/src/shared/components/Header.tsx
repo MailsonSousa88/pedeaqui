@@ -10,11 +10,18 @@ import type { AppRoute } from '../../app/routes/types';
 interface HeaderProps {
   currentPath: AppRoute;
   onNavigate: (route: AppRoute, planId?: number) => void;
-  onCartClick: () => void;
+  onCartClick?: () => void;
   minimal?: boolean;
+  rightAction?: React.ReactNode;
 }
 
-export default function Header({ currentPath, onNavigate, onCartClick, minimal = false }: HeaderProps) {
+export default function Header({
+  currentPath,
+  onNavigate,
+  onCartClick,
+  minimal = false,
+  rightAction,
+}: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -50,6 +57,10 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
             className="h-10 w-auto object-contain transition-transform group-hover:scale-105"
           />
         </div>
+
+        {minimal && rightAction && (
+          <div className="flex items-center gap-2 sm:gap-4">{rightAction}</div>
+        )}
 
         {!minimal && (
           <>
