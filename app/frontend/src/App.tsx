@@ -11,6 +11,9 @@ import Header from './shared/components/Header';
 import BottomNav from './shared/components/BottomNav';
 import Footer from './shared/components/Footer';
 import HomePage from './features/store/home-page/components/HomePage';
+import { AboutUsPage } from './features/store/home-page/components/AboutUsPage';
+import { PrivacyPolicyPage } from './features/store/home-page/components/PrivacyPolicyPage';
+import { TermsOfUsePage } from './features/store/home-page/components/TermsOfUsePage';
 import { LoginPage } from './features/auth/login/pages/LoginPage';
 import { ForgotPasswordPage } from './features/auth/forgot-password/pages/ForgotPasswordPage';
 import { RegisterPage } from './features/auth/register/pages/RegisterPage';
@@ -53,6 +56,9 @@ const getRouteFromLocation = (): AppRoute => {
     path === '/forgot-password/reset' ||
     path === '/register' ||
     path === '/stores' ||
+    path === '/sobre-nos' ||
+    path === '/termos-de-uso' ||
+    path === '/politica-de-privacidade' ||
     path === '/storefront' ||
     path === '/store-preconfiguration' ||
     path === '/market-cart' ||
@@ -182,6 +188,18 @@ export default function App() {
       );
     }
 
+    if (currentPath === '/sobre-nos') {
+      return <AboutUsPage onNavigate={handleNavigate} />;
+    }
+
+    if (currentPath === '/termos-de-uso') {
+      return <TermsOfUsePage onNavigate={handleNavigate} />;
+    }
+
+    if (currentPath === '/politica-de-privacidade') {
+      return <PrivacyPolicyPage onNavigate={handleNavigate} />;
+    }
+
     if (productDetailParams) {
       return (
         <ProductDetailPage
@@ -301,9 +319,13 @@ export default function App() {
   };
 
   const isHome = currentPath === '/';
+  const isInstitutionalPage =
+    currentPath === '/sobre-nos' ||
+    currentPath === '/termos-de-uso' ||
+    currentPath === '/politica-de-privacidade';
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
-  const showHeader = isHome || isMarketCart || isBillingPage || currentPath === '/stores';
+  const showHeader = isHome || isInstitutionalPage || isMarketCart || isBillingPage || currentPath === '/stores';
 
   return (
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>
@@ -331,7 +353,7 @@ export default function App() {
         </AnimatePresence>
       </main>
 
-      {isHome && <Footer />}
+      {(isHome || isInstitutionalPage) && <Footer onNavigate={handleNavigate} />}
 
       {(isHome || isMarketCart || currentPath === '/stores') && (
         <BottomNav
