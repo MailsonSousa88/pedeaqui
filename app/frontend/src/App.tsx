@@ -253,6 +253,7 @@ export default function App() {
           }}
           onSuccess={(store) => {
             setCreatedStore(store);
+            localStorage.setItem('pedeaqui.store-slug', store.slug);
             setActivationError(null);
             handleNavigate('/billing/success');
           }}
@@ -299,7 +300,8 @@ export default function App() {
   const isHome = currentPath === '/';
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
-  const showHeader = isHome || isMarketCart || isBillingPage || currentPath === '/stores';
+  const isStorefront = currentPath.startsWith('/storefront') || currentPath.startsWith('/lojas');
+  const showHeader = isHome || isMarketCart || isBillingPage || currentPath === '/stores' || isStorefront;
 
   return (
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>

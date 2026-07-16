@@ -1,4 +1,4 @@
-import { AuthHeader } from '../../../../shared/components/AuthHeader'
+import Header from '../../../../shared/components/Header'
 import type { AppRoute } from '../../../../app/routes/types'
 
 type ForgotPasswordHeaderProps = {
@@ -6,5 +6,11 @@ type ForgotPasswordHeaderProps = {
 }
 
 export function ForgotPasswordHeader({ onNavigate }: ForgotPasswordHeaderProps) {
-  return <AuthHeader onNavigate={onNavigate} />
+  return (
+    <Header
+      currentPath="/forgot-password"
+      onNavigate={onNavigate}
+      minimal={true}
+    />
+  )
 }

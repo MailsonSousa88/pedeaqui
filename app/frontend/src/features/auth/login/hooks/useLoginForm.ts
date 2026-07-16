@@ -44,6 +44,7 @@ export function useLoginForm({ onSuccess }: UseLoginFormOptions = {}) {
       setSubmissionStage('resolving-store')
       const store = await loginService.findStoreForTenant(response.profile.id)
       saveAuthSession(response)
+      localStorage.setItem('pedeaqui.store-slug', store.slug)
       onSuccess?.(store)
     } catch (error) {
       clearAuthSession()
