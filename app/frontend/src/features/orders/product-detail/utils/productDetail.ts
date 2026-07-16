@@ -110,4 +110,5 @@ export const createProductDetailViewModel = (
   promoPriceCents: getActivePromoPrice(product, now),
   available: product.available,
   details: getPublicProductDetails(product.details),
+  whatsappNumber: store.whatsappNumber,
 })

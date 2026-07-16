@@ -75,7 +75,7 @@ export function ProductDetailPage({
         deliveryFee: 4.90,
         isOpen: true,
         color: 'border-red-100 hover:border-red-200 bg-red-50/10',
-        phone: '5586999999999',
+        phone: product.whatsappNumber || '5586999999999',
         items: [newCartItem],
       }
       cartStores.push(storeCart)
