@@ -4,7 +4,6 @@ import { CategoryChips } from '../components/CategoryChips'
 import { EmptyProductsArea } from '../components/EmptyProductsArea'
 import { ProductSearchBar } from '../components/ProductSearchBar'
 import { StorefrontFeedback } from '../components/StorefrontFeedback'
-import { StorefrontHeader } from '../components/StorefrontHeader'
 import { StoreHeroCard } from '../components/StoreHeroCard'
 import { useStorefront } from '../hooks/useStorefront'
 import { useStorefrontProducts } from '../hooks/useStorefrontProducts'
@@ -82,7 +81,6 @@ export function StorefrontPage({
   ) {
     return (
       <div className="min-h-screen bg-[#f5f5f5]">
-        <StorefrontHeader onBackToStores={onBackToStores} onOpenCart={onOpenCart} />
         <StorefrontFeedback
           onBackToStores={onBackToStores}
           onRetry={storefront.retry}
@@ -94,7 +92,6 @@ export function StorefrontPage({
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-      <StorefrontHeader onBackToStores={onBackToStores} onOpenCart={onOpenCart} />
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
         <StoreHeroCard
           canSharePublicLink={storefront.canSharePublicLink}
