@@ -5,11 +5,11 @@ import { requestResetSchema } from '../schemas/forgotPasswordSchemas'
 import type { ForgotPasswordRequestFormValues } from '../types/forgotPassword'
 
 type UseForgotPasswordRequestFormParams = {
-  onRequestSuccess: () => void
+  onRequestSubmit: (email: string) => Promise<void>
 }
 
 export function useForgotPasswordRequestForm({
-  onRequestSuccess,
+  onRequestSubmit,
 }: UseForgotPasswordRequestFormParams) {
   const form = useForm<ForgotPasswordRequestFormValues>({
     defaultValues: {
@@ -18,8 +18,8 @@ export function useForgotPasswordRequestForm({
     resolver: zodResolver(requestResetSchema),
   })
 
-  const handleRequestSubmit = form.handleSubmit(() => {
-    onRequestSuccess()
+  const handleRequestSubmit = form.handleSubmit(async (values) => {
+    await onRequestSubmit(values.email)
   })
 
   return {

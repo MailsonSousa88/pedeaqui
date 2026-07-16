@@ -1,11 +1,21 @@
 import { Clock, MailCheck } from 'lucide-react'
 
+import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
+
 type ForgotPasswordEmailSentProps = {
-  onSimulateResetLinkOpening: () => void
+  onBackToLogin: () => void
+  onResend: () => Promise<void>
+  isResending: boolean
+  resendError?: string
+  resendSuccessMessage?: string
 }
 
 export function ForgotPasswordEmailSent({
-  onSimulateResetLinkOpening,
+  onBackToLogin,
+  onResend,
+  isResending,
+  resendError,
+  resendSuccessMessage,
 }: ForgotPasswordEmailSentProps) {
   return (
     <div className="flex w-full flex-col items-center text-center">
@@ -57,30 +67,35 @@ export function ForgotPasswordEmailSent({
 
       <button
         type="button"
-        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-bold text-white shadow-lg shadow-red-200/60 outline-none transition-colors hover:bg-[#c80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507]"
+        disabled={isResending}
+        aria-busy={isResending}
+        onClick={() => {
+          void onResend()
+        }}
+        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-bold text-white shadow-lg shadow-red-200/60 outline-none transition-colors hover:bg-[#c80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] disabled:cursor-not-allowed disabled:bg-[#d34747]"
       >
-        Enviar novamente
+        {isResending ? 'Enviando...' : 'Enviar novamente'}
       </button>
 
-      <button
-        type="button"
-        onClick={onSimulateResetLinkOpening}
-        className="mt-4 text-sm font-semibold text-[#e30507] outline-none transition-colors hover:text-[#c80406] focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e30507]"
-        aria-label="Simular abertura do link recebido para visualizar a etapa Redefinir senha"
-      >
-        Simular abertura do link recebido
-      </button>
+      {resendSuccessMessage ? (
+        <p className="mt-3 text-sm font-medium text-[#0f9d58]" role="status">
+          {resendSuccessMessage}
+        </p>
+      ) : null}
 
-      <p className="mt-2 text-xs leading-relaxed text-slate-500">
-        Simulacao visual local; nenhum link real sera aberto.
-      </p>
+      {resendError ? (
+        <p className="mt-3 text-sm font-medium text-[#e30507]" role="alert">
+          {resendError}
+        </p>
+      ) : null}
 
-      <button
+      <SecondaryButton
         type="button"
-        className="mt-5 text-sm font-semibold text-[#e30507] outline-none transition-colors hover:text-[#c80406] focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#e30507]"
+        className="mt-5 w-full"
+        onClick={onBackToLogin}
       >
         Voltar para login
-      </button>
+      </SecondaryButton>
     </div>
   )
 }

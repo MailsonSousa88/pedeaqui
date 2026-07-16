@@ -1,30 +1,77 @@
 import { motion, useReducedMotion } from 'framer-motion'
 
 import { ForgotPasswordEmailSent } from './ForgotPasswordEmailSent'
+import { ForgotPasswordInvalidLink } from './ForgotPasswordInvalidLink'
 import { ForgotPasswordRequestForm } from './ForgotPasswordRequestForm'
 import { ForgotPasswordResetForm } from './ForgotPasswordResetForm'
 import type { ForgotPasswordStep } from '../types/forgotPassword'
 
 type ForgotPasswordCardProps = {
   currentStep: ForgotPasswordStep
-  onRequestSuccess: () => void
-  onSimulateResetLinkOpening: () => void
+  onBackToLogin: () => void
+  onRequestSubmit: (email: string) => Promise<void>
+  isSubmitting: boolean
+  requestError?: string
+  onResend: () => Promise<void>
+  isResending: boolean
+  resendError?: string
+  resendSuccessMessage?: string
+  recoveryAccessToken?: string
+  onRequestNewLink: () => void
+  onResetSuccess: () => void
 }
 
 export function ForgotPasswordCard({
   currentStep,
-  onRequestSuccess,
-  onSimulateResetLinkOpening,
+  onBackToLogin,
+  onRequestSubmit,
+  isSubmitting,
+  requestError,
+  onResend,
+  isResending,
+  resendError,
+  resendSuccessMessage,
+  recoveryAccessToken,
+  onRequestNewLink,
+  onResetSuccess,
 }: ForgotPasswordCardProps) {
   const shouldReduceMotion = useReducedMotion()
   const content = {
-    request: <ForgotPasswordRequestForm onRequestSuccess={onRequestSuccess} />,
-    sent: (
-      <ForgotPasswordEmailSent
-        onSimulateResetLinkOpening={onSimulateResetLinkOpening}
+    request: (
+      <ForgotPasswordRequestForm
+        onBackToLogin={onBackToLogin}
+        onRequestSubmit={onRequestSubmit}
+        isSubmitting={isSubmitting}
+        submitError={requestError}
       />
     ),
-    reset: <ForgotPasswordResetForm />,
+    sent: (
+      <ForgotPasswordEmailSent
+        onBackToLogin={onBackToLogin}
+        onResend={onResend}
+        isResending={isResending}
+        resendError={resendError}
+        resendSuccessMessage={resendSuccessMessage}
+      />
+    ),
+    reset: recoveryAccessToken ? (
+      <ForgotPasswordResetForm
+        accessToken={recoveryAccessToken}
+        onBackToLogin={onBackToLogin}
+        onResetSuccess={onResetSuccess}
+      />
+    ) : (
+      <ForgotPasswordInvalidLink
+        onBackToLogin={onBackToLogin}
+        onRequestNewLink={onRequestNewLink}
+      />
+    ),
+    'invalid-link': (
+      <ForgotPasswordInvalidLink
+        onBackToLogin={onBackToLogin}
+        onRequestNewLink={onRequestNewLink}
+      />
+    ),
   }[currentStep]
 
   return (

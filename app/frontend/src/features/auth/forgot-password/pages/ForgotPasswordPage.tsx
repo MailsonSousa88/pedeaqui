@@ -3,15 +3,64 @@ import { ForgotPasswordHeader } from '../components/ForgotPasswordHeader'
 import { ForgotPasswordStepper } from '../components/ForgotPasswordStepper'
 import { useForgotPasswordFlow } from '../hooks/useForgotPasswordFlow'
 import styles from '../styles/ForgotPasswordPage.module.css'
+import type { AppRoute } from '../../../../app/routes/types'
+import type { ForgotPasswordStep } from '../types/forgotPassword'
 
-export function ForgotPasswordPage() {
-  const { currentStep, goToEmailSent, simulateResetLinkOpening } =
-    useForgotPasswordFlow()
+type ForgotPasswordPageProps = {
+  onNavigate?: (route: AppRoute, planId?: number) => void
+}
+
+const resetRoute = '/forgot-password/reset'
+
+const getRecoveryAccessToken = () => {
+  if (window.location.pathname !== resetRoute) {
+    return undefined
+  }
+
+  const hash = window.location.hash.startsWith('#')
+    ? window.location.hash.slice(1)
+    : window.location.hash
+
+  const params = new URLSearchParams(hash)
+  const type = params.get('type')
+  const accessToken = params.get('access_token')
+
+  return type === 'recovery' && accessToken ? accessToken : undefined
+}
+
+const getInitialStep = (): ForgotPasswordStep => {
+  if (window.location.pathname !== resetRoute) {
+    return 'request'
+  }
+
+  return getRecoveryAccessToken() ? 'reset' : 'invalid-link'
+}
+
+export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
+  const recoveryAccessToken = getRecoveryAccessToken()
+  const {
+    currentStep,
+    goToRequest,
+    isSubmitting,
+    isResending,
+    requestError,
+    resendError,
+    resendSuccessMessage,
+    resendRecoveryRequest,
+    submitRecoveryRequest,
+  } = useForgotPasswordFlow({ initialStep: getInitialStep() })
+
+  const handleResetSuccess = () => {
+    window.history.replaceState(null, '', resetRoute)
+    onNavigate?.('/login')
+  }
 
   return (
     <div className={`${styles.page} flex min-h-screen flex-col bg-[#f5f5f5]`}>
       <div className="fixed inset-x-0 top-0 z-50">
-        <ForgotPasswordHeader />
+        <ForgotPasswordHeader
+          onNavigate={(route, planId) => onNavigate?.(route, planId)}
+        />
       </div>
       <div
         aria-hidden="true"
@@ -27,8 +76,17 @@ export function ForgotPasswordPage() {
           <div className="mt-7 w-full sm:mt-8">
             <ForgotPasswordCard
               currentStep={currentStep}
-              onRequestSuccess={goToEmailSent}
-              onSimulateResetLinkOpening={simulateResetLinkOpening}
+              onBackToLogin={() => onNavigate?.('/login')}
+              onRequestSubmit={submitRecoveryRequest}
+              isSubmitting={isSubmitting}
+              requestError={requestError}
+              onResend={resendRecoveryRequest}
+              isResending={isResending}
+              resendError={resendError}
+              resendSuccessMessage={resendSuccessMessage}
+              recoveryAccessToken={recoveryAccessToken}
+              onRequestNewLink={goToRequest}
+              onResetSuccess={handleResetSuccess}
             />
           </div>
         </div>

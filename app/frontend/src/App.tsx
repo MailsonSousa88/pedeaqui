@@ -12,6 +12,7 @@ import BottomNav from './shared/components/BottomNav';
 import Footer from './shared/components/Footer';
 import HomePage from './features/store/home-page/components/HomePage';
 import { LoginPage } from './features/auth/login/pages/LoginPage';
+import { ForgotPasswordPage } from './features/auth/forgot-password/pages/ForgotPasswordPage';
 import { RegisterPage } from './features/auth/register/pages/RegisterPage';
 import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
 import { localStores } from './features/store/store-list/data/localStores';
@@ -47,6 +48,8 @@ const getRouteFromLocation = (): AppRoute => {
 
   if (
     path === '/login' ||
+    path === '/forgot-password' ||
+    path === '/forgot-password/reset' ||
     path === '/register' ||
     path === '/stores' ||
     path === '/storefront' ||
@@ -146,6 +149,10 @@ export default function App() {
 
     if (currentPath === '/login') {
       return <LoginPage onNavigate={handleNavigate} />;
+    }
+
+    if (currentPath === '/forgot-password' || currentPath === '/forgot-password/reset') {
+      return <ForgotPasswordPage onNavigate={handleNavigate} />;
     }
 
     if (currentPath === '/register') {

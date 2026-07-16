@@ -5,10 +5,11 @@ import { LoginField } from './LoginField'
 import type { LoginResolvedStore } from '../types/login'
 
 type LoginFormProps = {
+  onForgotPasswordClick?: () => void
   onSuccess?: (store: LoginResolvedStore) => void
 }
 
-export function LoginForm({ onSuccess }: LoginFormProps) {
+export function LoginForm({ onForgotPasswordClick, onSuccess }: LoginFormProps) {
   const {
     errors,
     isPasswordVisible,
@@ -64,6 +65,7 @@ export function LoginForm({ onSuccess }: LoginFormProps) {
         <button
           type="button"
           className="rounded-md border-0 bg-transparent p-1 text-xs font-semibold text-[#e30507] outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] sm:text-sm"
+          onClick={onForgotPasswordClick}
         >
           Esqueci minha senha
         </button>

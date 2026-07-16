@@ -4,11 +4,12 @@ import { LoginForm } from './LoginForm'
 import type { LoginResolvedStore } from '../types/login'
 
 type LoginCardProps = {
+  onForgotPasswordClick?: () => void
   onRegisterClick?: () => void
   onSuccess?: (store: LoginResolvedStore) => void
 }
 
-export function LoginCard({ onRegisterClick, onSuccess }: LoginCardProps) {
+export function LoginCard({ onForgotPasswordClick, onRegisterClick, onSuccess }: LoginCardProps) {
   const shouldReduceMotion = useReducedMotion()
 
   return (
@@ -45,7 +46,7 @@ export function LoginCard({ onRegisterClick, onSuccess }: LoginCardProps) {
       </div>
 
       <div className="mt-8">
-        <LoginForm onSuccess={onSuccess} />
+        <LoginForm onForgotPasswordClick={onForgotPasswordClick} onSuccess={onSuccess} />
       </div>
 
       <div className="my-5 flex items-center gap-3" aria-hidden="true">
