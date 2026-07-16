@@ -14,8 +14,7 @@ import HomePage from './features/store/home-page/components/HomePage';
 import { LoginPage } from './features/auth/login/pages/LoginPage';
 import { ForgotPasswordPage } from './features/auth/forgot-password/pages/ForgotPasswordPage';
 import { RegisterPage } from './features/auth/register/pages/RegisterPage';
-import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
-import { localStores } from './features/store/store-list/data/localStores';
+import { StoreListRoutePage } from './features/store/store-list/pages/StoreListRoutePage';
 import { StorefrontPage } from './features/store/storefront/pages/StorefrontPage';
 import { StorefrontManagementPage } from './features/store/storefront/pages/StorefrontManagementPage';
 import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
@@ -171,13 +170,10 @@ export default function App() {
 
     if (currentPath === '/stores') {
       return (
-        <StoreListPage
-          state={{ status: 'success', stores: localStores }}
-          onSearchChange={() => undefined}
-          onSelectStore={(storeId) => {
-            handleNavigate(`/storefront/${encodeURIComponent(storeId)}`);
+        <StoreListRoutePage
+          onSelectStore={(slug) => {
+            handleNavigate(`/storefront/${encodeURIComponent(slug)}`);
           }}
-          onRetry={() => undefined}
         />
       );
     }

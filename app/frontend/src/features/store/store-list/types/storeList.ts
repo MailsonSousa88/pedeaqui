@@ -7,6 +7,25 @@ export type StoreSummary = {
   isSelectable: boolean
 }
 
+export type PublicStoreListItemDto = {
+  id: string
+  tenantId: string
+  slug: string
+  storeName: string
+  horarioAbertura: string
+  horarioFechamento: string
+  endereco: string
+  city: string
+  state: string
+  descricao: string | null
+  logoUrl: string | null
+  whatsappNumber: string
+  active: boolean
+  deletedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
 export type StoreListEmptyReason = 'list' | 'search'
 
 export type StoreListState =
@@ -27,8 +46,4 @@ export type StoreListCallbacks = {
   onRetry?: () => void
 }
 
-export type StoreListServiceResult =
-  | { status: 'unavailable' }
-  | { status: 'notImplemented' }
-
-export type LoadStoreList = () => Promise<StoreListServiceResult>
+export type LoadStoreList = () => Promise<readonly StoreSummary[]>
