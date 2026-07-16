@@ -114,15 +114,8 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
                   </div>
                   <h3 className="text-lg font-bold text-gray-800">Seu carrinho está vazio</h3>
                   <p className="text-sm text-gray-400 mt-1 max-w-sm">
-                    Adicione produtos para ver as lojas listadas aqui. Você pode redefinir o mock de teste a qualquer momento.
+                    Adicione produtos para ver as lojas listadas aqui.
                   </p>
-                  <button
-                    onClick={cart.handleResetCart}
-                    className="mt-6 px-5 py-2.5 bg-[#e30507] hover:bg-red-600 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-2 shadow-md shadow-red-500/15"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    Restaurar Itens de Teste
-                  </button>
                 </div>
               )}
             </div>
