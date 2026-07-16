@@ -7,6 +7,8 @@ import {
 import type { CreatedStore } from '../types/checkoutReview'
 
 const CREATED_STORE_KEY = 'pedeaqui.created-store'
+const DEFAULT_ACTIVATION_ERROR_MESSAGE =
+  'Não foi possível criar sua loja. Verifique seus dados e tente novamente.'
 
 const canUseSessionStorage = () => typeof window !== 'undefined' && Boolean(window.sessionStorage)
 
@@ -20,9 +22,7 @@ const getApiErrorMessage = (error: ApiError) => {
 
 const describeActivationError = (error: unknown) => {
   if (!(error instanceof ApiError)) {
-    return error instanceof Error
-      ? error.message
-      : 'Nao foi possivel criar sua loja. Tente novamente.'
+    return DEFAULT_ACTIVATION_ERROR_MESSAGE
   }
 
   const apiMessage = getApiErrorMessage(error)
@@ -43,11 +43,15 @@ const describeActivationError = (error: unknown) => {
     return 'Esta conta ja possui uma loja vinculada.'
   }
 
+  if (apiMessage?.includes('stores_whatsapp_number_key')) {
+    return 'Este número de WhatsApp já está vinculado a outra loja. Atualize o número do seu cadastro para continuar.'
+  }
+
   if (apiMessage === 'Invalid document') {
     return 'O documento informado para o lojista nao e valido.'
   }
 
-  return apiMessage || 'Nao foi possivel criar sua loja. Tente novamente.'
+  return DEFAULT_ACTIVATION_ERROR_MESSAGE
 }
 
 const saveCreatedStore = (store: CreatedStore) => {
