@@ -118,22 +118,29 @@ export default function Header({
                 Carrinho
               </button>
 
-              <div className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none">
-                <LayoutGrid size={16} />
-                Vitrine
-              </div>
+              {session ? (
+                <button
+                  onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage` as any)}
+                  className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors cursor-pointer ${
+                    currentPath.startsWith('/storefront') && currentPath.endsWith('/manage')
+                      ? 'text-primary'
+                      : 'text-on-surface-variant hover:text-primary'
+                  }`}
+                >
+                  <LayoutGrid size={16} />
+                  Vitrine
+                </button>
+              ) : (
+                <div className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none">
+                  <LayoutGrid size={16} />
+                  Vitrine
+                </div>
+              )}
             </nav>
 
             <div className="hidden md:flex items-center gap-4">
               {session ? (
                 <>
-                  <button
-                    onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage`)}
-                    className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10 flex items-center gap-1.5"
-                  >
-                    <LayoutDashboard size={16} />
-                    Painel
-                  </button>
                   <button
                     onClick={handleLogout}
                     className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors flex items-center gap-1.5"
@@ -172,15 +179,10 @@ export default function Header({
               {session ? (
                 <>
                   <button
-                    onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage`)}
-                    className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors shadow-md shadow-primary/10"
-                  >
-                    Painel
-                  </button>
-                  <button
                     onClick={handleLogout}
                     className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-sans font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors"
                   >
+                    <LogOut size={14} className="inline mr-1" />
                     Sair
                   </button>
                 </>
