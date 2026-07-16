@@ -5,7 +5,6 @@ import { CategoryManagementPage } from '../../category-management/pages/Category
 import { ProductManagementPage } from '../../product-management/pages/ProductManagementPage'
 import { EmptyProductsArea } from '../components/EmptyProductsArea'
 import { StorefrontFeedback } from '../components/StorefrontFeedback'
-import { StorefrontHeader } from '../components/StorefrontHeader'
 import { StoreManagementHeroCard } from '../components/StoreManagementHeroCard'
 import { StoreTabs } from '../components/StoreTabs'
 import { useStorefrontManagement } from '../hooks/useStorefrontManagement'
@@ -44,7 +43,6 @@ export function StorefrontManagementPage({
   ) {
     return (
       <div className="min-h-screen bg-[#f5f5f5]">
-        <StorefrontHeader onBackToStores={onBackToPublic} onOpenCart={onOpenCart} />
         <StorefrontFeedback
           onBackToStores={onBackToPublic}
           onRetry={management.retry}
@@ -57,7 +55,6 @@ export function StorefrontManagementPage({
   if (management.status === 'success' && !management.canManage) {
     return (
       <div className="min-h-screen bg-[#f5f5f5]">
-        <StorefrontHeader onBackToStores={onBackToPublic} onOpenCart={onOpenCart} />
         <main className="mx-auto flex min-h-[60vh] w-full max-w-3xl items-center px-4 py-10 sm:px-6">
           <section className="w-full rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-sm">
             <span className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-[#fff0f0] text-[#e30507]">
@@ -91,7 +88,6 @@ export function StorefrontManagementPage({
 
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-      <StorefrontHeader onBackToStores={onBackToPublic} onOpenCart={onOpenCart} />
       <main className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
         <StoreManagementHeroCard
           canSharePublicLink={management.canSharePublicLink}
