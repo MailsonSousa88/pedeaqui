@@ -1,2 +1,8 @@
 # Registros locais de leitura e análise
 docs/records/
+
+# Cache local do Turborepo
+**/.turbo/
+
+# Dependências instaladas na raiz do monorepositório
+/node_modules/
