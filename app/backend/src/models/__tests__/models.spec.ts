@@ -1,0 +1,551 @@
+import { Admin, AuditLog, Plan, Tenant, Subscription, Store, Category, Product, ProductImage, ProductVariation, VariationOption, Profile } from '../index';
+
+describe('Domain Entities', () => {
+  describe('Admin Entity', () => {
+    it('should create an Admin instance correctly', () => {
+      const adminProps = {
+        id: 'uuid-admin',
+        role: 'super_admin' as const,
+        active: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const admin = new Admin(adminProps);
+      expect(admin.id).toBe(adminProps.id);
+      expect(admin.role).toBe(adminProps.role);
+    });
+  });
+
+  describe('AuditLog Entity', () => {
+    it('should create an AuditLog instance correctly', () => {
+      const auditProps = {
+        id: 'uuid-log',
+        adminId: 'uuid-admin',
+        tenantId: 'uuid-tenant',
+        action: 'tenant.create' as const,
+        targetTable: 'tenants',
+        targetId: 'uuid-tenant',
+        payload: { document: '12345678900' },
+        createdAt: new Date()
+      };
+      const log = new AuditLog(auditProps);
+      expect(log.action).toBe(auditProps.action);
+      expect(log.adminId).toBe(auditProps.adminId);
+      expect(log.tenantId).toBe(auditProps.tenantId);
+      expect(log.payload).toEqual(auditProps.payload);
+    });
+
+    it('should allow null adminId and tenantId', () => {
+      const auditProps = {
+        id: 'uuid-log',
+        adminId: null,
+        tenantId: null,
+        action: 'tenant.create' as const,
+        targetTable: 'tenants',
+        targetId: 'uuid-tenant',
+        payload: {},
+        createdAt: new Date()
+      };
+      const log = new AuditLog(auditProps);
+      expect(log.adminId).toBeNull();
+      expect(log.tenantId).toBeNull();
+    });
+  });
+
+  describe('Plan Entity', () => {
+    it('should create a Plan instance correctly', () => {
+      const planProps = {
+        id: 'uuid-plan',
+        name: 'Premium Plan',
+        priceBrlCents: 9990,
+        stripePriceId: 'price_123',
+        active: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const plan = new Plan(planProps);
+      expect(plan.priceBrlCents).toBe(9990);
+    });
+
+    it('should throw an error if price is less than or equal to 0', () => {
+      const planProps = {
+        id: 'uuid-plan',
+        name: 'Premium Plan',
+        priceBrlCents: 0,
+        stripePriceId: 'price_123',
+        active: true,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Plan(planProps)).toThrow('Price BRL cents must be greater than 0');
+    });
+  });
+
+  describe('Tenant Entity', () => {
+    it('should create a Tenant instance correctly with a valid business document (CNPJ)', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        businessDocument: '33.683.111/0001-07',
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const tenant = new Tenant(tenantProps);
+      expect(tenant.photoStorageLimit).toBe(500000);
+      expect(tenant.businessDocument).toBe('33683111000107'); // sanitized
+    });
+
+    it('should create a Tenant instance correctly without a business document (fallback scenario)', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const tenant = new Tenant(tenantProps);
+      expect(tenant.photoStorageLimit).toBe(500000);
+      expect(tenant.businessDocument).toBeNull();
+    });
+
+    it('should throw an error if an invalid business document is provided', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        businessDocument: '11111111111111', // invalid CNPJ
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Tenant(tenantProps)).toThrow('Invalid business document');
+    });
+
+    it('should throw an error if photo storage limit is less than or equal to 0', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'active' as const,
+        photoStorageLimit: 0,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Tenant(tenantProps)).toThrow('Photo storage limit must be greater than 0');
+    });
+
+    it('should throw an error if status is invalid', () => {
+      const tenantProps = {
+        id: 'uuid-tenant',
+        status: 'invalid' as any,
+        photoStorageLimit: 500000,
+        stripeCustomerId: 'cus_123',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Tenant(tenantProps)).toThrow('Invalid tenant status');
+    });
+  });
+
+  describe('Subscription Entity', () => {
+    const now = new Date();
+    const thirtyDaysLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+
+    it('should create a Subscription instance correctly', () => {
+      const subProps = {
+        id: 'uuid-sub',
+        tenantId: 'uuid-tenant',
+        planId: 'uuid-plan',
+        status: 'active' as const,
+        stripeSubscriptionId: 'sub_123',
+        startsAt: now,
+        endsAt: thirtyDaysLater,
+        createdAt: now,
+        updatedAt: now
+      };
+      const sub = new Subscription(subProps);
+      expect(sub.status).toBe('active');
+      expect(sub.tenantId).toBe('uuid-tenant');
+      expect(sub.planId).toBe('uuid-plan');
+    });
+
+    it('should throw an error on invalid status', () => {
+      const subProps = {
+        id: 'uuid-sub',
+        tenantId: 'uuid-tenant',
+        planId: 'uuid-plan',
+        status: 'invalid' as any,
+        startsAt: now,
+        endsAt: thirtyDaysLater,
+        createdAt: now,
+        updatedAt: now
+      };
+      expect(() => new Subscription(subProps)).toThrow('Invalid subscription status');
+    });
+
+    it('should throw an error if endsAt is before startsAt', () => {
+      const subProps = {
+        id: 'uuid-sub',
+        tenantId: 'uuid-tenant',
+        planId: 'uuid-plan',
+        status: 'active' as const,
+        startsAt: thirtyDaysLater,
+        endsAt: now,
+        createdAt: now,
+        updatedAt: now
+      };
+      expect(() => new Subscription(subProps)).toThrow('Subscription end date must be after start date');
+    });
+  });
+
+  describe('Store Entity', () => {
+    it('should create a Store instance correctly', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: 'my-store',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'SP',
+        descricao: 'Store Description',
+        logoUrl: 'http://image.url',
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const store = new Store(storeProps);
+      expect(store.slug).toBe('my-store');
+      expect(store.city).toBe('Sao Paulo');
+      expect(store.state).toBe('SP');
+    });
+
+    it('should throw error if slug is empty', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: '',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'SP',
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Store(storeProps)).toThrow('Store slug is required');
+    });
+
+    it('should throw error if name is empty', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: 'my-store',
+        storeName: '',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'SP',
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Store(storeProps)).toThrow('Store name is required');
+    });
+
+    it('should throw error if city is empty', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: 'my-store',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: '',
+        state: 'SP',
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Store(storeProps)).toThrow('Store city is required');
+    });
+
+    it('should throw error if state is not a two-letter uppercase UF', () => {
+      const storeProps = {
+        id: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        slug: 'my-store',
+        storeName: 'My Store',
+        horarioAbertura: '08:00:00',
+        horarioFechamento: '18:00:00',
+        endereco: 'Rua das Lojas, 123',
+        city: 'Sao Paulo',
+        state: 'sp',
+        descricao: null,
+        logoUrl: null,
+        whatsappNumber: '11999999999',
+        active: true,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Store(storeProps)).toThrow('Store state must be a two-letter uppercase UF');
+    });
+  });
+
+  describe('Category Entity', () => {
+    it('should create a Category instance correctly', () => {
+      const catProps = {
+        id: 'uuid-cat',
+        storeId: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        name: 'Electronics',
+        description: null,
+        sortOrder: 1,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      const category = new Category(catProps);
+      expect(category.name).toBe('Electronics');
+    });
+
+    it('should throw error if name is empty', () => {
+      const catProps = {
+        id: 'uuid-cat',
+        storeId: 'uuid-store',
+        tenantId: 'uuid-tenant',
+        name: '',
+        description: null,
+        sortOrder: 1,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      expect(() => new Category(catProps)).toThrow('Category name is required');
+    });
+  });
+
+  describe('Product Entity', () => {
+    const validProps = {
+      id: 'uuid-product',
+      storeId: 'uuid-store',
+      tenantId: 'uuid-tenant',
+      categoryId: 'uuid-cat',
+      name: 'iPhone 15',
+      description: 'Latest iPhone',
+      priceCents: 99900,
+      promoPriceCents: null,
+      promoEndsAt: null,
+      details: {},
+      available: true,
+      deletedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+
+    it('should create a Product instance correctly', () => {
+      const product = new Product(validProps);
+      expect(product.name).toBe('iPhone 15');
+    });
+
+    it('should throw error if name is empty', () => {
+      expect(() => new Product({ ...validProps, name: '' })).toThrow('Product name is required');
+    });
+
+    it('should throw error if price is 0 or negative', () => {
+      expect(() => new Product({ ...validProps, priceCents: 0 })).toThrow('Price cents must be greater than 0');
+    });
+
+    it('should throw error if promoPriceCents is 0 or negative', () => {
+      expect(() => new Product({ ...validProps, promoPriceCents: 0 })).toThrow('Promo price cents must be greater than 0');
+    });
+
+    it('should throw error if promoPriceCents is greater than or equal to priceCents', () => {
+      expect(() => new Product({ ...validProps, promoPriceCents: 100000 })).toThrow('Promo price cents must be less than base price cents');
+    });
+
+    it('should throw error if promoEndsAt is defined but promoPriceCents is null', () => {
+      expect(() => new Product({ ...validProps, promoEndsAt: new Date() })).toThrow('Promo ends at requires promo price cents to be defined');
+    });
+  });
+
+  describe('ProductImage Entity', () => {
+    it('should create ProductImage correctly', () => {
+      const imgProps = {
+        id: 'uuid-img',
+        productId: 'uuid-product',
+        r2Key: 'r2-key-value',
+        url: 'http://image.url/img.png',
+        sizeBytes: 1024,
+        mimeType: 'image/png',
+        sortOrder: 1,
+        createdAt: new Date()
+      };
+      const img = new ProductImage(imgProps);
+      expect(img.url).toBe(imgProps.url);
+    });
+
+    it('should throw error if url is empty', () => {
+      const imgProps = {
+        id: 'uuid-img',
+        productId: 'uuid-product',
+        r2Key: 'r2-key-value',
+        url: '',
+        sizeBytes: 1024,
+        mimeType: 'image/png',
+        sortOrder: 1,
+        createdAt: new Date()
+      };
+      expect(() => new ProductImage(imgProps)).toThrow('Product image URL is required');
+    });
+  });
+
+  describe('ProductVariation Entity', () => {
+    it('should create ProductVariation correctly', () => {
+      const varProps = {
+        id: 'uuid-var',
+        productId: 'uuid-product',
+        label: 'Color',
+        sortOrder: 1,
+        createdAt: new Date()
+      };
+      const variation = new ProductVariation(varProps);
+      expect(variation.label).toBe(varProps.label);
+    });
+
+    it('should throw error if label is empty', () => {
+      const varProps = {
+        id: 'uuid-var',
+        productId: 'uuid-product',
+        label: '',
+        sortOrder: 1,
+        createdAt: new Date()
+      };
+      expect(() => new ProductVariation(varProps)).toThrow('Product variation label is required');
+    });
+  });
+
+  describe('VariationOption Entity', () => {
+    it('should create VariationOption correctly', () => {
+      const optProps = {
+        id: 'uuid-opt',
+        variationId: 'uuid-var',
+        value: 'Black',
+        priceModifierCents: 0,
+        sortOrder: 1,
+        createdAt: new Date()
+      };
+      const opt = new VariationOption(optProps);
+      expect(opt.value).toBe(optProps.value);
+    });
+
+    it('should throw error if value is empty', () => {
+      const optProps = {
+        id: 'uuid-opt',
+        variationId: 'uuid-var',
+        value: '',
+        priceModifierCents: 0,
+        sortOrder: 1,
+        createdAt: new Date()
+      };
+      expect(() => new VariationOption(optProps)).toThrow('Variation option value is required');
+    });
+  });
+
+  describe('Profile Entity', () => {
+    const validCPF = '52886531863';
+    const validCNPJ = '33683111000107';
+
+    it('should create Profile correctly with valid CPF', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: validCPF
+      });
+      expect(profile.name).toBe('Test Profile');
+      expect(profile.document).toBe(validCPF);
+    });
+
+    it('should create Profile correctly with formatted CPF and sanitize it', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: '528.865.318-63'
+      });
+      expect(profile.document).toBe(validCPF);
+    });
+
+    it('should throw error if valid CNPJ is provided instead of CPF', () => {
+      expect(() => new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: validCNPJ
+      })).toThrow('Invalid CPF');
+    });
+
+    it('should throw error if formatted CNPJ is provided', () => {
+      expect(() => new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999',
+        document: '33.683.111/0001-07'
+      })).toThrow('Invalid CPF');
+    });
+
+    it('should create Profile correctly without document (optional)', () => {
+      const profile = new Profile({
+        id: 'uuid-profile',
+        name: 'Test Profile',
+        phone: '11999999999'
+      });
+      expect(profile.document).toBeUndefined();
+    });
+
+    it('should throw error if id is empty', () => {
+      expect(() => new Profile({ id: '', name: 'Test', phone: '123' })).toThrow('Profile id is required');
+    });
+
+    it('should throw error if name is empty', () => {
+      expect(() => new Profile({ id: 'id', name: '', phone: '123' })).toThrow('Profile name is required');
+    });
+
+    it('should throw error if phone is empty', () => {
+      expect(() => new Profile({ id: 'id', name: 'Test', phone: '' })).toThrow('Profile phone is required');
+    });
+
+    it('should throw error if document is invalid', () => {
+      expect(() => new Profile({
+        id: 'id',
+        name: 'Test',
+        phone: '123',
+        document: '123456'
+      })).toThrow('Invalid CPF');
+    });
+  });
+});

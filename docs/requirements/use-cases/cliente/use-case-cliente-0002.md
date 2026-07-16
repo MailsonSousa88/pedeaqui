@@ -1,12 +1,14 @@
-﻿# UC-CL-0002 - Gerenciar carrinho por loja
+# UC-CL-0002 - Selecionar produtos e organizar carrinho por loja
+
+> Observação de nomenclatura: o diretório e o código `CL` permanecem por compatibilidade documental, mas o ator correto deste fluxo é **Consumidor**, não cliente.
 
 ## Objetivo
 
-Permitir que o cliente adicione produtos ao carrinho, visualize os pedidos organizados por loja e remova produtos antes da finalização.
+Permitir que o consumidor selecione produtos de uma loja, adicione itens ao carrinho temporário e visualize o carrinho organizado por cards de loja, onde cada card representa os produtos escolhidos naquela loja.
 
 ## Ator principal
 
-Cliente.
+Consumidor.
 
 ## Atores secundários
 
@@ -14,50 +16,76 @@ Lojista.
 
 ## Pré-condições
 
-- O cliente deve estár visualizando uma loja ativa.
+- O consumidor deve estar visualizando uma loja ativa.
 - A loja deve possuir produtos disponíveis.
-- O produto selecionado deve estár disponível para inclusão no carrinho.
+- O produto selecionado deve estar disponível para inclusão no carrinho.
+- O carrinho temporário deve estar disponível no navegador do consumidor.
 
 ## Pós-condições
 
-- O carrinho contem os produtos selecionados pelo cliente.
-- Os itens do carrinho ficam organizados por loja.
-- Produtos removidos deixam de compor o pedido daquela loja.
+- O carrinho contém produtos selecionados pelo consumidor.
+- Os produtos ficam associados à loja de origem.
+- A tela de carrinho exibe cards por loja, não uma lista única misturando produtos de lojas diferentes.
+- Ao clicar em um card de loja, o consumidor visualiza os produtos escolhidos daquela loja.
+- Produtos removidos deixam de compor o card daquela loja.
 
 ## Gatilho
 
-O cliente seleciona um produto e decide adiciona-lo ao carrinho.
+O consumidor visualiza um produto em uma vitrine pública e decide adicioná-lo ao carrinho.
 
 ## Fluxo principal
 
 | Passo | Ação |
 |-------|------|
-| 1 | O cliente acessa uma loja e visualiza seus produtos. |
-| 2 | O cliente seleciona um produto. |
-| 3 | O cliente adiciona o produto ao carrinho. |
-| 4 | O sistema registra o produto no carrinho associado a loja correspondente. |
-| 5 | O cliente acessa o carrinho. |
-| 6 | O sistema exibe os pedidos organizados por loja. |
-| 7 | O cliente visualiza os produtos adicionados em cada pedido por loja. |
+| 1 | O consumidor acessa a vitrine de uma loja ativa. |
+| 2 | O sistema exibe produtos disponíveis da loja. |
+| 3 | O consumidor seleciona um produto. |
+| 4 | O sistema exibe detalhes ou informações suficientes do produto. |
+| 5 | O consumidor adiciona uma ou mais unidades do produto ao carrinho. |
+| 6 | O sistema registra o produto no carrinho temporário associado à loja correspondente. |
+| 7 | O consumidor acessa a página de carrinho. |
+| 8 | O sistema exibe um card/banner para cada loja que possui produtos no carrinho. |
+| 9 | O consumidor clica no card da loja desejada. |
+| 10 | O sistema exibe os produtos do carrinho referentes somente àquela loja. |
+| 11 | O consumidor revisa produtos, quantidades e resumo daquela loja. |
 
 ## Fluxos alternativos
 
-### FA01 - Remover produto do carrinho
+### FA01 - Consumidor adiciona mais de um produto da mesma loja
 
 | Passo | Ação |
 |-------|------|
-| 7a | O cliente escolhe remover um ou mais produtos de um pedido por loja. |
-| 7b | O sistema remove os produtos selecionados. |
-| 7c | O sistema atualiza o card do pedido referente à loja com os produtos restantes. |
-| 7d | O fluxo retorna ao passo 7 do fluxo principal. |
+| 5a | O consumidor seleciona outro produto da mesma loja. |
+| 5b | O consumidor adiciona o produto ao carrinho. |
+| 5c | O sistema atualiza o mesmo card da loja no carrinho. |
+| 5d | O fluxo retorna ao passo 7 do fluxo principal quando o consumidor acessa o carrinho. |
 
-### FA02 - Cliente adiciona produtos de lojas diferentes
+### FA02 - Consumidor adiciona produtos de lojas diferentes
 
 | Passo | Ação |
 |-------|------|
-| 3a | O cliente acessa outra loja e adiciona produtos ao carrinho. |
-| 3b | O sistema cria ou atualiza um card de pedido separado para a nova loja. |
-| 3c | O fluxo retorna ao passo 6 do fluxo principal. |
+| 5a | O consumidor acessa outra loja ativa. |
+| 5b | O consumidor adiciona produtos dessa outra loja ao carrinho. |
+| 5c | O sistema cria ou atualiza um card separado para essa loja. |
+| 5d | Na página de carrinho, o sistema exibe um card por loja com produtos selecionados. |
+
+### FA03 - Remover produto do card da loja
+
+| Passo | Ação |
+|-------|------|
+| 11a | O consumidor remove um produto do card da loja. |
+| 11b | O sistema solicita confirmação quando a quantidade chegar a zero, se aplicável. |
+| 11c | O sistema remove ou atualiza o item. |
+| 11d | O sistema recalcula o resumo daquele card de loja. |
+| 11e | O fluxo retorna ao passo 11 do fluxo principal. |
+
+### FA04 - Atualizar quantidade
+
+| Passo | Ação |
+|-------|------|
+| 11a | O consumidor incrementa ou decrementa a quantidade de um produto. |
+| 11b | O sistema atualiza a quantidade do item. |
+| 11c | O sistema recalcula o resumo daquele card de loja em tempo real. |
 
 ## Fluxos de exceção
 
@@ -65,20 +93,57 @@ O cliente seleciona um produto e decide adiciona-lo ao carrinho.
 
 | Passo | Ação |
 |-------|------|
-| 3a | O sistema identifica que o produto não está mais disponível. |
-| 3b | O sistema impede a inclusão do produto no carrinho. |
-| 3c | O sistema informa o cliente sobre a indisponibilidade. |
+| 5a | O sistema identifica que o produto não está mais disponível. |
+| 5b | O sistema impede a inclusão do produto no carrinho. |
+| 5c | O sistema informa o consumidor sobre a indisponibilidade. |
+
+### FE02 - Carrinho sem cards de loja
+
+| Passo | Ação |
+|-------|------|
+| 7a | O consumidor acessa a página de carrinho sem produtos adicionados. |
+| 7b | O sistema exibe estado vazio informando que o carrinho está vazio. |
+| 7c | O sistema orienta o consumidor a voltar para lojas/produtos. |
+
+### FE03 - Card de loja fica vazio após remoções
+
+| Passo | Ação |
+|-------|------|
+| 11a | O consumidor remove todos os produtos de uma loja. |
+| 11b | O sistema remove o card daquela loja do carrinho. |
+| 11c | Se não houver outros cards, o sistema exibe estado vazio do carrinho. |
+
+### FE04 - Limite de itens atingido
+
+| Passo | Ação |
+|-------|------|
+| 5a | O consumidor tenta adicionar item acima do limite permitido. |
+| 5b | O sistema bloqueia a inclusão. |
+| 5c | O sistema informa que o limite do carrinho foi atingido. |
 
 ## Regras de negócio
 
-- O carrinho deve agrupar os produtos por loja.
-- Cada pedido finalizado deve pertencer a uma única loja.
-- A remoção de produtos deve atualizar imediatamente o resumo do pedido.
-- Um produto indisponível não deve ser adicionado ao carrinho.
+- O carrinho é temporário e armazenado no navegador do consumidor.
+- A organização visual do carrinho deve ser por cards de loja.
+- Um card de loja representa os produtos selecionados daquela loja.
+- O consumidor não deve ver produtos de lojas diferentes misturados em uma única lista de pedido.
+- Cada finalização deve acontecer para uma loja específica.
+- Produto já presente deve ter quantidade incrementada.
+- Snapshot de nome, preço e imagem deve ser gravado no momento da adição, conforme RF.
+- A remoção e atualização de quantidade devem recalcular o resumo em tempo real.
+- Produto indisponível não deve ser adicionado ao carrinho.
+
+## Telas relacionadas
+
+- Futuras telas de vitrine pública da loja.
+- Futuras telas de detalhe de produto.
+- Futuras telas de carrinho.
 
 ## Referências
 
+- `RF004` - Adição de produtos ao carrinho de compras.
+- `RF005` - Remoção e atualização de quantidade de produtos do carrinho.
+- `RF006` - Finalização da compra.
+- `RF033` - Processamento de checkout e validação.
 - Status Report I - Fluxo Principal: Consumidor finaliza pedido por loja.
 - Status Report I - Fluxo Alternativo: Remover produto do carrinho antes de finalizar.
-
-

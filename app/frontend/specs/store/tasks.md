@@ -1,0 +1,231 @@
+# Tasks: storefront pública do consumidor — issue #52
+
+## Dependency Graph
+
+```text
+T001 -> T002 -> T003 -> T004
+T002 -> T005
+T003 + T005 -> T006 -> T007 -> T008
+```
+
+## Tasks
+
+- [x] T001 Configurar testes frontend e registrar contratos da entrega
+  - Type: setup/test
+  - Paths allowed:
+    - `app/frontend/package.json`
+    - `app/frontend/package-lock.json`
+    - `app/frontend/vite.config.ts`
+    - `app/frontend/vitest.config.ts`
+    - `app/frontend/specs/store/contracts/storefront-api.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+  - Depends on: nenhuma
+  - Requirements: `RF-FE-007`, `RF-FE-008`, `RNF0043`, `RNF0045`
+  - Done when:
+    - existir script de teste não interativo;
+    - Vitest, React Testing Library e jsdom estiverem disponíveis apenas em desenvolvimento;
+    - o contrato documentar 404 público, coleções atuais e lacunas sem inventar backend.
+  - Checks:
+    - `npm test -- --run`
+  - Validation notes:
+    - dependências instaladas somente em `devDependencies`;
+    - configuração Vitest isolada dos plugins de build;
+    - `npm test -- --run`: passou fora do sandbox (nenhum teste criado ainda, como esperado na T001).
+
+- [x] T002 Separar estado público e gestão autorizada
+  - Type: refactor/hooks
+  - Paths allowed:
+    - `app/frontend/src/features/store/storefront/hooks/`
+    - `app/frontend/src/features/store/storefront/services/storefrontService.ts`
+    - `app/frontend/src/features/store/storefront/types/storefront.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `app/frontend/src/features/store/product-management/`
+    - `app/frontend/src/features/store/category-management/`
+  - Depends on: T001
+  - Requirements: `RF-FE-001`, `RF-FE-005`, `RF-FE-007`, `RF-FE-008`
+  - Done when:
+    - `useStorefront` não expuser mutações administrativas;
+    - 404 for diferenciado de falha temporária;
+    - leitura pública e catálogo oferecerem retry;
+    - Web Share API usar Clipboard como fallback;
+    - gestão validar sessão/propriedade antes de expor edição.
+  - Checks:
+    - `npm run lint`
+    - `npm test -- --run`
+  - Validation notes:
+    - lint dos paths da T002 passou;
+    - `npm run lint` global permanece bloqueado por 3 variáveis não usadas preexistentes em `market-cart/OrderSuccessCard.tsx`, `market-cart/useCart.ts` e `home-page/HeroCarousel.tsx`, fora do Scope Lock;
+    - `npm test`: passou fora do sandbox;
+    - hook público não importa sessão nem mutação; hook de gestão concentra propriedade e edição.
+
+- [x] T003 Implementar composição consumer e catálogo refinável
+  - Type: feature/ui
+  - Paths allowed:
+    - `app/frontend/src/features/store/storefront/components/`
+    - `app/frontend/src/features/store/storefront/pages/StorefrontPage.tsx`
+    - `app/frontend/src/features/store/storefront/types/storefront.ts`
+    - `app/frontend/src/features/store/storefront/utils/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `app/frontend/src/features/store/product-management/`
+    - `app/frontend/src/features/store/category-management/`
+    - `app/frontend/src/features/orders/market-cart/`
+  - Depends on: T002
+  - Requirements: `RF-FE-001` até `RF-FE-008`
+  - Done when:
+    - a página pública não renderizar controles administrativos;
+    - identidade, informações públicas e imagens/fallbacks forem exibidos sem mocks;
+    - busca, categoria, preço, ordenação e páginas de até 20 itens funcionarem em conjunto;
+    - promoções e estados públicos forem distinguíveis;
+    - header oferecer voltar para lojas, compartilhar e acessar carrinho;
+    - detalhe do produto preservar slug e id.
+  - Checks:
+    - `npm run lint`
+    - `npm test -- --run`
+  - Validation notes:
+    - lint dos paths da storefront passou; o lint global mantém apenas os 3 erros preexistentes fora do Scope Lock registrados na T002;
+    - `npx tsc -b --pretty false`: passou;
+    - `npm test`: passou fora do sandbox;
+    - visão pública contém somente identidade, compartilhamento, categorias, filtros, produtos e navegação consumer.
+
+- [x] T004 Criar regressões automatizadas da visão pública
+  - Type: test
+  - Paths allowed:
+    - `app/frontend/src/features/store/storefront/**/*.test.ts`
+    - `app/frontend/src/features/store/storefront/**/*.test.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - arquivos de produção fora da storefront
+  - Depends on: T003
+  - Requirements: critérios de teste da issue #52, `RF-FE-004`, `RF-FE-007`, `RF-FE-008`
+  - Done when:
+    - filtros/ordenação/paginação tiverem testes determinísticos;
+    - a rota consumer for testada sem `Editar`, `Adicionar` ou gestão de categorias;
+    - loading, indisponível, erro e vazio forem cobertos proporcionalmente ao risco.
+  - Checks:
+    - `npm test -- --run`
+  - Validation notes:
+    - 2 arquivos e 7 testes passaram;
+    - cobertos combinação de filtros, promoção expirada, ordenação, paginação, ausência de controles administrativos, busca, indisponibilidade pública, vazio e erro;
+    - lint dos testes e TypeScript passaram.
+
+- [x] T005 Preservar a experiência do proprietário em rota autorizada
+  - Type: feature/management
+  - Paths allowed:
+    - `app/frontend/src/features/store/storefront/pages/StorefrontManagementPage.tsx`
+    - `app/frontend/src/features/store/storefront/components/StoreManagementHeroCard.tsx`
+    - `app/frontend/src/features/store/storefront/components/StoreTabs.tsx`
+    - `app/frontend/src/features/store/storefront/components/StoreEditForm.tsx`
+    - `app/frontend/src/features/store/storefront/hooks/useStorefrontManagement.ts`
+    - `app/frontend/src/features/store/storefront/pages/StorefrontManagementPage.test.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - alterações nos módulos de CRUD importados
+  - Depends on: T002
+  - Requirements: `RF-FE-007`
+  - Done when:
+    - gestão existir apenas em `/storefront/:slug/manage`;
+    - visitante sem sessão não visualizar controles;
+    - proprietário autorizado preservar edição e painéis existentes;
+    - mutações continuarem usando bearer token e autorização backend.
+  - Checks:
+    - `npm run lint`
+    - `npm test -- --run`
+  - Validation notes:
+    - lint dos paths da T005 e TypeScript passaram;
+    - 3 arquivos e 9 testes passaram;
+    - controles administrativos aparecem somente com `canManage=true`;
+    - correção acessível removeu rótulos duplicados nas abas de gestão.
+
+- [x] T006 Atualizar roteamento público e pós-login
+  - Type: routing
+  - Paths allowed:
+    - `app/frontend/src/App.tsx`
+    - `app/frontend/src/app/routes/types.ts`
+    - `app/frontend/src/features/auth/login/pages/LoginPage.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - demais features de autenticação
+  - Depends on: T003, T005
+  - Requirements: `RF-FE-001`, `RF-FE-006`, `RF-FE-007`
+  - Done when:
+    - `/storefront/:slug` e `/lojas/:slug` renderizarem sempre a visão consumer;
+    - `/storefront/:slug/manage` renderizar a gestão separada;
+    - login e configuração pós-checkout encaminharem o proprietário à rota de gestão;
+    - navegação pública para lojas, detalhe e carrinho funcionar pelas rotas atuais.
+  - Checks:
+    - `npm run lint`
+    - `npm test -- --run`
+  - Validation notes:
+    - lint dos paths de roteamento e TypeScript passaram;
+    - 3 arquivos e 9 testes passaram;
+    - listagem navega por slug, rotas públicas permanecem consumer e login/checkout direcionam o proprietário para `/manage`.
+
+- [x] T007 Executar análise cruzada e corrigir inconsistências
+  - Type: verification
+  - Paths allowed:
+    - `app/frontend/specs/store/checklist.md`
+    - paths permitidos nas tasks anteriores somente para correções encontradas
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+  - Depends on: T004, T006
+  - Requirements: `RF-FE-001` até `RF-FE-008`
+  - Done when:
+    - spec, clarify, plan, tasks, contrato e código não apresentarem contradições bloqueantes;
+    - checklist registrar evidências e pendências externas reais.
+  - Checks:
+    - `npm test -- --run`
+    - `npm run lint`
+    - `npm run build`
+    - `git diff --check`
+  - Validation notes:
+    - 3 arquivos e 9 testes passaram;
+    - `npm run build`: passou fora do sandbox; TypeScript e bundle de produção concluídos;
+    - `git diff --check`: passou;
+    - lint de todos os arquivos alterados passou;
+    - lint global executado e limitado aos 3 erros preexistentes fora do Scope Lock já registrados;
+    - checklist cruzado atualizado sem inconsistência crítica da feature.
+
+- [x] T008 Validar responsividade, acessibilidade e Definition of Done
+  - Type: final-validation
+  - Paths allowed:
+    - `app/frontend/specs/store/tasks.md`
+    - paths permitidos nas tasks anteriores somente para correções de validação
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+  - Depends on: T007
+  - Requirements: `RNF0015`, `RNF0016`, critérios de aceite da issue #52
+  - Done when:
+    - testes, lint e build passarem;
+    - visão pública e gestão forem verificadas em mobile e desktop;
+    - controles principais funcionarem por teclado e possuírem nomes/foco acessíveis;
+    - tasks forem marcadas somente após seus checks.
+  - Checks:
+    - `npm test -- --run`
+    - `npm run lint`
+    - `npm run build`
+    - `git diff --check`
+  - Validation notes:
+    - browser local em 320x800: sem overflow horizontal; botões visíveis com 44–48 px de altura; estado de erro público legível e acionável;
+    - browser local em 1440x900: layout centralizado, navegação pública clara e sem overflow horizontal;
+    - console do navegador sem warnings ou erros de interface; backend não estava em execução, então sucesso/gestão foram validados pela suíte jsdom em vez de dados reais no browser;
+    - 3 arquivos e 9 testes passaram;
+    - lint de todo o escopo alterado, TypeScript, build de produção e `git diff --check` passaram;
+    - lint global permanece com somente os 3 erros preexistentes fora do Scope Lock.
+
+## Notes
+
+- Implementar somente a próxima task pendente e marcar conclusão após os checks.
+- Não conectar a storefront ao carrinho demonstrativo existente.
+- Não enfraquecer estados públicos para refletir detalhes administrativos.
+- Qualquer necessidade de backend deve permanecer registrada no contrato e não ser implementada nesta issue frontend.

@@ -1,0 +1,210 @@
+name: Review policy
+
+on:
+  pull_request:
+    branches:
+      - development
+      - main
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
+      - ready_for_review
+      - labeled
+      - unlabeled
+  pull_request_review:
+    types:
+      - submitted
+      - dismissed
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+concurrency:
+  group: review-policy-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  enforce:
+    name: Enforce review policy
+    if: github.event.pull_request.base.ref == 'development' || github.event.pull_request.base.ref == 'main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      REPOSITORY: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.pull_request.number }}
+      HEAD_REF: ${{ github.event.pull_request.head.ref }}
+      BASE_REF: ${{ github.event.pull_request.base.ref }}
+      PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+    steps:
+      - name: Classificar a mudanca e validar aprovacoes
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          backend_changed=false
+          backend_sensitive=false
+          integration=false
+          sensitive_reasons=()
+
+          labels="$(gh api "repos/$REPOSITORY/issues/$PR_NUMBER/labels" --jq '.[].name')"
+          files="$(gh api --paginate "repos/$REPOSITORY/pulls/$PR_NUMBER/files?per_page=100" --jq '.[].filename')"
+
+          if [[ "$BASE_REF" == "main" && "$HEAD_REF" == "development" ]]; then
+            integration=true
+          fi
+
+          while IFS= read -r file; do
+            [[ -z "$file" ]] && continue
+
+            case "$file" in
+              app/backend/*)
+                backend_changed=true
+                ;;
+            esac
+
+            case "$file" in
+              app/backend/supabase/*|app/backend/src/middlewares/*|app/backend/src/useCases/auth/*|app/backend/src/useCases/subscription/*|app/backend/src/infra/providers/*|app/backend/src/infra/supabase/*|app/backend/src/controllers/AuthController.ts|app/backend/src/controllers/SubscriptionController.ts|app/backend/src/controllers/WebhookController.ts|app/backend/src/routes/authRoutes.ts|app/backend/src/routes/subscription.routes.ts|app/backend/src/routes/webhook.routes.ts)
+                backend_sensitive=true
+                sensitive_reasons+=("arquivo sensivel do backend: $file")
+                ;;
+            esac
+          done <<< "$files"
+
+          if [[ "$backend_changed" == "true" ]] && grep -Fxqi "sensitive" <<< "$labels"; then
+            backend_sensitive=true
+            sensitive_reasons+=("label sensitive aplicada a uma mudanca do backend")
+          fi
+
+          add_label() {
+            local label="$1"
+
+            if ! grep -Fxqi "$label" <<< "$labels"; then
+              printf '{"labels":["%s"]}' "$label" | gh api \
+                --method POST \
+                "repos/$REPOSITORY/issues/$PR_NUMBER/labels" \
+                --input - >/dev/null
+              labels="${labels}${labels:+$'\n'}${label}"
+            fi
+          }
+
+          remove_label() {
+            local label="$1"
+
+            if grep -Fxqi "$label" <<< "$labels"; then
+              gh api \
+                --method DELETE \
+                "repos/$REPOSITORY/issues/$PR_NUMBER/labels/$label" >/dev/null
+              labels="$(grep -Fvxi "$label" <<< "$labels" || true)"
+            fi
+          }
+
+          if [[ "$backend_sensitive" == "true" ]]; then
+            add_label "sensitive"
+          elif [[ "$backend_changed" != "true" ]]; then
+            remove_label "sensitive"
+          fi
+
+          if [[ "$integration" != "true" ]]; then
+            remove_label "integration"
+            echo "## Politica de revisao" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+
+            if [[ "$backend_sensitive" == "true" ]]; then
+              echo "Mudanca sensivel restrita ao backend." >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Reviewers responsaveis: MailsonSousa88, vitorlopes-coder e Rikelry, conforme CODEOWNERS." >> "$GITHUB_STEP_SUMMARY"
+              echo "Permanecem obrigatorias as 2 aprovacoes configuradas no ruleset." >> "$GITHUB_STEP_SUMMARY"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "Motivos identificados:" >> "$GITHUB_STEP_SUMMARY"
+              printf -- '- %s\n' "${sensitive_reasons[@]}" >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "PR comum. Permanecem obrigatorias as 2 aprovacoes configuradas no ruleset." >> "$GITHUB_STEP_SUMMARY"
+            fi
+
+            exit 0
+          fi
+
+          add_label "integration"
+
+          reviews="$(gh api --paginate --slurp "repos/$REPOSITORY/pulls/$PR_NUMBER/reviews?per_page=100")"
+          author="${PR_AUTHOR,,}"
+
+          effective_reviews="$(jq '
+            add
+            | map(select(.user.login != null))
+            | map(. + {normalized_login: (.user.login | ascii_downcase)})
+            | map(select(.state != "COMMENTED" and .state != "PENDING"))
+            | sort_by(.normalized_login, (.submitted_at // ""))
+            | group_by(.normalized_login)
+            | map(last)
+          ' <<< "$reviews")"
+
+          approvals="$(jq --arg author "$author" '
+            ["mailsonsousa88", "mateusarj", "cassiosampaio2016", "vitorlopes-coder", "rikelry"] as $team
+            | map(select(.normalized_login != $author))
+            | map(select(.normalized_login as $login | $team | index($login)))
+            | map(select(.state == "APPROVED"))
+            | length
+          ' <<< "$effective_reviews")"
+
+          requested_reviewers="$(gh api \
+            "repos/$REPOSITORY/pulls/$PR_NUMBER/requested_reviewers" \
+            --jq '.users[].login | ascii_downcase')"
+
+          team=(
+            "MailsonSousa88"
+            "MateusARJ"
+            "Cassiosampaio2016"
+            "vitorlopes-coder"
+            "Rikelry"
+          )
+          reviewers_to_request=()
+
+          for reviewer in "${team[@]}"; do
+            normalized="${reviewer,,}"
+
+            [[ "$normalized" == "$author" ]] && continue
+
+            if grep -Fxqi "$normalized" <<< "$requested_reviewers"; then
+              continue
+            fi
+
+            latest_state="$(jq -r --arg login "$normalized" '
+              map(select(.normalized_login == $login))
+              | if length == 0 then "" else .[0].state end
+            ' <<< "$effective_reviews")"
+
+            if [[ "$latest_state" == "APPROVED" || "$latest_state" == "CHANGES_REQUESTED" ]]; then
+              continue
+            fi
+
+            reviewers_to_request+=("$reviewer")
+          done
+
+          if (( ${#reviewers_to_request[@]} > 0 )); then
+            reviewer_payload="$(printf '%s\n' "${reviewers_to_request[@]}" \
+              | jq -R . \
+              | jq -s '{reviewers: .}')"
+
+            gh api \
+              --method POST \
+              "repos/$REPOSITORY/pulls/$PR_NUMBER/requested_reviewers" \
+              --input - <<< "$reviewer_payload" >/dev/null
+          fi
+
+          echo "## Politica de integracao" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Este Pull Request promove development para main e exige **4 aprovacoes validas**." >> "$GITHUB_STEP_SUMMARY"
+          echo "Aprovacoes atuais: **$approvals/4**." >> "$GITHUB_STEP_SUMMARY"
+
+          if (( approvals < 4 )); then
+            echo "::error::PRs de integracao entre development e main exigem 4 aprovacoes. Estado atual: $approvals/4."
+            exit 1
+          fi
+
+          echo "Quantidade minima de aprovacoes para integracao atendida." >> "$GITHUB_STEP_SUMMARY"

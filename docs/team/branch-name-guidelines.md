@@ -15,7 +15,7 @@ tipo/nome-da-funcionalidade
 Exemplos:
 
 ```text
-feature/cadastro-produtos
+feat/cadastro-produtos
 fix/validacao-cpf-cnpj
 docs/status-report-i
 refactor/service-produtos
@@ -26,7 +26,7 @@ chore/configuracao-eslint
 
 | Prefixo | Uso |
 |---------|-----|
-| `feature/` | Nova funcionalidade. |
+| `feat/` | Nova funcionalidade. |
 | `fix/` | Correção de bug. |
 | `docs/` | Alterações de documentação. |
 | `refactor/` | Refatoração de código. |
@@ -47,7 +47,7 @@ chore/configuracao-eslint
 minha-branch
 alteracoes
 teste
-feature/coisas
+feat/coisas
 branch-mailson
 arrumando-tudo
 ```
@@ -55,9 +55,9 @@ arrumando-tudo
 ## Exemplos recomendados
 
 ```text
-feature/cadastro-loja
-feature/carrinho-por-loja
-feature/upload-imagem-produto
+feat/cadastro-loja
+feat/carrinho-por-loja
+feat/upload-imagem-produto
 fix/redirecionamento-whatsapp
 docs/casos-de-uso-admin
 chore/setup-backend-express

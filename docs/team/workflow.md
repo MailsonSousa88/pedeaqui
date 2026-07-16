@@ -14,11 +14,13 @@ Definir o fluxo básico de trabalho do time Cloud Hive no desenvolvimento do Ped
 6. Atualizar documentação quando a alteração impactar regras, fluxos, arquitetura ou requisitos.
 7. Abrir Pull Request apontando para a branch `development`.
 8. Relacionar o PR com a issue correspondente, quando existir.
-9. Solicitar revisão de pelo menos 2 pessoas.
+9. Confirmar os reviewers solicitados automaticamente pelo `CODEOWNERS` e complementar somente quando necessário.
 10. Corrigir pontos levantados na revisão.
 11. O autor do PR deve fazer o merge na `development` somente após aprovação mínima.
 12. Após validação na `development`, abrir Pull Request da `development` para a `main`.
 13. Fazer merge na `main` somente quando a versão estiver validada e estável.
+
+As labels de área e os reviewers do Pull Request são definidos automaticamente. O autor continua responsável por preencher o template, marcar-se em `Assignees`, relacionar issue e milestone quando aplicável e confirmar se a automação classificou corretamente a alteração. Consulte [Automações do GitHub](github-automation.md).
 
 ## Branch principal (Main)
 
@@ -42,17 +44,18 @@ Definir o fluxo básico de trabalho do time Cloud Hive no desenvolvimento do Ped
 
 O merge de uma branch de trabalho para a `development` deve ser feito pelo autor do Pull Request após aprovação mínima de 2 pessoas revisoras.
 
-Mudanças sensíveis devem ter validação dos revisores que foram requisitados (Mínimo) antes do merge.
+Mudanças sensíveis do backend devem ser revisadas pelos Code Owners da área e permanecem sujeitas ao mínimo de 2 aprovações do ruleset.
 
-São consideradas mudanças sensíveis:
+São consideradas mudanças sensíveis do backend:
 
 - Alterações em arquitetura.
 - Alterações em banco de dados.
 - Alterações em autenticação ou autorização.
 - Alterações em pagamento.
-- Alterações em deploy ou infraestrutura.
+- Alterações em infraestrutura do backend.
 - Alterações em regras de negócio críticas.
-- Alterações em documentos oficiais do projeto.
+
+Pull Requests de integração entre `development` e `main` recebem a label `integration` e exigem no mínimo 4 aprovações válidas. Essa exigência não se aplica a branches de trabalho destinadas à `development`.
 
 O merge da `development` para a `main` deve ser feito pelo responsável ou por uma pessoa autorizada pelo responsável, após validação da versão.
 
