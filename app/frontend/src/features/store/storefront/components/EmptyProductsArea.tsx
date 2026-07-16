@@ -1,5 +1,6 @@
 import { AlertCircle, ChevronLeft, ChevronRight, Loader2, PackageOpen, Tag } from 'lucide-react'
 
+import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
 import type { StorefrontCatalogPage, StorefrontCatalogStatus } from '../types/storefront'
 import { getProductPriceCents } from '../utils/catalog'
 import { ImagePlaceholder } from './ImagePlaceholder'
@@ -129,13 +130,13 @@ export function EmptyProductsArea({
                   ) : (
                     <strong className="text-xl text-[#111111]">{formatPrice(effectivePrice)}</strong>
                   )}
-                  <button
-                    className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[#e30507] px-4 text-sm font-semibold text-white hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+                  <PrimaryButton
+                    className="mt-4 min-h-11 w-full"
                     onClick={() => onSelectProduct(product.id)}
                     type="button"
                   >
                     Ver detalhes
-                  </button>
+                  </PrimaryButton>
                 </div>
               </div>
             </article>

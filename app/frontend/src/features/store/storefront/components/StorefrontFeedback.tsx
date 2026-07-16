@@ -1,5 +1,6 @@
 import { AlertCircle, Store } from 'lucide-react'
 
+import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
 import type { StorefrontLoadStatus } from '../types/storefront'
 
 type StorefrontFeedbackProps = {
@@ -29,13 +30,13 @@ export function StorefrontFeedback({
         <p className="mx-auto mt-2 max-w-lg text-sm leading-relaxed text-[#6b7280]">{description}</p>
         <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
           {isError ? (
-            <button
-              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-semibold text-white hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+            <PrimaryButton
+              className="min-h-12"
               onClick={onRetry}
               type="button"
             >
               Tentar novamente
-            </button>
+            </PrimaryButton>
           ) : null}
           <button
             className="inline-flex min-h-12 items-center justify-center rounded-xl border border-gray-300 bg-white px-5 text-sm font-semibold text-[#111111] hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
