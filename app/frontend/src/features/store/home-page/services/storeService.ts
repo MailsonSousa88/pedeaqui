@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import type { AppRoute } from '../../../../app/routes/types';
 import type { Slide, Feature, Plan } from '../types';
 
 export const SLIDES: Slide[] = [
@@ -111,9 +112,9 @@ export const PLANS: Plan[] = [
   },
 ];
 
-export const FOOTER_LINKS = [
-  { label: 'Sobre Nós', href: '#por-que-pedeaqui' },
-  { label: 'Privacidade', href: '#' },
-  { label: 'Termos', href: '#' },
+export const FOOTER_LINKS: Array<{ label: string; href: string; route?: AppRoute }> = [
+  { label: 'Sobre Nós', href: '/sobre-nos', route: '/sobre-nos' },
+  { label: 'Privacidade', href: '/politica-de-privacidade', route: '/politica-de-privacidade' },
+  { label: 'Termos', href: '/termos-de-uso', route: '/termos-de-uso' },
   { label: 'Ajuda', href: '#' },
 ];
