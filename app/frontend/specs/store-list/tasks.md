@@ -1,0 +1,298 @@
+# Tasks: Lista de Lojas
+
+## Dependency Graph
+
+Durante IMPLEMENT, executar apenas uma task por vez.
+
+Não antecipar tarefas futuras.
+
+Somente após aprovação da task atual iniciar a próxima.
+
+```text
+T001 -> T002 -> T003 -> T004 -> T005 -> T006 -> T007
+```
+
+As tasks são sequenciais porque cada etapa depende dos contratos e componentes estabilizados na anterior. Durante IMPLEMENT, executar somente uma task por interação.
+
+## Tasks
+
+- [x] T001 Criar contratos, fonte local e fronteira do service futuro
+  - Type: fundação da feature.
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-list/types/storeList.ts`
+    - `app/frontend/src/features/store/store-list/data/localStores.ts`
+    - `app/frontend/src/features/store/store-list/services/storeListService.ts`
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T001 após todos os checks.
+  - Paths forbidden:
+    - qualquer outro arquivo em `app/frontend/src/**`;
+    - `app/frontend/package.json` e arquivos de lock;
+    - `app/frontend/specs/store-list/spec.md`, `clarify.md`, `plan.md` e assets;
+    - backend, banco, Supabase, migrations, endpoints, HTTP e outras features.
+  - Depends on: nenhuma.
+  - Requirements:
+    - declarar `StoreSummary` somente com identificador, nome, descrição, imagem opcional, alternativa opcional e disponibilidade de seleção;
+    - declarar a união discriminada dos estados `initial`, `loading`, `success`, `empty` e `error`;
+    - declarar `empty` com motivos discriminados `list` e `search`;
+    - declarar `isExploreAvailable` como disponibilidade própria de **Explorar**, separada de `StoreSummary.isSelectable`;
+    - declarar callbacks e resultado tipado necessário à futura função assíncrona;
+    - fornecer coleção local tipada e substituível, sem simular resposta de API ou latência;
+    - criar a função assíncrona tipada do service com resultado controlado `unavailable` ou `notImplemented` e TODO de integração futura;
+    - não declarar endpoint, URL, método HTTP, cliente, payload remoto ou mock de request.
+  - Done when:
+    - os três arquivos existem e compilam;
+    - a coleção local satisfaz `StoreSummary` e possui identificadores estáveis;
+    - o contrato representa os cinco estados e diferencia `empty/list` de `empty/search`;
+    - `isExploreAvailable` e `StoreSummary.isSelectable` existem como controles independentes;
+    - o service não realiza efeitos externos e não é importado por código de apresentação;
+    - nenhum campo ou contrato remoto foi inventado.
+  - Checks:
+    - revisar os arquivos em busca de URL, `fetch`, cliente HTTP, timeout ou latência simulada;
+    - conferir os estados `initial`, `loading`, `success`, `empty/list`, `empty/search` e `error` no contrato;
+    - conferir que `isExploreAvailable` não é derivado de `StoreSummary.isSelectable`;
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - conferir que somente os paths permitidos foram alterados;
+    - marcar T001 como concluída somente após todos os checks passarem.
+
+- [x] T002 Implementar o estado local e a pesquisa progressiva por prefixo
+  - Type: lógica frontend.
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-list/hooks/useStoreList.ts`
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T002 após todos os checks.
+  - Paths forbidden:
+    - qualquer outro arquivo em `app/frontend/src/**`;
+    - arquivos de dependência, specs anteriores, assets, backend e outras features;
+    - chamadas ao service futuro, HTTP, roteamento e persistência.
+  - Depends on: T001.
+  - Requirements:
+    - receber a coleção de lojas como entrada;
+    - manter o termo de pesquisa localmente;
+    - expor o handler usado no fluxo `StoreSearchField → onSearchChange → useStoreList → lista filtrada`;
+    - propagar externamente `onSearchChange(term)` exatamente uma vez por alteração recebida;
+    - remover espaços do início e do fim e ignorar diferenças entre maiúsculas e minúsculas;
+    - filtrar exclusivamente por nomes que começam com todo o texto digitado;
+    - refinar os resultados a cada novo caractere;
+    - restaurar a coleção completa quando o termo normalizado estiver vazio;
+    - expor termo, alteração, limpeza, lojas visíveis e indicação de resultado vazio;
+    - não remover acentos, pesquisar por ocorrência interna ou alterar a ordem recebida.
+  - Done when:
+    - o hook possui responsabilidade exclusivamente local;
+    - cada alteração atualiza o termo, recalcula a lista filtrada e emite uma única saída externa `onSearchChange(term)`;
+    - a regra implementada equivale a `startsWith` sobre nome e termo normalizados;
+    - termos progressivos como `c`, `ca` e `cac` refinam corretamente uma coleção compatível;
+    - limpar o campo restaura a mesma coleção e ordem de entrada.
+  - Checks:
+    - verificar os casos `c`, `ca`, `cac`, ` C `, termo vazio e termo sem resultado;
+    - verificar o fluxo `StoreSearchField → onSearchChange → useStoreList → lista filtrada`;
+    - confirmar uma única emissão externa de `onSearchChange(term)` por alteração;
+    - verificar que uma ocorrência no meio do nome não é aceita;
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - conferir que somente os paths permitidos foram alterados;
+    - marcar T002 como concluída somente após todos os checks passarem.
+
+- [x] T003 Implementar o header sticky e o campo acessível de pesquisa
+  - Type: interface e acessibilidade.
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-list/components/StoreListHeader.tsx`
+    - `app/frontend/src/features/store/store-list/components/StoreSearchField.tsx`
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T003 após todos os checks.
+  - Paths forbidden:
+    - qualquer outro arquivo em `app/frontend/src/**`;
+    - alteração da logo, referência visual, CSS global ou dependências;
+    - router, links com destino inventado, service e HTTP.
+  - Depends on: T002.
+  - Requirements:
+    - usar `/logoPedeAqui.jpeg` sem recriar ou modificar a marca;
+    - manter o header sticky no fluxo normal, com fundo sólido e z-index adequado;
+    - renderizar **Explorar** como callback de intenção, sem navegação;
+    - receber e consumir `isExploreAvailable` para controlar exclusivamente a disponibilidade de **Explorar**;
+    - não usar nem derivar `StoreSummary.isSelectable` para controlar **Explorar**;
+    - aplicar ao sub-botão fundo branco e borda cinza no padrão;
+    - no hover de **Explorar**, alterar somente a borda para vermelho institucional, preservando fundo, texto e ícone;
+    - implementar estados focus, active e disabled, sem ação quando desabilitado;
+    - criar campo controlado com ícone de lupa, placeholder **Pesquisar lojas** e nome acessível;
+    - tratar ícones decorativos como não anunciáveis.
+  - Done when:
+    - os dois componentes são controlados por props e não possuem navegação ou dados próprios;
+    - o header permanece visível sem usar posicionamento que retire seu espaço do fluxo;
+    - o campo possui label acessível e emite alterações do valor;
+    - **Explorar** respeita todos os estados específicos da feature;
+    - **Explorar** fica disabled quando `isExploreAvailable` for falso, sem depender da seleção das lojas.
+  - Checks:
+    - revisar semântica, `aria` necessário, foco e disabled;
+    - confirmar que `isExploreAvailable` controla **Explorar** independentemente de `StoreSummary.isSelectable`;
+    - confirmar por inspeção que o hover não altera fundo, texto nem ícone;
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - conferir que somente os paths permitidos foram alterados;
+    - marcar T003 como concluída somente após todos os checks passarem.
+
+- [x] T004 Implementar cards acionáveis e a lista semântica
+  - Type: interface, interação e acessibilidade.
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-list/components/StoreCard.tsx`
+    - `app/frontend/src/features/store/store-list/components/StoreList.tsx`
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T004 após todos os checks.
+  - Paths forbidden:
+    - qualquer outro arquivo em `app/frontend/src/**`;
+    - novos assets, CSS global, dependências, service, HTTP, router e vitrine pública;
+    - alterações em outras features.
+  - Depends on: T003.
+  - Requirements:
+    - renderizar imagem ou fallback, nome, descrição e **Ver loja**;
+    - tornar toda a área do card acionável por clique, Enter e Espaço, sem áreas mortas;
+    - usar foco visível e cursor pointer quando a loja estiver disponível;
+    - aplicar borda vermelha, leve elevação e transição suave no hover do card;
+    - encaminhar card e **Ver loja** para o mesmo callback com o mesmo `storeId`;
+    - impedir disparo duplicado quando **Ver loja** for acionado;
+    - aplicar a **Ver loja** as mesmas regras visuais dos sub-botões, incluindo hover somente de borda;
+    - fornecer nome acessível contextual, como “Ver loja Burgão House”;
+    - respeitar `isSelectable`, desabilitando ação e estados interativos quando necessário;
+    - renderizar os cards em lista semântica, preservando ordem e chave estável.
+  - Done when:
+    - card e botão executam uma única seleção equivalente;
+    - teclado e ponteiro produzem o mesmo resultado;
+    - imagem inválida pode ser substituída por fallback de dimensões estáveis;
+    - textos longos não sobrepõem a ação nem rompem o card;
+    - a lista não conhece service, navegação ou transporte.
+  - Checks:
+    - verificar clique no card, clique em **Ver loja**, Enter e Espaço;
+    - confirmar uma única emissão por interação e nenhuma emissão no disabled;
+    - verificar foco visível, nome acessível e ordem semântica;
+    - confirmar que o hover de **Ver loja** altera somente a borda;
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - conferir que somente os paths permitidos foram alterados;
+    - marcar T004 como concluída somente após todos os checks passarem.
+
+- [x] T005 Implementar feedbacks de estado e compor a página da feature
+  - Type: composição e estados de interface.
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-list/components/StoreListFeedback.tsx`
+    - `app/frontend/src/features/store/store-list/components/StoreListContent.tsx`
+    - `app/frontend/src/features/store/store-list/pages/StoreListPage.tsx`
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T005 após todos os checks.
+  - Paths forbidden:
+    - `app/frontend/src/App.tsx`, reservado para T006;
+    - qualquer outro arquivo em `app/frontend/src/**`;
+    - CSS global, dependências, backend, HTTP, router e outras features.
+  - Depends on: T004.
+  - Requirements:
+    - compor header, título **Lojas**, texto **Encontre lojas perto de você.**, pesquisa e conteúdo;
+    - conectar `useStoreList` à coleção recebida e aos componentes de apresentação;
+    - representar explicitamente `initial`, `loading`, `success`, `empty` e `error`;
+    - usar `empty/list` para ausência de lojas e `empty/search` para ausência de correspondências da pesquisa;
+    - oferecer limpeza da pesquisa no resultado vazio;
+    - exibir nova tentativa somente quando existir callback disponível;
+    - anunciar mudanças de resultado e mensagens relevantes sem deslocar o foco;
+    - manter callbacks de **Explorar** e seleção de loja como intenções, sem navegação;
+    - usar container centralizado, responsivo e sem rolagem horizontal;
+    - preservar o header, a pesquisa e a hierarquia dos cards em telas estreitas.
+  - Done when:
+    - todos os estados definidos na spec podem ser apresentados pelo contrato da página;
+    - a pesquisa controla a lista de sucesso e diferencia `empty/list` de `empty/search`;
+    - a página não acessa service, backend, router ou outra feature;
+    - a composição corresponde à hierarquia da referência visual.
+  - Checks:
+    - verificar o estado initial;
+    - verificar o estado loading;
+    - verificar o estado error;
+    - verificar o estado success com dados;
+    - verificar o estado `empty/list`;
+    - verificar o estado `empty/search`;
+    - verificar limpeza da pesquisa e callback opcional de nova tentativa;
+    - revisar landmarks, região viva e manutenção do foco;
+    - revisar layout em larguras móvel e desktop por inspeção das classes responsivas;
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - conferir que somente os paths permitidos foram alterados;
+    - marcar T005 como concluída somente após todos os checks passarem.
+
+- [x] T006 Integrar a Lista de Lojas no ponto de composição da aplicação
+  - Type: integração frontend local.
+  - Paths allowed:
+    - `app/frontend/src/App.tsx`
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T006 após todos os checks.
+  - Paths forbidden:
+    - qualquer outro arquivo em `app/frontend/src/**`;
+    - `main.tsx`, CSS global, package files, backend, router e outras features;
+    - implementação de destino para **Explorar** ou loja selecionada.
+  - Depends on: T005.
+  - Requirements:
+    - substituir somente a tela atualmente composta por `StoreListPage`;
+    - fornecer à `StoreListPage` o estado completo da tela por meio do contrato discriminado, usando `success` com a coleção local nesta composição;
+    - fornecer `isExploreAvailable` separadamente de `StoreSummary.isSelectable`;
+    - manter callbacks de intenção sem request, router, redirecionamento ou vitrine pública;
+    - não importar diretamente outra feature na Lista de Lojas;
+    - não alterar configuração global da aplicação.
+  - Done when:
+    - a aplicação renderiza a Lista de Lojas;
+    - `StoreListPage` recebe um estado válido do contrato completo e a disponibilidade própria de **Explorar**;
+    - não há roteamento ou efeito externo associado aos callbacks futuros;
+    - a compilação resolve toda a árvore da feature sem alterações globais adicionais.
+  - Checks:
+    - revisar imports e confirmar ausência de router, HTTP e navegação;
+    - confirmar que `App` fornece o estado completo e `isExploreAvailable` sem derivá-lo de `StoreSummary.isSelectable`;
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - conferir que somente `App.tsx` e a marcação de T006 foram alterados nesta task;
+    - marcar T006 como concluída somente após todos os checks passarem.
+
+- [x] T007 Validar integralmente a feature contra spec, plano e referência visual
+  - Type: validação final, acessibilidade e refinamento estritamente corretivo.
+  - Paths allowed:
+    - `app/frontend/src/features/store/store-list/**`, somente para corrigir defeitos encontrados nos checks desta task;
+    - `app/frontend/src/App.tsx`, somente para corrigir defeito de composição da Lista de Lojas;
+    - `app/frontend/specs/store-list/tasks.md`, somente para marcar T007 após todos os checks.
+  - Paths forbidden:
+    - qualquer arquivo fora dos paths permitidos;
+    - mudança de requisitos, contratos, fluxo ou arquitetura;
+    - novos assets, dependências, backend, HTTP, roteamento e funcionalidades futuras.
+  - Depends on: T006.
+  - Requirements:
+    - validar fidelidade funcional e visual sem acrescentar comportamento;
+    - validar desktop e mobile contra `specs/store-list/assets/tela-de-lojas.png`;
+    - validar todos os estados, responsividade, acessibilidade e interações especificados;
+    - validar a independência entre `isExploreAvailable` e `StoreSummary.isSelectable`;
+    - validar que `onSearchChange(term)` é propagado externamente uma única vez por alteração;
+    - corrigir apenas defeitos diretamente relacionados aos requisitos existentes;
+    - confirmar o Scope Lock e a ausência de antecipação de outras features.
+  - Done when:
+    - header sticky não sobrepõe conteúdo e permanece visível na rolagem;
+    - pesquisa progressiva, limpeza e resultado vazio funcionam como especificado;
+    - cards, **Ver loja** e **Explorar** atendem ponteiro, teclado, foco, active e disabled;
+    - hover dos sub-botões altera somente a borda;
+    - todos os estados e fallbacks são legíveis e acessíveis;
+    - `initial`, `loading`, `success`, `empty/list`, `empty/search` e `error` funcionam conforme o contrato;
+    - a disponibilidade de **Explorar** não altera nem depende da disponibilidade das lojas;
+    - cada alteração da pesquisa produz uma única propagação externa de `onSearchChange(term)`;
+    - não existe rolagem horizontal nas larguras verificadas;
+    - lint e build passam sem erros;
+    - nenhuma chamada HTTP, endpoint, rota ou navegação foi introduzida.
+  - Checks:
+    - executar `npm run lint` em `app/frontend`;
+    - executar `npm run build` em `app/frontend`;
+    - verificar visualmente desktop e mobile no navegador local;
+    - verificar rolagem com header sticky e conteúdo não encoberto;
+    - verificar pesquisa com `c`, `ca`, `cac`, variações de caixa, espaços externos, termo inexistente e limpeza;
+    - verificar os estados `initial`, `loading`, `success`, `empty/list`, `empty/search` e `error`, além de imagem inválida e ação indisponível;
+    - verificar a independência entre `isExploreAvailable` e `StoreSummary.isSelectable` nos estados disponível e indisponível;
+    - verificar o fluxo `StoreSearchField → onSearchChange → useStoreList → lista filtrada` e confirmar uma única propagação externa por alteração;
+    - verificar card e **Ver loja** com mouse e teclado, confirmando uma única seleção;
+    - verificar ordem de foco, foco visível, nomes acessíveis, anúncios e áreas de toque;
+    - verificar padrão, hover, focus, active e disabled dos dois sub-botões;
+    - pesquisar o escopo por `fetch`, URL, cliente HTTP, router e imports de outras features;
+    - conferir todos os arquivos alterados contra o Scope Lock;
+    - marcar T007 como concluída somente após todos os checks passarem.
+
+## Notes
+
+- Executar somente uma task por interação durante a fase IMPLEMENT.
+- Não iniciar uma task enquanto sua dependência estiver pendente.
+- Marcar cada task como concluída somente após todos os checks correspondentes passarem.
+- Atualizar apenas o checkbox da task atual; não antecipar a marcação das seguintes.
+- Se um check exigir path, dependência ou decisão fora do Scope Lock, interromper a implementação e revisar o plano.
+- `spec.md`, `clarify.md`, `plan.md`, referência visual e logo são fontes somente para leitura durante IMPLEMENT.
+- As decisões específicas dos sub-botões prevalecem sobre exemplos genéricos do Design System.
+- A fase TASKS não autoriza criação de código.

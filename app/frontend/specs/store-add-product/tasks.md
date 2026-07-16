@@ -1,0 +1,469 @@
+# Tasks: store-add-product
+
+## Dependency Graph
+
+```text
+T001 -> T002 -> T003 -> T004 -> T005 -> T006 -> T007 -> T008 -> T009 -> T010 -> T011 -> T012 -> T013 -> T014 -> T015 -> T016 -> T017 -> T018 -> T019
+```
+
+## Tasks
+
+- [x] T001 Criar estrutura base e tipos do módulo `product-management`
+  - Type: setup/types
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/shared/`
+    - `app/frontend/src/features/store/storefront/`
+  - Depends on: nenhuma
+  - Requirements:
+    - Definir tipos para formulário, categoria visual, imagem placeholder, estoque, promoção, variação e opção.
+    - Registrar `imageSlots` como limite visual de 3 posições.
+    - Não criar service ou contrato backend real.
+  - Done when:
+    - Tipos exportados cobrem campos descritos em `spec.md` e `plan.md`.
+    - Nenhum arquivo fora do path permitido foi alterado.
+  - Checks:
+    - `npm run build`
+
+- [x] T002 Criar hook de estado local da gestão de produtos
+  - Type: hook
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/storefront/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T001
+  - Requirements:
+    - Controlar abertura/fechamento do modal.
+    - Controlar índice ativo dos 3 placeholders de imagem.
+    - Controlar toggles visuais básicos quando necessário.
+    - Não persistir dados.
+    - Não chamar service.
+  - Done when:
+    - Hook expõe estado e ações de UI suficientes para card/modal.
+    - O estado de imagem respeita posições 1, 2 e 3.
+  - Checks:
+    - `npm run build`
+
+- [x] T003 Criar card `Adicionar novo produto`
+  - Type: component
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/AddProductCard.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/storefront/`
+  - Depends on: T001
+  - Requirements:
+    - Card clicável com ícone Lucide.
+    - Texto `Adicionar novo produto`.
+    - Ação recebida por prop `onClick`.
+    - Usar Tailwind no TSX e microinteração leve com Framer Motion se adequado.
+  - Done when:
+    - Card renderiza sem depender de backend.
+    - Card não aninha card dentro de card.
+  - Checks:
+    - `npm run build`
+
+- [x] T004 Criar página/área `ProductManagementPage`
+  - Type: page
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/pages/ProductManagementPage.tsx`
+    - `app/frontend/src/features/store/product-management/components/AddProductCard.tsx`
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/storefront/`
+  - Depends on: T002, T003
+  - Requirements:
+    - Exibir área de gestão acionada pela aba `Adicionar`.
+    - Exibir card `Adicionar novo produto`.
+    - Preparar abertura do modal, mesmo que o modal ainda seja placeholder nesta task.
+  - Done when:
+    - Página compõe hook e card.
+    - Página não cria persistência nem service.
+  - Checks:
+    - `npm run build`
+
+- [x] T005 Criar seções básicas do formulário de produto
+  - Type: components
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ProductBasicInfoSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductCategorySection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductFormActions.tsx`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/storefront/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T001
+  - Requirements:
+    - Campos visuais para nome, descrição, preço base e disponibilidade.
+    - Categoria `Todos` fixa e não removível.
+    - Categoria específica opcional sem inventar categoria real.
+    - Ação limitada/visual para criar categoria.
+    - Botões `Salvar produto` e `Cancelar`, sem persistência real.
+  - Done when:
+    - Todos os campos básicos aparecem com labels em PT-BR.
+    - Categoria `Todos` aparece como fixa.
+    - Salvar não comunica sucesso real.
+  - Checks:
+    - `npm run build`
+
+- [x] T006 Criar placeholders navegáveis de imagem
+  - Type: component
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ProductImagePlaceholders.tsx`
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T002
+  - Requirements:
+    - Exibir 3 posições visuais de imagem.
+    - Permitir avançar e voltar entre posições 1, 2 e 3.
+    - Não usar input `file`.
+    - Não gerar preview local.
+  - Done when:
+    - Navegação visual de imagem funciona localmente.
+    - Placeholder mantém aparência consistente com a vitrine.
+  - Checks:
+    - `npm run build`
+
+- [x] T007 Criar seção visual de promoção e destaque
+  - Type: component
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ProductPromotionSection.tsx`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T001
+  - Requirements:
+    - Toggle de destaque.
+    - Promoção dependente do toggle de destaque.
+    - Campo de preço promocional.
+    - Campo `Fim da promoção` opcional.
+    - Não persistir nem simular sucesso.
+  - Done when:
+    - Promoção só aparece ou fica habilitada quando destaque estiver ativo.
+    - Campos possuem labels claros.
+  - Checks:
+    - `npm run build`
+
+- [x] T008 Criar seções visuais de estoque e variações
+  - Type: components
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ProductStockSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductVariationSection.tsx`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T001
+  - Requirements:
+    - Estoque livre/controlado visual.
+    - Campo de quantidade inicial visual para estoque controlado.
+    - Variação elementar com nome da variação, opção e acréscimo/desconto.
+    - Não criar comportamento real de persistência.
+  - Done when:
+    - Estoque e variações aparecem de forma clara e limitada.
+    - UI registra visualmente que a integração real virá depois.
+  - Checks:
+    - `npm run build`
+
+- [x] T009 Criar modal `AddProductModal` compondo todas as seções
+  - Type: component/composition
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/AddProductModal.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductBasicInfoSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductCategorySection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductImagePlaceholders.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductPromotionSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductStockSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductVariationSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductFormActions.tsx`
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/product-management/services/`
+    - CSS global
+  - Depends on: T005, T006, T007, T008
+  - Requirements:
+    - Modal com backdrop, botão de fechar e scroll interno no mobile.
+    - Usar Framer Motion para entrada/saída se adequado.
+    - Fechar por cancelar e botão de fechar.
+    - Salvar não chama backend, não chama mock service e não comunica persistência real.
+  - Done when:
+    - Modal compõe todas as seções.
+    - Modal é usável em mobile e desktop.
+    - Modal não bloqueia checks de TypeScript.
+  - Checks:
+    - `npm run build`
+
+- [x] T010 Integrar `product-management` à vitrine pela aba `Adicionar`
+  - Type: integration
+  - Paths allowed:
+    - `app/frontend/src/features/store/storefront/pages/StorefrontPage.tsx`
+    - `app/frontend/src/features/store/storefront/components/StoreTabs.tsx`
+    - `app/frontend/src/features/store/storefront/types/storefront.ts`
+    - `app/frontend/src/features/store/product-management/pages/ProductManagementPage.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/features/store/store-preconfiguration/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T004, T009
+  - Requirements:
+    - Aba `Adicionar` deve trocar para a área de gestão de produtos.
+    - Área de produtos original deve continuar disponível na aba `Produtos`.
+    - Não quebrar layout da vitrine aprovada.
+    - Não implementar rota backend ou navegação externa.
+  - Done when:
+    - Clicar em `Adicionar` mostra card `Adicionar novo produto`.
+    - Clicar em `Produtos` volta para a área original da vitrine.
+    - Card abre modal.
+  - Checks:
+    - `npm run build`
+
+- [x] T011 Executar validação final e atualizar tasks
+  - Type: validation
+  - Paths allowed:
+    - `app/frontend/specs/store-add-product/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+  - Depends on: T010
+  - Requirements:
+    - Executar build.
+    - Executar lint.
+    - Validar manualmente fluxo `Adicionar` -> card -> modal -> fechar/cancelar.
+    - Confirmar que salvar não comunica persistência real.
+    - Marcar tasks concluídas somente após checks.
+  - Done when:
+    - `npm run build` executado ou impossibilidade registrada.
+    - `npm run lint` executado ou impossibilidade registrada.
+    - `tasks.md` reflete progresso real.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T012 Alinhar formulário e payload ao contrato atual de produto
+  - Type: refactor/component/schema/types/hook/service
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/AddProductModal.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductPromotionSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductStockSection.tsx`
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/src/features/store/product-management/schemas/productFormSchema.ts`
+    - `app/frontend/src/features/store/product-management/services/productManagementService.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/src/features/store/product-management/pages/ProductManagementPage.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - `app/frontend/src/shared/`
+    - CSS global
+  - Depends on: T011
+  - Requirements:
+    - Remover da UI os modos de estoque e a quantidade inicial.
+    - Remover destaque e qualquer dependência entre destaque e promoção.
+    - Manter promoção independente com preço promocional e fim opcional.
+    - Remover estoque e destaque dos tipos, estado, schema e payload HTTP.
+    - Preservar layout, tokens e estilo visual das seções restantes.
+  - Done when:
+    - A tela não renderiza estoque ou destaque.
+    - Promoção pode ser habilitada diretamente.
+    - O payload contém somente campos aceitos pelo backend atual.
+    - Não existem referências funcionais residuais a estoque/destaque no módulo.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T013 Validar a correção e atualizar tasks
+  - Type: validation
+  - Paths allowed:
+    - `app/frontend/specs/store-add-product/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+  - Depends on: T012
+  - Requirements:
+    - Executar build e lint.
+    - Confirmar por busca que estoque e destaque saíram do fluxo de adicionar produto.
+    - Confirmar que promoção permanece no formulário e no payload.
+  - Done when:
+    - Checks passam ou eventual impedimento é registrado.
+    - T012 e T013 refletem o progresso real.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T014 Padronizar botões primários vermelhos
+  - Type: design-system/component/refactor
+  - Paths allowed:
+    - `app/frontend/.specify/design-system/components/button.md`
+    - `app/frontend/src/shared/components/PrimaryButton.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductFormActions.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductCategorySection.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - CSS global
+  - Depends on: T013
+  - Requirements:
+    - Definir `Salvar produto` como referência normativa do botão primário.
+    - Combinar hover `#b80406` com escala `1.03` e tap `0.97` em `0.2s`.
+    - Criar componente reutilizável em código.
+    - Aplicar o componente a `Salvar produto` e `Adicionar` categoria.
+  - Done when:
+    - Os dois botões usam o mesmo componente e comportamento de hover.
+    - O design system documenta a regra obrigatória.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T015 Validar padronização de botão primário
+  - Type: validation
+  - Paths allowed:
+    - `app/frontend/specs/store-add-product/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+  - Depends on: T014
+  - Requirements:
+    - Executar build e lint.
+    - Confirmar uso do componente nos dois botões comparados.
+  - Done when:
+    - Checks passam e T014/T015 refletem o progresso real.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T016 Padronizar botões secundários e fechamento por ícone
+  - Type: design-system/component/refactor
+  - Paths allowed:
+    - `app/frontend/.specify/design-system/components/button.md`
+    - `app/frontend/src/shared/components/SecondaryButton.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductFormActions.tsx`
+    - `app/frontend/src/features/store/product-management/components/AddProductModal.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - CSS global
+  - Depends on: T015
+  - Requirements:
+    - Usar `Cancelar` como referência do hover secundário.
+    - Combinar mudança de borda/texto com escala `1.03`, tap `0.97` e duração `0.2s`.
+    - Oferecer variante quadrada para botões somente com ícone.
+    - Aplicar o componente a `Cancelar` e ao botão `X` do modal.
+  - Done when:
+    - Os dois controles usam o mesmo componente e microinteração.
+    - O design system documenta que botões secundários não podem omitir a escala.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T017 Validar padronização de botão secundário
+  - Type: validation
+  - Paths allowed:
+    - `app/frontend/specs/store-add-product/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+  - Depends on: T016
+  - Requirements:
+    - Executar build e lint.
+    - Confirmar uso do componente em `Cancelar` e no `X`.
+  - Done when:
+    - Checks passam e T016/T017 refletem o progresso real.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T018 Alinhar Categorias e Gerenciar produtos aos botões do design system
+  - Type: design-system/refactor
+  - Paths allowed:
+    - `app/frontend/src/features/store/category-management/components/CategoryForm.tsx`
+    - `app/frontend/src/features/store/category-management/components/CategoryCard.tsx`
+    - `app/frontend/src/features/store/product-management/components/ManagedProductCard.tsx`
+    - `app/frontend/src/features/store/product-management/components/ManageProductsPanel.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductDeleteConfirmation.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductImagePlaceholders.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductManagementFilters.tsx`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+    - CSS global
+  - Depends on: T017
+  - Requirements:
+    - Usar `PrimaryButton` em ações principais vermelhas.
+    - Usar `SecondaryButton` em ações secundárias e de ícone correspondentes.
+    - Preservar cards, toggles de estado e confirmação destrutiva em suas variantes próprias.
+  - Done when:
+    - Categorias e Gerenciar produtos não duplicam classes de botão primário/secundário.
+    - Os botões padronizados herdam cor, escala, foco e duração oficiais.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T019 Validar Categorias e Gerenciar produtos
+  - Type: validation
+  - Paths allowed:
+    - `app/frontend/specs/store-add-product/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `supabase/`
+  - Depends on: T018
+  - Requirements:
+    - Executar build e lint.
+    - Auditar referências residuais às classes duplicadas.
+  - Done when:
+    - Checks passam e T018/T019 refletem o progresso real.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+## Notes
+
+- Marcar task como concluída somente após checks.
+- Não executar tasks futuras sem pedido explícito.
+- Não criar backend, service mockado, endpoint, migration ou Supabase.
+- Não criar CSS global para esta tela.
+- Se alguma task exigir alteração fora do `Scope Lock`, parar e voltar para `plan`.
+
+## Evolução de integração real
+
+- [x] T011 Conectar categorias reais, criação de produto e atualização da listagem
+  - Type: integration/frontend
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/`
+    - `app/frontend/src/features/store/storefront/pages/StorefrontPage.tsx`
+    - `app/frontend/specs/store-add-product/`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+  - Requirements:
+    - Receber o `storeId` real da storefront e usar o token da sessão.
+    - Carregar e criar categorias reais da loja.
+    - Criar produto com payload validado.
+    - Inserir o produto retornado na lista, um abaixo do outro.
+    - Exibir loading e erro sem fechar o modal em falha.
+  - Checks:
+    - `npm run lint`
+    - `npx tsc -b --pretty false`

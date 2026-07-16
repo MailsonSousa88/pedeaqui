@@ -1,0 +1,286 @@
+# Tasks: store-manage-products
+
+## Dependency Graph
+
+```text
+T001 -> T002 -> T003 -> T004 -> T005 -> T006 -> T007 -> T008 -> T009
+```
+
+## Tasks
+
+- [x] T001 Expandir tipos, estados e mensagens da feature de gerenciamento de produtos
+  - Type: types/constants
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/product-management/components/`
+    - `app/frontend/src/features/store/product-management/hooks/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: none
+  - Requirements:
+    - Adicionar tipos para `ManageProductListItem`, filtros, modo `create | edit`, payload de update, status de loading/erro e mensagens aprovadas.
+    - Nao remover tipos existentes usados pelo cadastro atual.
+    - Nao incluir `available` em `UpdateProductPayload`.
+  - Done when:
+    - Tipos da spec/plan estao representados.
+    - Mensagens aprovadas em `clarify.md` existem como constantes ou tipo estruturado.
+    - Nenhum componente/hook/service e alterado nesta task.
+  - Checks:
+    - `npm run build`
+
+- [x] T002 Criar schema Zod do formulario de produto para modo create/edit
+  - Type: schema
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/schemas/productFormSchema.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/product-management/components/`
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T001
+  - Requirements:
+    - Validar nome obrigatorio.
+    - Validar preco base maior que zero.
+    - Validar categoria obrigatoria conforme backend exige `categoryId`.
+    - Validar preco promocional maior que zero e menor que preco base quando informado.
+    - Validar `promoEndsAt` apenas quando houver promocao.
+    - Nao criar edicao livre para `details`.
+  - Done when:
+    - Schema exporta tipo inferido para uso futuro no modal.
+    - Schema nao duplica validacoes fora de Zod.
+  - Checks:
+    - `npm run build`
+
+- [x] T003 Criar service de product management com apiClient e mapeamento de erro
+  - Type: service
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/services/productManagementService.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/src/shared/services/api.ts`, somente se ajuste generico de tipagem for indispensavel
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/product-management/components/`
+    - `app/frontend/src/features/store/product-management/pages/`
+  - Depends on: T001
+  - Requirements:
+    - Implementar `listProductsByStore(storeId)`.
+    - Implementar `updateProduct(productId, payload, authToken?)` usando `PUT /api/products/:id`.
+    - Implementar `toggleProductAvailability(productId, authToken?)` usando `PATCH /api/products/:id/toggle-availability` sem body.
+    - Implementar `deleteProduct(productId, authToken?)` usando `DELETE /api/products/:id`.
+    - Mapear erros para mensagens aprovadas.
+    - Nao chamar service a partir de componente.
+  - Done when:
+    - Service compila e usa `apiClient`.
+    - Endpoints batem com `contracts/product-management-api.md`.
+    - Acoes protegidas aceitam token opcional sem inventar autenticacao.
+  - Checks:
+    - `npm run build`
+
+- [x] T004 Evoluir hook `useProductManagement` para suportar painel, filtros e `storeId` plugavel
+  - Type: hook/state
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/src/features/store/product-management/services/productManagementService.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/product-management/components/`
+    - `app/frontend/src/features/store/product-management/pages/`
+  - Depends on: T001, T003
+  - Requirements:
+    - Adicionar estado para abrir/fechar painel `Gerenciar produtos`.
+    - Aceitar `storeId` plugavel sem fixar valor real.
+    - Criar estado sem `storeId` que nao chama API com id invalido.
+    - Orquestrar busca/filtros locais sobre produtos carregados.
+    - Preparar handlers para editar, pausar/reativar e remover sem acoplar UI ao service.
+  - Done when:
+    - Hook expoe dados/handlers claros para pagina e componentes.
+    - Nenhuma chamada de API ocorre sem `storeId`.
+    - Estado existente do modal de adicionar continua preservado.
+  - Checks:
+    - `npm run build`
+
+- [x] T005 Criar card `Gerenciar produtos` e integrar entrada na pagina de gestao
+  - Type: UI/page
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ManageProductsCard.tsx`
+    - `app/frontend/src/features/store/product-management/components/AddProductCard.tsx`, somente se extrair padrao visual pequeno for necessario
+    - `app/frontend/src/features/store/product-management/pages/ProductManagementPage.tsx`
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/storefront/components/StoreTabs.tsx`
+  - Depends on: T004
+  - Requirements:
+    - Manter aba `Adicionar`.
+    - Exibir `Adicionar novo produto` e `Gerenciar produtos`.
+    - Card novo deve seguir modelo visual do card existente.
+    - Card deve abrir painel de gerenciamento.
+    - Nao renomear tabs da storefront.
+  - Done when:
+    - Card aparece na area de gestao.
+    - Clique abre estado/painel de gerenciamento.
+    - Layout mobile nao sobrepoe textos/botoes.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T006 Criar painel de gerenciamento com busca, filtros e estados vazio/erro/loading
+  - Type: UI/components
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ManageProductsPanel.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductManagementSearch.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductManagementFilters.tsx`
+    - `app/frontend/src/features/store/product-management/pages/ProductManagementPage.tsx`
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/storefront/components/StoreTabs.tsx`
+  - Depends on: T005
+  - Requirements:
+    - Exibir busca por nome.
+    - Exibir filtros por disponibilidade, categoria e promocao.
+    - Exibir estado sem `storeId`.
+    - Exibir loading, erro e vazio.
+    - Busca/filtros nao recarregam pagina.
+  - Done when:
+    - Painel renderiza estados principais.
+    - Busca/filtros sao controlados pelo hook.
+    - Mensagens seguem `clarify.md`.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T007 Criar lista e card de produto gerenciavel com acoes
+  - Type: UI/components
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/ManagedProductList.tsx`
+    - `app/frontend/src/features/store/product-management/components/ManagedProductCard.tsx`
+    - `app/frontend/src/features/store/product-management/components/ManageProductsPanel.tsx`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T006
+  - Requirements:
+    - Exibir nome, descricao resumida, preco, preco promocional, categoria e disponibilidade quando disponiveis.
+    - Incluir acoes `Editar`, `Pausar`/`Reativar` e `Remover`.
+    - Disponibilidade deve ser badge/estado textual, nao apenas cor.
+    - Card nao deve chamar API diretamente.
+  - Done when:
+    - Lista renderiza produtos filtrados.
+    - Cards delegam acoes por callbacks.
+    - UI respeita mobile e nao estoura textos.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T008 Evoluir modal/formulario para modo `create | edit`
+  - Type: UI/form
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/components/AddProductModal.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductFormActions.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductBasicInfoSection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductCategorySection.tsx`
+    - `app/frontend/src/features/store/product-management/components/ProductPromotionSection.tsx`
+    - `app/frontend/src/features/store/product-management/schemas/productFormSchema.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/product-management/services/`
+  - Depends on: T007
+  - Requirements:
+    - Modal aceita `mode: create | edit`.
+    - Titulos/copy mudam para `Adicionar produto` ou `Editar produto`.
+    - Botao principal muda para `Salvar produto` ou `Salvar alteracoes`.
+    - Modal de edicao recebe dados atuais do produto.
+    - Disponibilidade pode ser exibida, mas nao salva pausa/reativacao.
+    - Nao prometer persistencia real de imagens, variacoes ou estoque.
+  - Done when:
+    - Modal existente continua funcionando para adicionar.
+    - Modal suporta modo de edicao com copy e dados apropriados.
+    - Payload de edicao nao inclui disponibilidade.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+- [x] T009 Conectar acoes de editar, pausar/reativar e remover com service e confirmacao
+  - Type: integration
+  - Paths allowed:
+    - `app/frontend/src/features/store/product-management/hooks/useProductManagement.ts`
+    - `app/frontend/src/features/store/product-management/components/ProductDeleteConfirmation.tsx`
+    - `app/frontend/src/features/store/product-management/components/ManageProductsPanel.tsx`
+    - `app/frontend/src/features/store/product-management/components/ManagedProductList.tsx`, aprovado pelo usuario para repassar estado de acao ao card
+    - `app/frontend/src/features/store/product-management/components/ManagedProductCard.tsx`
+    - `app/frontend/src/features/store/product-management/components/AddProductModal.tsx`, somente para conectar `onSave` ao handler do hook
+    - `app/frontend/src/features/store/product-management/components/ProductBasicInfoSection.tsx`, somente para nomear campos usados no payload de edicao
+    - `app/frontend/src/features/store/product-management/components/ProductCategorySection.tsx`, somente para nomear campo usado no payload de edicao
+    - `app/frontend/src/features/store/product-management/components/ProductPromotionSection.tsx`, somente para nomear campos usados no payload de edicao
+    - `app/frontend/src/features/store/product-management/pages/ProductManagementPage.tsx`, aprovado pelo usuario para conectar callbacks da pagina
+    - `app/frontend/src/features/store/product-management/services/productManagementService.ts`
+    - `app/frontend/src/features/store/product-management/types/productManagement.ts`
+    - `app/frontend/specs/store-manage-products/tasks.md`
+  - Paths forbidden:
+    - `app/backend/`
+    - `database/`
+    - `supabase/`
+    - migrations
+    - `app/frontend/src/features/store/storefront/components/StoreTabs.tsx`
+  - Depends on: T008
+  - Requirements:
+    - `Editar` abre modal em modo edit e salva por `PUT /api/products/:id`.
+    - `Pausar`/`Reativar` chama `PATCH /api/products/:id/toggle-availability` sem body.
+    - `Remover` abre confirmacao e confirma por `DELETE /api/products/:id`.
+    - Estados de loading impedem duplo clique.
+    - Erros usam mensagens aprovadas.
+    - Produto removido sai da lista apos sucesso.
+  - Done when:
+    - Fluxos principais estao conectados via hook -> service -> apiClient.
+    - Componentes continuam sem chamada direta de API.
+    - Acoes protegidas aceitam token opcional sem inventar autenticacao.
+    - `tasks.md` so deve ser marcado apos checks passarem.
+  - Checks:
+    - `npm run build`
+    - `npm run lint`
+
+## Notes
+
+- Marcar task como concluida somente apos checks.
+- Nao executar tasks futuras sem pedido explicito.
+- Implementacao deve seguir `spec.md`, `clarify.md`, `plan.md` e `contracts/product-management-api.md`.
+- Cada task deve respeitar seus paths permitidos/proibidos.
+- Se alguma task exigir alterar backend, parar e pedir nova decisao.
+- Se surgir necessidade de nova dependencia, parar antes de instalar ou alterar `package.json`.
