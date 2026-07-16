@@ -113,6 +113,7 @@ export function useCheckoutForm({
           onSuccess({
             storeName,
             storeLogo,
+            storePhone: activeStore.phone || "",
             deliveryTime,
             total: totalValue,
             items: itemsOrdered,
