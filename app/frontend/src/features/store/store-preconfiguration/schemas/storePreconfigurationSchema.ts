@@ -28,8 +28,6 @@ const weekdayOrder = new Map<Weekday, number>(
 
 const timePattern = /^([01]\d|2[0-3]):[0-5]\d$/
 const cnpjDigitLength = 14
-const whatsappMinLength = 10
-const whatsappMaxLength = 11
 
 const requiredText = (fieldName: string) =>
   z.string().trim().min(1, `${fieldName} e obrigatorio.`)
@@ -65,12 +63,6 @@ const optionalCnpjSchema = z
   .refine((value) => value === '' || isValidCnpj(value), {
     message: 'Informe um CNPJ valido.',
   })
-
-const whatsappSchema = requiredText('Numero de WhatsApp').refine((value) => {
-  const digits = getOnlyDigits(value)
-
-  return digits.length >= whatsappMinLength && digits.length <= whatsappMaxLength
-}, 'Informe um WhatsApp valido com DDD.')
 
 const timeToMinutes = (time: string) => {
   const [hours = '0', minutes = '0'] = time.split(':')
@@ -128,7 +120,6 @@ const businessHoursSchema = z
 export const identityStepSchema = z.object({
   storeName: requiredText('Nome da loja'),
   businessDocument: optionalCnpjSchema,
-  whatsappNumber: whatsappSchema,
   businessHours: businessHoursSchema,
 })
 
@@ -147,7 +138,6 @@ export const storePreconfigurationFormSchema = identityStepSchema.merge(addressS
 export const storePreconfigurationPayloadSchema = z.object({
   storeName: requiredText('Nome da loja'),
   businessDocument: optionalCnpjSchema,
-  whatsappNumber: whatsappSchema,
   businessHours: z
     .object({
       startDay: weekdaySchema,

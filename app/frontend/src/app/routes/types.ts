@@ -17,4 +17,5 @@ export type AppRoute =
   | '/billing/success'
   | '/billing/failed'
   | `/lojas/${string}`
+  | `/storefront/${string}/manage`
   | `/storefront/${string}`;

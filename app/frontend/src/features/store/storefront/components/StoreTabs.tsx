@@ -41,8 +41,7 @@ export function StoreTabs({ activeTab, onTabChange }: StoreTabsProps) {
             type="button"
           >
             <Icon aria-hidden="true" size={20} strokeWidth={2.2} />
-            <span className="hidden sm:inline">{tab.label}</span>
-            <span className="sm:hidden">{tab.label}</span>
+            <span>{tab.label}</span>
             {isActive ? (
               <span
                 aria-hidden="true"

@@ -34,7 +34,6 @@ export type StoreAddressFormValues = {
 export type StorePreconfigurationFormValues = {
   storeName: string
   businessDocument: string
-  whatsappNumber: string
   businessHours: BusinessHoursFormValues
   address: StoreAddressFormValues
 }
@@ -53,7 +52,6 @@ export type StorePreconfigurationPayload = {
     state: string
     descricao: string | null
     logoUrl: string | null
-    whatsappNumber: string
   }
   source: {
     businessDocument: string | null

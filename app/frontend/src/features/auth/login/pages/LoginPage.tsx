@@ -23,7 +23,7 @@ export function LoginPage({ onNavigate }: LoginPageProps) {
             onForgotPasswordClick={() => onNavigate('/forgot-password')}
             onRegisterClick={() => onNavigate('/register')}
             onSuccess={(store) =>
-              onNavigate(`/storefront/${encodeURIComponent(store.slug)}`)
+              onNavigate(`/storefront/${encodeURIComponent(store.slug)}/manage`)
             }
           />
         </div>

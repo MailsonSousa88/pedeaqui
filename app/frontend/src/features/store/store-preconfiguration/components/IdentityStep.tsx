@@ -1,4 +1,4 @@
-import { Building2, CalendarDays, Clock, Phone, Store } from 'lucide-react'
+import { Building2, CalendarDays, Clock, Store } from 'lucide-react'
 import type { MouseEvent } from 'react'
 import type { FieldErrors, UseFormRegister } from 'react-hook-form'
 
@@ -44,23 +44,8 @@ const formatCnpjInput = (value: string) => {
     .replace(/(\d{4})(\d)/, '$1-$2')
 }
 
-const formatWhatsappInput = (value: string) => {
-  const digits = value.replace(/\D/g, '').slice(0, 11)
-
-  if (digits.length <= 10) {
-    return digits
-      .replace(/^(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{4})(\d)/, '$1-$2')
-  }
-
-  return digits
-    .replace(/^(\d{2})(\d)/, '($1) $2')
-    .replace(/(\d{5})(\d)/, '$1-$2')
-}
-
 export function IdentityStep({ disabled = false, errors, register }: IdentityStepProps) {
   const businessDocumentRegistration = register('businessDocument')
-  const whatsappNumberRegistration = register('whatsappNumber')
 
   return (
     <section className="space-y-6" aria-labelledby="identity-step-title">
@@ -116,32 +101,6 @@ export function IdentityStep({ disabled = false, errors, register }: IdentitySte
             }}
             placeholder="00.000.000/0000-00"
             type="text"
-          />
-        </FormField>
-
-        <FormField
-          error={errors.whatsappNumber?.message}
-          hint="Esse numero sera usado para receber pedidos e mensagens."
-          htmlFor="whatsappNumber"
-          icon={<Phone aria-hidden="true" size={18} />}
-          label="Numero de WhatsApp"
-          required
-        >
-          <input
-            {...whatsappNumberRegistration}
-            aria-describedby={describedBy('whatsappNumber', Boolean(errors.whatsappNumber))}
-            aria-invalid={Boolean(errors.whatsappNumber)}
-            className={formFieldInputWithIconClassName}
-            disabled={disabled}
-            id="whatsappNumber"
-            inputMode="numeric"
-            maxLength={15}
-            onChange={(event) => {
-              event.target.value = formatWhatsappInput(event.target.value)
-              return whatsappNumberRegistration.onChange(event)
-            }}
-            placeholder="(11) 91234-5678"
-            type="tel"
           />
         </FormField>
 
