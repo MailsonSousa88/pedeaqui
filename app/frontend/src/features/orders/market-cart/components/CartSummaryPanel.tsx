@@ -95,10 +95,20 @@ export function CartSummaryPanel({ store, stats, onBack, onUpdateQuantity, onRem
                 </div>
               </div>
 
+              {!store.phone && (
+                <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-left">
+                  <p className="text-[11px] leading-relaxed text-amber-800 font-semibold flex items-start gap-1.5">
+                    <span className="shrink-0 mt-0.5">⚠️</span>
+                    <span>Esta loja não possui número de WhatsApp cadastrado. Não é possível finalizar o pedido.</span>
+                  </p>
+                </div>
+              )}
+
               <button
                 onClick={onCheckout}
-                className="w-full mt-2 min-h-[52px] bg-[#e30507] hover:bg-red-600 text-white font-extrabold text-xs sm:text-sm px-4 py-3.5 rounded-2xl transition-colors cursor-pointer shadow-lg shadow-red-500/15 flex items-center justify-center gap-2 text-center"
-                title={`Finalizar Pedido (${store.name})`}
+                disabled={!store.phone}
+                className="w-full mt-2 min-h-[52px] bg-[#e30507] hover:bg-red-600 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed text-white font-extrabold text-xs sm:text-sm px-4 py-3.5 rounded-2xl transition-colors cursor-pointer shadow-lg shadow-red-500/15 flex items-center justify-center gap-2 text-center"
+                title={store.phone ? `Finalizar Pedido (${store.name})` : "WhatsApp indisponível"}
               >
                 <ShieldCheck className="h-4 w-4 shrink-0" />
                 <span className="block min-w-0 truncate">

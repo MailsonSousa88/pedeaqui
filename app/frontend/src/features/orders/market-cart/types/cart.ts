@@ -18,6 +18,7 @@ export interface StoreCart {
   items: CartItem[];
   isOpen: boolean;
   color: string;
+  phone?: string;
 }
 
 export interface CartStats {
@@ -41,6 +42,7 @@ export interface DeleteConfirmState {
 export interface CompletedOrder {
   storeName: string;
   storeLogo: string;
+  storePhone: string;
   deliveryTime: string;
   total: number;
   items: CartItem[];

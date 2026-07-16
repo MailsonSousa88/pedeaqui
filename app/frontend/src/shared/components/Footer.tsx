@@ -41,7 +41,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                 >
                   {link.label}
                 </a>
-              ) : 
+              ) :
               link.route && onNavigate ? (
                 <button
                   key={index}

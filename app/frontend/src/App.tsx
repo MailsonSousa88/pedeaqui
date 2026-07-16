@@ -17,8 +17,7 @@ import { TermsOfUsePage } from './features/store/home-page/components/TermsOfUse
 import { LoginPage } from './features/auth/login/pages/LoginPage';
 import { ForgotPasswordPage } from './features/auth/forgot-password/pages/ForgotPasswordPage';
 import { RegisterPage } from './features/auth/register/pages/RegisterPage';
-import { StoreListPage } from './features/store/store-list/pages/StoreListPage';
-import { localStores } from './features/store/store-list/data/localStores';
+import { StoreListRoutePage } from './features/store/store-list/pages/StoreListRoutePage';
 import { StorefrontPage } from './features/store/storefront/pages/StorefrontPage';
 import { StorefrontManagementPage } from './features/store/storefront/pages/StorefrontManagementPage';
 import { StorePreconfigurationPage } from './features/store/store-preconfiguration/pages/StorePreconfigurationPage';
@@ -177,13 +176,10 @@ export default function App() {
 
     if (currentPath === '/stores') {
       return (
-        <StoreListPage
-          state={{ status: 'success', stores: localStores }}
-          onSearchChange={() => undefined}
-          onSelectStore={(storeId) => {
-            handleNavigate(`/storefront/${encodeURIComponent(storeId)}`);
+        <StoreListRoutePage
+          onSelectStore={(slug) => {
+            handleNavigate(`/storefront/${encodeURIComponent(slug)}`);
           }}
-          onRetry={() => undefined}
         />
       );
     }
@@ -208,6 +204,7 @@ export default function App() {
           }
           productId={productDetailParams.productId}
           storeSlug={productDetailParams.storeSlug}
+          addToast={triggerToast}
         />
       );
     }
@@ -221,7 +218,6 @@ export default function App() {
             handleNavigate(`/storefront/${encodeURIComponent(managementSlug)}`)
           }
           onLogin={() => handleNavigate('/login')}
-          onOpenCart={handleCartClick}
           onSelectProduct={(productId) =>
             navigateTo(
               `/lojas/${encodeURIComponent(managementSlug)}/produtos/${encodeURIComponent(productId)}`,
@@ -242,7 +238,6 @@ export default function App() {
       return (
         <StorefrontPage
           onBackToStores={() => handleNavigate('/stores')}
-          onOpenCart={handleCartClick}
           onSelectProduct={(productId) => {
             if (!storeSlug) {
               return;
@@ -275,6 +270,7 @@ export default function App() {
           }}
           onSuccess={(store) => {
             setCreatedStore(store);
+            localStorage.setItem('pedeaqui.store-slug', store.slug);
             setActivationError(null);
             handleNavigate('/billing/success');
           }}
@@ -325,7 +321,9 @@ export default function App() {
     currentPath === '/politica-de-privacidade';
   const isMarketCart = currentPath === '/market-cart';
   const isBillingPage = currentPath === '/billing/success' || currentPath === '/billing/failed';
-  const showHeader = isHome || isInstitutionalPage || isMarketCart || isBillingPage || currentPath === '/stores';
+  const isStorefront = currentPath.startsWith('/storefront') || currentPath.startsWith('/lojas');
+  const isConsumerStorefront = isStorefront && !currentPath.includes('/manage');
+  const showHeader = isHome || isInstitutionalPage || isMarketCart || isBillingPage || currentPath === '/stores' || isStorefront;
 
   return (
     <div className={`min-h-screen bg-background text-on-surface flex flex-col font-sans selection:bg-primary/20 selection:text-primary-dark ${showHeader ? 'pt-[56px]' : ''}`}>
@@ -355,7 +353,7 @@ export default function App() {
 
       {(isHome || isInstitutionalPage) && <Footer onNavigate={handleNavigate} />}
 
-      {(isHome || isMarketCart || currentPath === '/stores') && (
+      {(isHome || isMarketCart || currentPath === '/stores' || isConsumerStorefront) && (
         <BottomNav
           currentPath={currentPath}
           onNavigate={handleNavigate}

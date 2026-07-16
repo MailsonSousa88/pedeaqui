@@ -1,5 +1,7 @@
 import { AlertCircle, Loader2, PackageX } from 'lucide-react'
 
+import { PrimaryButton } from '../../../../shared/components/PrimaryButton'
+
 type ProductDetailFeedbackProps =
   | { status: 'loading' }
   | {
@@ -59,13 +61,12 @@ export function ProductDetailFeedback(props: ProductDetailFeedbackProps) {
         </div>
         <div className="flex flex-col gap-3 sm:flex-row">
           {isError ? (
-            <button
-              className="inline-flex items-center justify-center rounded-xl bg-[#e30507] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#b80406] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"
+            <PrimaryButton
               onClick={props.onRetry}
               type="button"
             >
               Tentar novamente
-            </button>
+            </PrimaryButton>
           ) : null}
           <button
             className="inline-flex items-center justify-center rounded-xl border border-gray-300 bg-white px-5 py-3 text-sm font-semibold text-[#111111] transition-colors hover:border-[#e30507] hover:text-[#e30507] focus:outline-none focus:ring-2 focus:ring-[#e30507] focus:ring-offset-2"

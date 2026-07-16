@@ -28,15 +28,15 @@ flowchart TD
     productUrl --> validateProduct{"Produto pertence à loja?"}
     validateProduct -->|Não| productError["Exibir indisponibilidade"]
     validateProduct -->|Sim| productDetail["Exibir produto e quantidade"]
-    productDetail --> addDisabled["Adicionar ao carrinho desabilitado"]
+    productDetail --> addToCart["Adicionar ao carrinho"]
 
     classDef integrated fill:#dcfce7,stroke:#166534,color:#14532d;
     classDef partial fill:#fef3c7,stroke:#b45309,color:#78350f;
     classDef blocked fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d;
 
-    class publicUrl,getStore,getCatalog,storefront,search,selectProduct,productUrl,productDetail integrated;
+    class publicUrl,getStore,getCatalog,storefront,search,selectProduct,productUrl,productDetail,addToCart integrated;
     class home,stores,localData partial;
-    class genericRoute,missingStore,addDisabled blocked;
+    class genericRoute,missingStore blocked;
 ```
 
 ## Carrinho e finalização atual
@@ -44,31 +44,37 @@ flowchart TD
 ```mermaid
 flowchart TD
     start([Início]) --> cart["Abrir /market-cart"]
-    cart --> loadCart["Carregar localStorage ou seed"]
+    cart --> loadCart["Carregar localStorage"]
     loadCart --> manage["Gerenciar itens por loja"]
     manage --> chooseStore["Selecionar loja"]
-    chooseStore --> form["Preencher dados do pedido"]
+    chooseStore --> hasPhone{"Loja possui WhatsApp?"}
+    hasPhone -->|Não| blocked["Botão bloqueado + aviso"]
+    hasPhone -->|Sim| form["Preencher dados do pedido"]
     form --> validForm{"Campos válidos?"}
     validForm -->|Não| formError["Exibir erros"]
     formError --> form
-    validForm -->|Sim| simulation["Executar temporizadores"]
-    simulation --> clearStore["Limpar grupo da loja"]
-    clearStore --> success["Exibir resumo local"]
-    success --> noOrder["Sem pedido no backend"]
-    noOrder --> noWhatsapp["Sem abertura do WhatsApp"]
+    validForm -->|Sim| simulation["Exibir tela de carregamento"]
+    simulation --> buildMessage["Montar mensagem formatada"]
+    buildMessage --> clearStore["Limpar grupo da loja"]
+    clearStore --> openWhatsApp["Abrir wa.me com mensagem"]
+    openWhatsApp --> whatsappChat["Consumidor envia mensagem ao lojista"]
 
+    classDef integrated fill:#dcfce7,stroke:#166534,color:#14532d;
     classDef partial fill:#fef3c7,stroke:#b45309,color:#78350f;
     classDef blocked fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d;
 
-    class cart,loadCart,manage,chooseStore,form,simulation,clearStore,success partial;
-    class formError,noOrder,noWhatsapp blocked;
+    class cart,loadCart,manage,chooseStore,form,simulation,buildMessage,clearStore,openWhatsApp,whatsappChat integrated;
+    class formError,blocked blocked;
 ```
 
 ## Limites atuais representados
 
 - `GET /api/stores/public` existe no backend, mas a página geral de lojas ainda recebe `localStores` do frontend.
 - A vitrine e o detalhe do produto funcionam quando o consumidor possui um slug válido.
-- O detalhe do produto não adiciona itens ao carrinho porque a ação está desabilitada.
-- O carrinho inicia com dados demonstrativos quando não encontra dados locais.
-- O checkout usa apenas validação e temporizadores no navegador.
-- Não existe rota de pedido no backend nem redirecionamento atual para `wa.me`.
+- O detalhe do produto adiciona itens ao carrinho via localStorage.
+- O carrinho inicia vazio quando não encontra dados locais.
+- O checkout usa validação Zod e temporizadores visuais no navegador.
+- Ao confirmar, o sistema monta a mensagem, limpa o carrinho da loja e abre `wa.me` com a mensagem pré-formatada.
+- O PedeAqui não envia mensagens em nome do consumidor nem confirma que a mensagem foi enviada.
+- Lojas sem WhatsApp cadastrado não permitem finalização do pedido.
+

@@ -1,4 +1,4 @@
-import { AuthHeader } from '../../../../shared/components/AuthHeader'
+import Header from '../../../../shared/components/Header'
 import type { AppRoute } from '../../../../app/routes/types'
 
 type LoginHeaderProps = {
@@ -7,8 +7,10 @@ type LoginHeaderProps = {
 
 export function LoginHeader({ onNavigate }: LoginHeaderProps) {
   return (
-    <AuthHeader
+    <Header
+      currentPath="/login"
       onNavigate={onNavigate}
+      minimal={true}
       rightAction={
         <button
           onClick={() => {

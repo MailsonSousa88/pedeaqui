@@ -1,0 +1,24 @@
+{
+  "name": "pedeaqui",
+  "private": true,
+  "version": "0.0.0",
+  "packageManager": "npm@11.13.0",
+  "workspaces": [
+    "app/frontend",
+    "app/backend"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:frontend": "npm run dev --workspace=app/frontend",
+    "dev:backend": "npm run dev --workspace=app/backend",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:unit": "turbo run test:unit",
+    "test:integration": "turbo run test:integration",
+    "test:coverage": "turbo run test:coverage"
+  },
+  "devDependencies": {
+    "turbo": "2.10.5"
+  }
+}

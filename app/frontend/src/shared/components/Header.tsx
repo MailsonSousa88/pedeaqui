@@ -4,18 +4,36 @@
  */
 
 import { useEffect, useState } from 'react';
-import { Home, LayoutGrid, ShoppingCart, Store } from 'lucide-react';
+import { Home, LayoutGrid, ShoppingCart, Store, LayoutDashboard, LogOut } from 'lucide-react';
 import type { AppRoute } from '../../app/routes/types';
+import { getAuthSession, clearAuthSession } from '../../shared/services/authSession';
 
 interface HeaderProps {
   currentPath: AppRoute;
   onNavigate: (route: AppRoute, planId?: number) => void;
-  onCartClick: () => void;
+  onCartClick?: () => void;
   minimal?: boolean;
+  rightAction?: React.ReactNode;
 }
 
-export default function Header({ currentPath, onNavigate, onCartClick, minimal = false }: HeaderProps) {
+export default function Header({
+  currentPath,
+  onNavigate,
+  onCartClick,
+  minimal = false,
+  rightAction,
+}: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [, refreshSession] = useState(0);
+  const session = getAuthSession();
+  const storeSlug = localStorage.getItem('pedeaqui.store-slug');
+
+  const handleLogout = () => {
+    clearAuthSession();
+    localStorage.removeItem('pedeaqui.store-slug');
+    refreshSession((currentVersion) => currentVersion + 1);
+    onNavigate('/');
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -51,6 +69,10 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
           />
         </div>
 
+        {minimal && rightAction && (
+          <div className="flex items-center gap-2 sm:gap-4">{rightAction}</div>
+        )}
+
         {!minimal && (
           <>
             <nav className="hidden md:flex items-center gap-8 ml-auto mr-8">
@@ -75,7 +97,9 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
               <button
                 onClick={() => onNavigate('/stores')}
                 className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors ${
-                  currentPath === '/stores'
+                  currentPath === '/stores' ||
+                  ((currentPath.startsWith('/lojas') || currentPath.startsWith('/storefront')) &&
+                    !currentPath.includes('/manage'))
                     ? 'text-primary'
                     : 'text-on-surface-variant hover:text-primary'
                 }`}
@@ -96,42 +120,82 @@ export default function Header({ currentPath, onNavigate, onCartClick, minimal =
                 Carrinho
               </button>
 
-              <div className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none">
-                <LayoutGrid size={16} />
-                Vitrine
-              </div>
+              {session ? (
+                <button
+                  onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage` as any)}
+                  className={`flex items-center gap-1.5 font-sans text-sm font-medium transition-colors cursor-pointer ${
+                    currentPath.startsWith('/storefront') && currentPath.endsWith('/manage')
+                      ? 'text-primary'
+                      : 'text-on-surface-variant hover:text-primary'
+                  }`}
+                >
+                  <LayoutGrid size={16} />
+                  Vitrine
+                </button>
+              ) : (
+                <div className="flex items-center gap-1.5 font-sans text-sm font-medium text-slate-400 cursor-default select-none">
+                  <LayoutGrid size={16} />
+                  Vitrine
+                </div>
+              )}
             </nav>
 
             <div className="hidden md:flex items-center gap-4">
-              <button
-                onClick={() => onNavigate('/login')}
-                className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
-              >
-                Entrar
-              </button>
+              {session ? (
+                <>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors flex items-center gap-1.5"
+                  >
+                    <LogOut size={16} />
+                    Sair
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => onNavigate('/login')}
+                    className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
+                  >
+                    Entrar
+                  </button>
 
-              <button
-                onClick={() => {
-                  if (currentPath === '/') {
-                    document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
-                  } else {
-                    sessionStorage.setItem('scrollToPlanos', 'true');
-                    onNavigate('/');
-                  }
-                }}
-                className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
-              >
-                Começar Agora
-              </button>
+                  <button
+                    onClick={() => {
+                      if (currentPath === '/') {
+                        document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' });
+                      } else {
+                        sessionStorage.setItem('scrollToPlanos', 'true');
+                        onNavigate('/');
+                      }
+                    }}
+                    className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10"
+                  >
+                    Começar Agora
+                  </button>
+                </>
+              )}
             </div>
 
             <div className="flex items-center gap-2 md:hidden">
-              <button
-                onClick={() => onNavigate('/login')}
-                className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs px-3.5 py-1.5 rounded-lg transition-colors shadow-md shadow-primary/10"
-              >
-                Entrar
-              </button>
+              {session ? (
+                <>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-sans font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors"
+                  >
+                    <LogOut size={14} className="inline mr-1" />
+                    Sair
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => onNavigate('/login')}
+                  className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs px-3.5 py-1.5 rounded-lg transition-colors shadow-md shadow-primary/10"
+                >
+                  Entrar
+                </button>
+              )}
             </div>
           </>
         )}

@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   ShoppingBag,
   Store,
-  RotateCcw,
 } from "lucide-react";
 import { useCart } from "../hooks/useCart";
 import { useCheckoutForm } from "../hooks/useCheckoutForm";
@@ -10,8 +9,7 @@ import { StoreCard } from "../components/StoreCard";
 import { CartSummaryPanel } from "../components/CartSummaryPanel";
 import { DeleteConfirmModal } from "../components/DeleteConfirmModal";
 import { CheckoutForm } from "../components/CheckoutForm";
-import { OrderSuccessCard } from "../components/OrderSuccessCard";
-import type { CompletedOrder } from "../types/cart";
+import { buildWhatsAppUrl } from "../services/whatsappService";
 
 interface MarketCartPageProps {
   addToast: (type: "success" | "error" | "info", title: string, message: string) => void;
@@ -19,7 +17,6 @@ interface MarketCartPageProps {
 
 export function MarketCartPage({ addToast }: MarketCartPageProps) {
   const [isFillingCheckoutForm, setIsFillingCheckoutForm] = useState(false);
-  const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
 
   const cart = useCart({ addToast });
 
@@ -27,7 +24,14 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
     activeStore: cart.activeStore,
     activeStoreStats: cart.activeStoreStats,
     onSuccess: (order) => {
-      setCompletedOrder(order);
+      const url = buildWhatsAppUrl(order);
+
+      if (url) {
+        window.open(url, '_blank');
+      } else {
+        addToast('error', 'WhatsApp indisponível', 'Não foi possível gerar o link do WhatsApp para esta loja.');
+      }
+
       setIsFillingCheckoutForm(false);
       cart.setSelectedStoreId(null);
     },
@@ -40,17 +44,11 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
   return (
     <div
       className={`w-full bg-[#f8f9fa] flex flex-col font-sans relative min-h-screen ${
-        (isFillingCheckoutForm && cart.activeStore) || completedOrder ? "" : "pb-24 md:pb-0"
+        (isFillingCheckoutForm && cart.activeStore) ? "" : "pb-24 md:pb-0"
       }`}
     >
       {/* Conditional page render */}
-      {completedOrder ? (
-        /* ==================== 1. ORDER COMPLETED SUMMARY SCREEN ==================== */
-        <OrderSuccessCard
-          order={completedOrder}
-          onBack={() => setCompletedOrder(null)}
-        />
-      ) : isFillingCheckoutForm && cart.activeStore ? (
+      {isFillingCheckoutForm && cart.activeStore ? (
         /* ==================== 2. CHECKOUT FORM INPUT SCREEN ==================== */
         <CheckoutForm
           store={cart.activeStore}
@@ -114,15 +112,8 @@ export function MarketCartPage({ addToast }: MarketCartPageProps) {
                   </div>
                   <h3 className="text-lg font-bold text-gray-800">Seu carrinho está vazio</h3>
                   <p className="text-sm text-gray-400 mt-1 max-w-sm">
-                    Adicione produtos para ver as lojas listadas aqui. Você pode redefinir o mock de teste a qualquer momento.
+                    Adicione produtos para ver as lojas listadas aqui.
                   </p>
-                  <button
-                    onClick={cart.handleResetCart}
-                    className="mt-6 px-5 py-2.5 bg-[#e30507] hover:bg-red-600 text-white font-bold rounded-xl text-xs transition-colors cursor-pointer flex items-center gap-2 shadow-md shadow-red-500/15"
-                  >
-                    <RotateCcw className="w-3.5 h-3.5" />
-                    Restaurar Itens de Teste
-                  </button>
                 </div>
               )}
             </div>

@@ -20,7 +20,7 @@ export function CategoryChips({
   const options = [{ id: null, name: 'Todos' }, ...visibleCategories]
 
   return (
-    <div aria-label="Categorias da loja" className="flex min-h-12 gap-3 overflow-x-auto pb-1">
+    <div aria-label="Categorias da loja" className="flex min-h-12 gap-3 overflow-x-auto p-1">
       {options.map((category) => {
         const isActive = activeCategoryId === category.id
 

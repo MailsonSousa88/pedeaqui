@@ -153,7 +153,7 @@ export default function FailedPage({
                 className="group w-full h-12 bg-white hover:bg-red-50/30 text-gray-700 font-bold rounded-xl border border-[#e5e7eb] hover:border-[#e30507] flex items-center justify-center gap-2 transition-all cursor-pointer text-sm"
               >
                 <AlignLeft className="w-4.5 h-4.5 stroke-[2.5] group-hover:text-[#e30507] transition-colors" />
-                <span className="group-hover:underline group-hover:decoration-[#e30507] group-hover:decoration-2 group-hover:underline-offset-4 transition-all">
+                <span className="transition-all">
                   Voltar ao pré-registro
                 </span>
               </motion.button>

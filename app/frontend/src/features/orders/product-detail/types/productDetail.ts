@@ -3,6 +3,7 @@ export type PublicStoreDto = {
   slug: string
   storeName: string
   active: boolean
+  whatsappNumber?: string
 }
 
 export type PublicProductDto = {
@@ -41,6 +42,7 @@ export type ProductDetailViewModel = {
   promoPriceCents: number | null
   available: boolean
   details: ProductPublicDetail[]
+  whatsappNumber?: string
 }
 
 export type ProductDetailUnavailableReason = 'store' | 'product'
