@@ -15,7 +15,6 @@ import { paginateStorefrontProducts } from '../utils/catalog'
 type StorefrontManagementPageProps = {
   onBackToPublic: () => void
   onLogin: () => void
-  onOpenCart: () => void
   onSelectProduct: (productId: string) => void
   slug?: string
 }
@@ -23,7 +22,6 @@ type StorefrontManagementPageProps = {
 export function StorefrontManagementPage({
   onBackToPublic,
   onLogin,
-  onOpenCart,
   onSelectProduct,
   slug,
 }: StorefrontManagementPageProps) {

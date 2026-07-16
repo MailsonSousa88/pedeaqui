@@ -24,18 +24,14 @@ export default function Header({
   rightAction,
 }: HeaderProps) {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [session, setSession] = useState(() => getAuthSession());
+  const [, refreshSession] = useState(0);
+  const session = getAuthSession();
   const storeSlug = localStorage.getItem('pedeaqui.store-slug');
-
-  useEffect(() => {
-    // Keep session state in sync with actual sessionStorage
-    setSession(getAuthSession());
-  }, [currentPath]);
 
   const handleLogout = () => {
     clearAuthSession();
     localStorage.removeItem('pedeaqui.store-slug');
-    setSession(null);
+    refreshSession((currentVersion) => currentVersion + 1);
     onNavigate('/');
   };
 
@@ -132,7 +128,7 @@ export default function Header({
               {session ? (
                 <>
                   <button
-                    onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage` as any)}
+                    onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage`)}
                     className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-sm px-5 py-2 rounded-lg transition-colors shadow-md hover:shadow-lg shadow-primary/10 flex items-center gap-1.5"
                   >
                     <LayoutDashboard size={16} />
@@ -176,7 +172,7 @@ export default function Header({
               {session ? (
                 <>
                   <button
-                    onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage` as any)}
+                    onClick={() => onNavigate(`/storefront/${encodeURIComponent(storeSlug || 'store')}/manage`)}
                     className="bg-primary hover:bg-primary-dark text-white font-sans font-semibold text-xs px-3 py-1.5 rounded-lg transition-colors shadow-md shadow-primary/10"
                   >
                     Painel

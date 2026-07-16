@@ -199,7 +199,6 @@ export default function App() {
             handleNavigate(`/storefront/${encodeURIComponent(managementSlug)}`)
           }
           onLogin={() => handleNavigate('/login')}
-          onOpenCart={handleCartClick}
           onSelectProduct={(productId) =>
             navigateTo(
               `/lojas/${encodeURIComponent(managementSlug)}/produtos/${encodeURIComponent(productId)}`,
@@ -220,7 +219,6 @@ export default function App() {
       return (
         <StorefrontPage
           onBackToStores={() => handleNavigate('/stores')}
-          onOpenCart={handleCartClick}
           onSelectProduct={(productId) => {
             if (!storeSlug) {
               return;

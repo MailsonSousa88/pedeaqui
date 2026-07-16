@@ -15,7 +15,6 @@ import {
 
 type StorefrontPageProps = {
   onBackToStores?: () => void
-  onOpenCart?: () => void
   onSelectProduct: (productId: string) => void
   slug?: string
 }
@@ -33,7 +32,6 @@ const priceToCents = (value: string) => {
 
 export function StorefrontPage({
   onBackToStores = () => navigateTo('/stores'),
-  onOpenCart = () => navigateTo('/market-cart'),
   onSelectProduct,
   slug,
 }: StorefrontPageProps) {
