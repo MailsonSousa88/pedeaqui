@@ -3,9 +3,15 @@ import { useState } from 'react'
 import { forgotPasswordService } from '../services/forgotPasswordService'
 import type { ForgotPasswordStep } from '../types/forgotPassword'
 
-export function useForgotPasswordFlow() {
+type UseForgotPasswordFlowParams = {
+  initialStep?: ForgotPasswordStep
+}
+
+export function useForgotPasswordFlow({
+  initialStep = 'request',
+}: UseForgotPasswordFlowParams = {}) {
   const [currentStep, setCurrentStep] =
-    useState<ForgotPasswordStep>('request')
+    useState<ForgotPasswordStep>(initialStep)
   const [lastEmail, setLastEmail] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isResending, setIsResending] = useState(false)
@@ -15,6 +21,10 @@ export function useForgotPasswordFlow() {
 
   function goToEmailSent() {
     setCurrentStep('sent')
+  }
+
+  function goToRequest() {
+    setCurrentStep('request')
   }
 
   async function submitRecoveryRequest(email: string) {
@@ -67,6 +77,7 @@ export function useForgotPasswordFlow() {
   return {
     currentStep,
     goToEmailSent,
+    goToRequest,
     isSubmitting,
     isResending,
     lastEmail,

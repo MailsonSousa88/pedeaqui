@@ -2,13 +2,14 @@ import { ApiError, ApiNetworkError, apiClient } from '../../../../shared/service
 import type {
   ForgotPasswordRequestPayload,
   ForgotPasswordRequestResult,
-  ForgotPasswordResetPayload,
+  ForgotPasswordResetRequestPayload,
+  ForgotPasswordResetResult,
 } from '../types/forgotPassword'
 
 export interface ForgotPasswordService {
   requestResetLink(payload: ForgotPasswordRequestPayload): Promise<ForgotPasswordRequestResult>
   resendResetLink(payload: ForgotPasswordRequestPayload): Promise<ForgotPasswordRequestResult>
-  resetPassword(payload: ForgotPasswordResetPayload): Promise<void>
+  resetPassword(accessToken: string, payload: ForgotPasswordResetRequestPayload): Promise<ForgotPasswordResetResult>
 }
 
 const getRequestErrorText = (error: unknown) => {
@@ -33,6 +34,20 @@ const getRequestErrorText = (error: unknown) => {
   return 'Nao foi possivel enviar o link de recuperacao. Tente novamente.'
 }
 
+const getResetErrorText = (error: unknown) => {
+  if (error instanceof ApiError) {
+    return error.status === 401
+      ? 'Este link expirou ou ja foi utilizado. Solicite um novo link para continuar.'
+      : 'Nao foi possivel redefinir sua senha. Tente novamente.'
+  }
+
+  if (error instanceof ApiNetworkError) {
+    return 'Nao foi possivel conectar ao servico. Verifique sua conexao e tente novamente.'
+  }
+
+  return 'Nao foi possivel redefinir sua senha. Tente novamente.'
+}
+
 export const forgotPasswordService: ForgotPasswordService = {
   async requestResetLink(payload) {
     try {
@@ -48,9 +63,21 @@ export const forgotPasswordService: ForgotPasswordService = {
   async resendResetLink(payload) {
     return forgotPasswordService.requestResetLink(payload)
   },
-  async resetPassword() {
-    return undefined
+  async resetPassword(accessToken, payload) {
+    try {
+      return await apiClient.post<ForgotPasswordResetResult>(
+        '/api/auth/reset-password',
+        {
+          password: payload.password,
+        },
+        {
+          authToken: accessToken,
+        },
+      )
+    } catch (error) {
+      throw new Error(getResetErrorText(error), {
+        cause: error,
+      })
+    }
   },
 }
-
-// TODO: implementar somente apos contrato oficial de backend e autorizacao explicita de escopo.

@@ -49,6 +49,7 @@ const getRouteFromLocation = (): AppRoute => {
   if (
     path === '/login' ||
     path === '/forgot-password' ||
+    path === '/forgot-password/reset' ||
     path === '/register' ||
     path === '/stores' ||
     path === '/storefront' ||
@@ -150,7 +151,7 @@ export default function App() {
       return <LoginPage onNavigate={handleNavigate} />;
     }
 
-    if (currentPath === '/forgot-password') {
+    if (currentPath === '/forgot-password' || currentPath === '/forgot-password/reset') {
       return <ForgotPasswordPage onNavigate={handleNavigate} />;
     }
 

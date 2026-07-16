@@ -5,11 +5,15 @@ import { SecondaryButton } from '../../../../shared/components/SecondaryButton'
 import { useForgotPasswordResetForm } from '../hooks/useForgotPasswordResetForm'
 
 type ForgotPasswordResetFormProps = {
+  accessToken: string
   onBackToLogin: () => void
+  onResetSuccess: () => void
 }
 
 export function ForgotPasswordResetForm({
+  accessToken,
   onBackToLogin,
+  onResetSuccess,
 }: ForgotPasswordResetFormProps) {
   const {
     form: {
@@ -17,11 +21,13 @@ export function ForgotPasswordResetForm({
       formState: { errors },
     },
     handleResetSubmit,
+    isSubmitting,
     isNewPasswordVisible,
     isConfirmPasswordVisible,
+    submitError,
     toggleNewPasswordVisibility,
     toggleConfirmPasswordVisibility,
-  } = useForgotPasswordResetForm()
+  } = useForgotPasswordResetForm({ accessToken, onResetSuccess })
 
   return (
     <form
@@ -58,6 +64,7 @@ export function ForgotPasswordResetForm({
           placeholder="Digite sua nova senha"
           autoComplete="new-password"
           required
+          disabled={isSubmitting}
           icon={<LockKeyhole size={19} strokeWidth={2.1} />}
           helperText="A senha deve ter no minimo 8 caracteres."
           error={errors.newPassword?.message}
@@ -94,6 +101,7 @@ export function ForgotPasswordResetForm({
           placeholder="Confirme sua nova senha"
           autoComplete="new-password"
           required
+          disabled={isSubmitting}
           icon={<LockKeyhole size={19} strokeWidth={2.1} />}
           helperText="Repita a senha para confirmar."
           error={errors.confirmPassword?.message}
@@ -126,10 +134,18 @@ export function ForgotPasswordResetForm({
 
       <button
         type="submit"
-        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-bold text-white shadow-lg shadow-red-200/60 outline-none transition-colors hover:bg-[#c80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507]"
+        disabled={isSubmitting}
+        aria-busy={isSubmitting}
+        className="mt-6 inline-flex h-12 w-full items-center justify-center rounded-xl bg-[#e30507] px-5 text-sm font-bold text-white shadow-lg shadow-red-200/60 outline-none transition-colors hover:bg-[#c80406] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#e30507] disabled:cursor-not-allowed disabled:bg-[#d34747]"
       >
-        Redefinir senha
+        {isSubmitting ? 'Redefinindo...' : 'Redefinir senha'}
       </button>
+
+      {submitError ? (
+        <p className="mt-4 text-sm font-medium text-[#e30507]" role="alert">
+          {submitError}
+        </p>
+      ) : null}
 
       <SecondaryButton
         type="button"

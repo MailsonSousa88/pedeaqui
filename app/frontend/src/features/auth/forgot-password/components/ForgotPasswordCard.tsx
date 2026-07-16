@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion'
 
 import { ForgotPasswordEmailSent } from './ForgotPasswordEmailSent'
+import { ForgotPasswordInvalidLink } from './ForgotPasswordInvalidLink'
 import { ForgotPasswordRequestForm } from './ForgotPasswordRequestForm'
 import { ForgotPasswordResetForm } from './ForgotPasswordResetForm'
 import type { ForgotPasswordStep } from '../types/forgotPassword'
@@ -15,6 +16,9 @@ type ForgotPasswordCardProps = {
   isResending: boolean
   resendError?: string
   resendSuccessMessage?: string
+  recoveryAccessToken?: string
+  onRequestNewLink: () => void
+  onResetSuccess: () => void
 }
 
 export function ForgotPasswordCard({
@@ -27,6 +31,9 @@ export function ForgotPasswordCard({
   isResending,
   resendError,
   resendSuccessMessage,
+  recoveryAccessToken,
+  onRequestNewLink,
+  onResetSuccess,
 }: ForgotPasswordCardProps) {
   const shouldReduceMotion = useReducedMotion()
   const content = {
@@ -47,7 +54,24 @@ export function ForgotPasswordCard({
         resendSuccessMessage={resendSuccessMessage}
       />
     ),
-    reset: <ForgotPasswordResetForm onBackToLogin={onBackToLogin} />,
+    reset: recoveryAccessToken ? (
+      <ForgotPasswordResetForm
+        accessToken={recoveryAccessToken}
+        onBackToLogin={onBackToLogin}
+        onResetSuccess={onResetSuccess}
+      />
+    ) : (
+      <ForgotPasswordInvalidLink
+        onBackToLogin={onBackToLogin}
+        onRequestNewLink={onRequestNewLink}
+      />
+    ),
+    'invalid-link': (
+      <ForgotPasswordInvalidLink
+        onBackToLogin={onBackToLogin}
+        onRequestNewLink={onRequestNewLink}
+      />
+    ),
   }[currentStep]
 
   return (

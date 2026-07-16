@@ -7,6 +7,7 @@ export type AppRoute =
   | '/'
   | '/login'
   | '/forgot-password'
+  | '/forgot-password/reset'
   | '/register'
   | '/stores'
   | '/storefront'

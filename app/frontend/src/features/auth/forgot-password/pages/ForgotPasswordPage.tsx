@@ -4,14 +4,43 @@ import { ForgotPasswordStepper } from '../components/ForgotPasswordStepper'
 import { useForgotPasswordFlow } from '../hooks/useForgotPasswordFlow'
 import styles from '../styles/ForgotPasswordPage.module.css'
 import type { AppRoute } from '../../../../app/routes/types'
+import type { ForgotPasswordStep } from '../types/forgotPassword'
 
 type ForgotPasswordPageProps = {
   onNavigate?: (route: AppRoute, planId?: number) => void
 }
 
+const resetRoute = '/forgot-password/reset'
+
+const getRecoveryAccessToken = () => {
+  if (window.location.pathname !== resetRoute) {
+    return undefined
+  }
+
+  const hash = window.location.hash.startsWith('#')
+    ? window.location.hash.slice(1)
+    : window.location.hash
+
+  const params = new URLSearchParams(hash)
+  const type = params.get('type')
+  const accessToken = params.get('access_token')
+
+  return type === 'recovery' && accessToken ? accessToken : undefined
+}
+
+const getInitialStep = (): ForgotPasswordStep => {
+  if (window.location.pathname !== resetRoute) {
+    return 'request'
+  }
+
+  return getRecoveryAccessToken() ? 'reset' : 'invalid-link'
+}
+
 export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
+  const recoveryAccessToken = getRecoveryAccessToken()
   const {
     currentStep,
+    goToRequest,
     isSubmitting,
     isResending,
     requestError,
@@ -19,7 +48,12 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
     resendSuccessMessage,
     resendRecoveryRequest,
     submitRecoveryRequest,
-  } = useForgotPasswordFlow()
+  } = useForgotPasswordFlow({ initialStep: getInitialStep() })
+
+  const handleResetSuccess = () => {
+    window.history.replaceState(null, '', resetRoute)
+    onNavigate?.('/login')
+  }
 
   return (
     <div className={`${styles.page} flex min-h-screen flex-col bg-[#f5f5f5]`}>
@@ -50,6 +84,9 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
               isResending={isResending}
               resendError={resendError}
               resendSuccessMessage={resendSuccessMessage}
+              recoveryAccessToken={recoveryAccessToken}
+              onRequestNewLink={goToRequest}
+              onResetSuccess={handleResetSuccess}
             />
           </div>
         </div>
